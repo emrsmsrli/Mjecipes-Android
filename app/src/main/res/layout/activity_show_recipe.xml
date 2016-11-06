@@ -50,15 +50,19 @@
             <!-- for directions -->
             <LinearLayout
                 android:paddingTop="@dimen/show_recipe_margins"
+                android:paddingStart="@dimen/show_recipe_margins"
+                android:paddingEnd="@dimen/show_recipe_margins"
                 android:paddingBottom="@dimen/show_recipe_margins"
                 android:orientation="vertical"
                 android:id="@+id/show_recipes_ll_directions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <!-- show comments -->
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/show_recipe_margins"
                 android:text="@string/show_recipe_comments"
                 android:id="@+id/show_recipes_b_comments"/>
 
