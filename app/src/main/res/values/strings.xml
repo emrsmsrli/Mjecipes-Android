@@ -11,7 +11,7 @@
     <string name="login_button">Login</string>
 
     <!-- showrecipe strings -->
-    <string name="show_recipe_comments">Comments</string>
-    <string name="show_recipe_directions">Directions</string>
+    <string name="show_recipe_comments">Show comments</string>
+    <string name="show_recipe_directions">Directions:</string>
 
 </resources>
