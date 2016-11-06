@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button login;
     private Button b;
+    private Button listcomment;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -50,6 +51,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent toy = new Intent(MainActivity.this, SignupActivity.class);
                 startActivity(toy);
+            }
+        });
+
+
+        listcomment = (Button) findViewById(R.id.buttoncomment);
+
+        listcomment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent c= new Intent(MainActivity.this,ShowComment.class);
+                startActivity(c);
             }
         });
 
