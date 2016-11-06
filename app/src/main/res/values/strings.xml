@@ -10,4 +10,8 @@
     <string name="login_cb_show_pass">Show Password</string>
     <string name="login_button">Login</string>
 
+    <!-- showrecipe strings -->
+    <string name="show_recipe_comments">Comments</string>
+    <string name="show_recipe_directions">Directions</string>
+
 </resources>

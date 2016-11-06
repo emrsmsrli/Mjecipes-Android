@@ -15,8 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" android:label="@string/app_login"></activity>
-        <activity android:name=".Sign_In"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/app_login" />
+        <activity android:name=".Sign_In" />
+        <activity android:name=".ShowRecipe"></activity>
     </application>
 
 </manifest>
