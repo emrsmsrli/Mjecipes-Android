@@ -11,7 +11,14 @@
     <string name="login_button">Login</string>
 
     <!-- showrecipe strings -->
-    <string name="show_recipe_comments">Show comments</string>
-    <string name="show_recipe_directions">Directions:</string>
+    <string name="show_recipe_comments">Comments</string>
+    <string name="show_recipe_directions">Directions</string>
+    <array name="iller">
+        <item>Comment1</item>
+        <item>Comment2</item>
+        <item>Comment3</item>
+        <item>Comment4</item>
+        <item>Comment5</item>
+    </array>
 
 </resources>
