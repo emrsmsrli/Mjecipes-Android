@@ -10,8 +10,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="se.ju.student.android_mjecipes.MainActivity">
 
-    <TextView
+    <Button
+        android:text="Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="119dp"
+        android:layout_marginTop="126dp"
+        android:id="@+id/button" />
 </RelativeLayout>
