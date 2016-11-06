@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ShowRecipe extends AppCompatActivity {
+public class ShowRecipeActivity extends AppCompatActivity {
 
     ImageView recipeImage;
     TextView recipeDesc;
