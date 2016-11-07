@@ -91,7 +91,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(accounts + id[0] + r).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + accounts + id[0] + r).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -138,7 +138,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(accounts + id[0] + c).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + accounts + id[0] + c).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -187,7 +187,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(accounts + id[0] + f).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + accounts + id[0] + f).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -277,11 +277,11 @@ public class MjecipesAPIHandler {
                 }
 
                 protected Recipe[] doInBackground(Integer... page) {
-                    String url = "recipesRef?page=";
+                    String url = "recipes?page=";
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(url + page[0]).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + url + page[0]).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -327,7 +327,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(recipes + id[0]).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + recipes + id[0]).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -382,7 +382,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(recipes + id[0] + c).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + recipes + id[0] + c).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -429,7 +429,7 @@ public class MjecipesAPIHandler {
                     Scanner s = null;
                     HttpURLConnection connection = null;
                     try {
-                        connection = (HttpURLConnection) new URL(recipes + url + term[0]).openConnection();
+                        connection = (HttpURLConnection) new URL(API_URL + recipes + url + term[0]).openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
 
@@ -494,7 +494,6 @@ public class MjecipesAPIHandler {
         }
     }
 
-    private static final String API_URL = "http://52.211.99.140/api/v1/";
     private static final String accounts = "accounts/";
     private static final String tokens = "tokens/";
     private static final String recipes = "recipesRef/";
@@ -502,6 +501,8 @@ public class MjecipesAPIHandler {
 
     private static MjecipesAPIHandler instance = null;
     private static Gson gson = null;
+
+    private static String API_URL = "http://52.211.99.140/api/v1/";
 
     private MjecipesAPIHandler() {
         gson = new Gson();
@@ -529,6 +530,11 @@ public class MjecipesAPIHandler {
         }
 
         return instance;
+    }
+
+    public static MjecipesAPIHandler getInstance(String API_URL_P) {
+        API_URL = API_URL_P;
+        return getInstance();
     }
 
 }
