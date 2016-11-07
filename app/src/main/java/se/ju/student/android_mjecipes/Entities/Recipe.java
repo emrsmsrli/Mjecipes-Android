@@ -8,4 +8,5 @@ public class Recipe {
     public String name;
     public String desc;
     public String imgsrc;
+    public Direction[] directions;
 }
