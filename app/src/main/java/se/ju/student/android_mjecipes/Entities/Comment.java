@@ -1,11 +1,10 @@
 package se.ju.student.android_mjecipes.Entities;
 
-/**
- * Created by Gizem Alpaydın on 6.11.2016.
- */
-
 public class Comment {
+    public int id;
     public String text;
     public int grade;
-    public String imgsrc;
+    public Account commenter;
+    public String image;
+    public long created;
 }

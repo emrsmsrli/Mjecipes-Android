@@ -1,12 +1,12 @@
 package se.ju.student.android_mjecipes.Entities;
 
-/**
- * Created by Emre on 07/11/2016.
- */
-
 public class Recipe {
+    public int id;
     public String name;
-    public String desc;
-    public String imgsrc;
+    public String description;
+    public String image;
+    public long created;
+    public Account creator;
+    public String creatorId;
     public Direction[] directions;
 }
