@@ -41,4 +41,11 @@ public class Errors {
     public static final String SEARCH_TERM_MISSING = "TermMissing";
 
     public String[] errors;
+
+    public boolean hasError(String error) {
+        for(String e: errors)
+            if(e.equals(error))
+                return true;
+        return false;
+    }
 }
