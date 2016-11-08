@@ -1,5 +1,7 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
+import java.net.HttpURLConnection;
+
 public class Errors {
     public static final String ACCOUNT_USERNAME_MISSING = "UserNameMissing";
     public static final String ACCOUNT_INVALID_USERNAME = "InvalidUserName";
@@ -40,7 +42,14 @@ public class Errors {
 
     public static final String SEARCH_TERM_MISSING = "TermMissing";
 
+    public static final int HTTP_OK = HttpURLConnection.HTTP_OK;
+    public static final int HTTP_CREATED = HttpURLConnection.HTTP_CREATED;
+    public static final int HTTP_UNAUTHORIZED = HttpURLConnection.HTTP_UNAUTHORIZED;
+    public static final int HTTP_NOT_FOUND = HttpURLConnection.HTTP_NOT_FOUND;
+    public static final int HTTP_BAD_REQUEST = HttpURLConnection.HTTP_BAD_REQUEST;
+
     public String[] errors;
+    public int HTTPCode;
 
     public boolean hasError(String error) {
         for(String e: errors)
