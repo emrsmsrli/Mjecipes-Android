@@ -13,7 +13,7 @@ import se.ju.student.android_mjecipes.Entities.Comment;
 
 public class RecipeHandler extends Handler {
     private static RecipeHandler instance;
-    private static final String TAG = "RECIPE_HANDLER";
+    private static final String TAG = "RecipeHandler";
 
     private RecipeHandler() {
         super();

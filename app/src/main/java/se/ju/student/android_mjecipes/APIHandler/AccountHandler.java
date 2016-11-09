@@ -15,7 +15,7 @@ import se.ju.student.android_mjecipes.Entities.Recipe;
 
 public class AccountHandler extends Handler {
     private static AccountHandler instance;
-    private static final String TAG = "ACCOUNT_HANDLER";
+    private static final String TAG = "AccountHandler";
 
     private AccountHandler() {
         super();
@@ -128,6 +128,8 @@ public class AccountHandler extends Handler {
     //public void putFavorites(String id, int[] recipeids) { }
 
     public Recipe[] getFavorites(String id, JWToken token) {
+        if(token == null) return null;
+
         String f = "/favorites";
         Scanner s = null;
         HttpURLConnection connection = null;

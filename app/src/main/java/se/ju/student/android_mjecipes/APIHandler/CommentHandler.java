@@ -2,7 +2,7 @@ package se.ju.student.android_mjecipes.APIHandler;
 
 public class CommentHandler extends Handler {
     private static CommentHandler instance;
-    private static final String TAG = "COMMENT_HANDLER";
+    private static final String TAG = "CommentHandler";
 
     private CommentHandler() {
         super();
