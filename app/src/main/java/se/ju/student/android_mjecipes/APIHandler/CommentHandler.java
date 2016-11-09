@@ -25,6 +25,7 @@ public class CommentHandler extends Handler {
         super();
     }
 
+    // FIXME: 09/11/2016 when specification fixed
     public boolean patchComment(int id, @NonNull Comment comment, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
@@ -80,6 +81,7 @@ public class CommentHandler extends Handler {
         return toReturn;
     }
 
+    // FIXME: 09/11/2016 when specification fixed
     public boolean deleteComment(int id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -115,6 +117,7 @@ public class CommentHandler extends Handler {
         return toReturn;
     }
 
+    // FIXME: 09/11/2016 when specification fixed
     public boolean postImage(int id, @NonNull String filename, @NonNull JWToken token) {
         String imagesstr = "/image";
         String boundary = "******";
