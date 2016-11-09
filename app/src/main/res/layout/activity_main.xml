@@ -11,7 +11,7 @@
     tools:context="se.ju.student.android_mjecipes.MainActivity">
 
     <Button
-        android:text="push me"
+        android:text="Sign Up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="23dp"

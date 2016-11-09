@@ -7,20 +7,26 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.util.List;
 
 public class ShowComment extends AppCompatActivity {
 
-
-
-
+    ViewFlipper flipper;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle icicle){
+        super.onCreate(icicle);
         setContentView(R.layout.activity_show_comment);
+
+
+
+        flipper= (ViewFlipper) findViewById(R.id.details);
+
+    }
+
+    public void flip(View v) {
         ListView listcomment= (ListView) findViewById(R.id.commentlist);
         listcomment.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -28,6 +34,6 @@ public class ShowComment extends AppCompatActivity {
 
             }
         });
-
+        flipper.showNext();
     }
 }

@@ -10,37 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="se.ju.student.android_mjecipes.Sign_In">
 
-    <Button
-        android:text="Sıgn Up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="37dp"
-        android:id="@+id/bsignin"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/username"
-        android:layout_marginBottom="128dp" />
-
-    <TextView
-        android:text="Password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/enterpassword"
-        android:layout_below="@+id/hiddenpassword"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="49dp" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/enterusername"
-        android:hint="Enter a user name"
-        android:layout_above="@+id/bsignin"
-        android:layout_alignStart="@+id/enterpassword"
-        android:layout_marginBottom="31dp" />
-
     <TextView
         android:text="Username"
         android:layout_width="wrap_content"
@@ -50,17 +19,6 @@
         android:layout_alignStart="@+id/enterpassword"
         android:layout_marginTop="9dp" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/hiddenpassword"
-        android:hint="Enter a password"
-        android:layout_marginTop="51dp"
-        android:layout_below="@+id/username"
-        android:layout_alignStart="@+id/enterpassword" />
-
     <TextView
         android:text="Inputs"
         android:layout_width="wrap_content"
@@ -69,5 +27,83 @@
         android:layout_alignTop="@+id/bsignin"
         android:layout_alignStart="@+id/enterusername"
         android:layout_marginTop="81dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/enterusername"
+        android:hint="Enter a user name"
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/username"
+        android:layout_alignStart="@+id/username" />
+
+    <Button
+        android:text="Sıgn Up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bsignin"
+        android:layout_marginBottom="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="21dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/hiddenpassword"
+        android:hint="Enter a password"
+        android:layout_alignBottom="@+id/bsignin"
+        android:layout_alignStart="@+id/enterpassword"
+        android:layout_marginBottom="34dp" />
+
+    <TextView
+        android:text="Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/enterpassword"
+        android:layout_marginBottom="17dp"
+        android:layout_above="@+id/hiddenpassword"
+        android:layout_alignStart="@+id/lati_tude" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/longi_tude"
+        android:layout_above="@+id/enterpassword"
+        android:layout_alignStart="@+id/enterpassword" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/lati_tude"
+        android:layout_below="@+id/latitude"
+        android:layout_toStartOf="@+id/bsignin"
+        android:layout_marginTop="14dp" />
+
+    <TextView
+        android:text="Latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/latitude"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/enterusername"
+        android:layout_toEndOf="@+id/enterpassword" />
+
+    <TextView
+        android:text="Longitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/logitude"
+        android:layout_below="@+id/lati_tude"
+        android:layout_toEndOf="@+id/username"
+        android:layout_marginTop="19dp" />
 
 </RelativeLayout>

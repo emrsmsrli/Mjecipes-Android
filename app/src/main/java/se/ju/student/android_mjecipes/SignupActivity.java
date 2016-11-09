@@ -1,23 +1,23 @@
 package se.ju.student.android_mjecipes;
 
 
+
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import se.ju.student.android_mjecipes.Entities.Account;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 public class SignupActivity extends AppCompatActivity {
 
     EditText username;
     EditText hiddenpassword;
+    EditText latitude;
+    EditText longitude;
     TextView tvResults;
     Button bsign;
 
@@ -29,27 +29,25 @@ public class SignupActivity extends AppCompatActivity {
 
         username=(EditText) findViewById(R.id.enterusername);
         hiddenpassword=(EditText) findViewById(R.id.hiddenpassword);
+        latitude= (EditText) findViewById(R.id.lati_tude);
+        longitude= (EditText) findViewById(R.id.longi_tude);
         tvResults=(TextView) findViewById(R.id.inputs);
         bsign= (Button) findViewById(R.id.bsignin);
         bsign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View var) {
+
                 Account a=new Account();
 
-
-                a.username=username.getText().toString();
+                a.userName=username.getText().toString();
                 a.password=hiddenpassword.getText().toString();
+                a.latitude= Double.parseDouble(latitude.getText().toString());
+                a.longitude= Double.parseDouble(longitude.getText().toString());
 
-                tvResults.setText(a.username+" "+a.password);
+                se.ju.student.android_mjecipes.APIHandler.Handler.getAccountHandler().postAccount(a);
 
-                JSONObject jsonObject= new JSONObject();
-                try {
-                    jsonObject.put("UserName",a.username);
-                    jsonObject.put("Password",a.password);
+                tvResults.setText(a.userName+" "+a.password+""+a.latitude+" "+a.longitude);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
