@@ -76,7 +76,40 @@ public class CommentHandler extends Handler {
         return toReturn;
     }
 
-    //public void deleteComment(int id) { }
+    public boolean deleteComment(int id, @NonNull JWToken token) {
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + id).openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setRequestProperty("Authentication", "Bearer " + token.access_token);
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "deleteComment: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "deleteComment: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "deleteComment: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "deleteComment: IO_EXCEPTION", e);
+        } finally {
+            if(connection != null) connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     //public void postImage(int id, Image i); { }
 
