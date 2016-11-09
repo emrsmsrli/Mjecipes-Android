@@ -1,5 +1,6 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -22,9 +23,7 @@ public class RecipeHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public String postRecipe(Recipe r, JWToken token) {
-        if(r == null || token == null) return "";
-
+    public String postRecipe(@NonNull Recipe r, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
@@ -153,9 +152,7 @@ public class RecipeHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean deleteRecipe(int id, JWToken token) {
-        if(token == null) return false;
-
+    public boolean deleteRecipe(int id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
 
@@ -194,9 +191,7 @@ public class RecipeHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean patchRecipe(Recipe recipe, JWToken token) {
-        if(recipe == null || token == null) return false;
-
+    public boolean patchRecipe(@NonNull Recipe recipe, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
@@ -254,9 +249,7 @@ public class RecipeHandler extends Handler {
     //public void postImage(int id, ) { }
 
     // FIXME: 09/11/2016 when specification fixed
-    public String postComment(int id, Comment c, JWToken token) {
-        if(c == null || token == null) return "";
-
+    public String postComment(int id, @NonNull Comment c, @NonNull JWToken token) {
         String commentsstr = "/comments";
         Scanner s = null;
         PrintWriter pw = null;
@@ -351,14 +344,14 @@ public class RecipeHandler extends Handler {
         return comments;
     }
 
-    public Recipe[] search(String term) {
+    public Recipe[] search(@NonNull String term) {
         String search = "search?term=";
         Scanner s = null;
         HttpURLConnection connection = null;
         Recipe[] recipes = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + search + (term != null ? term : "")).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + search + term).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 

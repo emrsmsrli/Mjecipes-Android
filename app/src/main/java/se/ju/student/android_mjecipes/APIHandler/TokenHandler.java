@@ -1,5 +1,6 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -19,9 +20,7 @@ public class TokenHandler extends Handler {
         super();
     }
 
-    public JWToken getToken(String username, String password) {
-        if(username == null || password == null) throw new NullPointerException();
-
+    public JWToken getToken(@NonNull String username, @NonNull String password) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;

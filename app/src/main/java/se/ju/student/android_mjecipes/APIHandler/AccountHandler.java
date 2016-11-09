@@ -1,5 +1,6 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class AccountHandler extends Handler {
         super();
     }
 
-    public Account getAccount(String id) {
+    public Account getAccount(@NonNull String id) {
         Scanner s = null;
         HttpURLConnection connection = null;
         Account account = null;
@@ -60,14 +61,12 @@ public class AccountHandler extends Handler {
         return account;
     }
 
-    public String postAccount(Account account) {
-        if (account == null) return "";
-
+    public String postAccount(@NonNull Account account) {
         String passwordstr = "password/";
         HttpURLConnection connection = null;
         Scanner s = null;
         PrintWriter pw = null;
-        String toReturn = "";
+        String toReturn = null;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + passwordstr).openConnection();
@@ -111,9 +110,7 @@ public class AccountHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean patchAccount(String id, Account a, JWToken token) {
-        if(a == null || token == null) return false;
-
+    public boolean patchAccount(@NonNull String id, @NonNull Account a, @NonNull JWToken token) {
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -159,9 +156,7 @@ public class AccountHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean deleteAccount(String id, JWToken token) {
-        if(token == null) return false;
-
+    public boolean deleteAccount(@NonNull String id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
 
@@ -199,7 +194,7 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    public Recipe[] getRecipes(String id) {
+    public Recipe[] getRecipes(@NonNull String id) {
         String r = "/recipes";
         Scanner s = null;
         HttpURLConnection connection = null;
@@ -238,7 +233,7 @@ public class AccountHandler extends Handler {
         return recipes;
     }
 
-    public Comment[] getComments(String id) {
+    public Comment[] getComments(@NonNull String id) {
         String c = "/comments";
         Scanner s = null;
         HttpURLConnection connection = null;
@@ -277,7 +272,7 @@ public class AccountHandler extends Handler {
         return comments;
     }
 
-    public boolean putFavorites(String id, int[] recipeids, JWToken token) {
+    public boolean putFavorites(@NonNull String id, @NonNull int[] recipeids, @NonNull JWToken token) {
         Recipe[] recipes = new Recipe[recipeids.length];
 
         for(int i = 0; i < recipeids.length; ++i) {
@@ -287,9 +282,7 @@ public class AccountHandler extends Handler {
         return putFavorites(id, recipes, token);
     }
 
-    public boolean putFavorites(String id, Recipe[] recipes, JWToken token) {
-        if(id == null || recipes == null || token ==null) return false;
-
+    public boolean putFavorites(@NonNull String id, @NonNull Recipe[] recipes, @NonNull JWToken token) {
         String favoritesstr = "/favorites";
         Scanner s = null;
         PrintWriter pw = null;
@@ -346,9 +339,7 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    public Recipe[] getFavorites(String id, JWToken token) {
-        if(token == null) return null;
-
+    public Recipe[] getFavorites(@NonNull String id, @NonNull JWToken token) {
         String f = "/favorites";
         Scanner s = null;
         HttpURLConnection connection = null;
