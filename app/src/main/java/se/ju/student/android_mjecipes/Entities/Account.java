@@ -5,5 +5,5 @@ public class Account {
     public String userName;
     public String password;
     public double latitude;
-    public double longitute;
+    public double longitude;
 }
