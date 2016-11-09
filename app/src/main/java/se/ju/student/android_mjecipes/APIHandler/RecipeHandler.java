@@ -147,7 +147,46 @@ public class RecipeHandler extends Handler {
         return recipe;
     }
 
-    //public void deleteRecipe(int id) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public boolean deleteRecipe(int id, JWToken token) {
+        if(token == null) return false;
+
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id).openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "deleteRecipe: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "deleteRecipe: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "deleteRecipe: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "deleteRecipe: IO_EXCEPTION", e);
+        } finally {
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     //public void patchRecipe(int id) { }
 
