@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -250,7 +253,77 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
-    //public void postImage(int id, ) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public boolean postImage(int id, @NonNull String filename, @NonNull JWToken token) {
+        String imagesstr = "/images";
+        String boundary = "******";
+        String hypens = "--";
+        String endl = "\r\n";
+        int buffersize = 1024*1024;
+        DataOutputStream dos = null;
+        HttpURLConnection connection = null;
+        FileInputStream fis = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + imagesstr).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            dos = new DataOutputStream(connection.getOutputStream());
+            dos.writeBytes(hypens + boundary + endl);
+            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"" + filename + "\"" + endl + endl);
+
+            byte[] buffer = new byte[buffersize];
+            fis = new FileInputStream(new File(filename));
+
+            buffersize = Math.min(buffersize, fis.available());
+            while(fis.read(buffer, 0, buffersize) > 0) {
+                dos.write(buffer, 0, buffersize);
+                buffersize = Math.min(buffersize, fis.available());
+            }
+
+            dos.writeBytes(endl + hypens + boundary + hypens + endl);
+            dos.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "postImage: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "postImage: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "postImage: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "postImage: IO_EXCEPTION", e);
+        } finally {
+            if(connection != null)
+                connection.disconnect();
+            try {
+                if(fis != null)
+                    fis.close();
+                if(dos != null)
+                    dos.close();
+            } catch(IOException e) {
+                Log.e(TAG, "postImage: IO_EXCEPTION", e);
+            }
+        }
+
+        return toReturn;
+    }
 
     // FIXME: 09/11/2016 when specification fixed
     @Nullable
