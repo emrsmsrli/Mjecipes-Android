@@ -158,7 +158,46 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    //public void deleteAccount(int id) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public boolean deleteAccount(int id, JWToken token) {
+        if(token == null) return false;
+
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id).openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "deleteAccount: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "deleteAccount: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "deleteAccount: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "deleteAccount: IO_EXCEPTION", e);
+        } finally {
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     public Recipe[] getRecipes(String id) {
         String r = "/recipes";
