@@ -3,6 +3,7 @@ package se.ju.student.android_mjecipes.APIHandler;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,7 +54,48 @@ public class AccountHandler extends Handler {
         return account;
     }
 
-    //public void postAccount(Account a) { String urlPassword = "password/"; }
+    public boolean postAccount(Account a) {
+        if (a == null) return false;
+
+        String passwordstr = "password/";
+        HttpURLConnection connection = null;
+        Scanner s = null;
+        PrintWriter pw = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + accounts + passwordstr).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            String str = gson.toJson(a, Account.class);
+            pw.print(str);
+            pw.flush();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                s = new Scanner(connection.getErrorStream());
+                errors = gson.fromJson(s.nextLine(), Errors.class);
+                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+            } else {
+                toReturn = true;
+            }
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "postAccount: MALFORMED_URL", e);
+        } catch (IOException e) {
+            Log.e(TAG, "postAccount: IO_EXCEPTION", e);
+         } finally {
+            if(s != null)
+                s.close();
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     //public void patchAccount(int id, Account a) { }
 
