@@ -21,7 +21,54 @@ public class RecipeHandler extends Handler {
         super();
     }
 
-    //public void postRecipe(Recipe r) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public String postRecipe(Recipe r, JWToken token) {
+        if(token == null) return null;
+
+        Scanner s = null;
+        PrintWriter pw = null;
+        HttpURLConnection connection = null;
+        String toReturn = "";
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            pw.print(gson.toJson(r, Recipe.class));
+            pw.flush();
+
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                Log.i(TAG, "postRecipe: HTTP Unauthroized");
+            } else if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                s = new Scanner(connection.getErrorStream());
+                errors = gson.fromJson(s.nextLine(),Errors.class);
+                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                Log.i(TAG, "postRecipe: HTTP Bad Request");
+            } else {
+                s = new Scanner(connection.getInputStream());
+                toReturn = s.nextLine().substring(9);
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "postRecipe: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "postRecipe: IO_EXCEPTION", e);
+        } finally {
+            if(s != null)
+                s.close();
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     public Recipe[] getRecipeByPage(int page) {
         String pagestr = "recipes?page=";
