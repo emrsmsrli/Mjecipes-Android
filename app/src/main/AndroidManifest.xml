@@ -20,7 +20,7 @@
         <activity android:name=".LoginActivity" android:label="@string/app_login">
         </activity>
         <activity android:name=".SignupActivity"></activity>
-        <activity android:name=".ShowComment"></activity>
+        <activity android:name=".ShowCommentActivity"></activity>
         <activity android:name=".ShowRecipeActivity"></activity>
     </application>
 

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         listcomment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent c= new Intent(MainActivity.this,ShowComment.class);
+                Intent c= new Intent(MainActivity.this,ShowCommentActivity.class);
                 startActivity(c);
             }
         });

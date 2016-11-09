@@ -22,7 +22,7 @@ import se.ju.student.android_mjecipes.APIHandler.Handler;
 import se.ju.student.android_mjecipes.Entities.Comment;
 import se.ju.student.android_mjecipes.Entities.Recipe;
 
-public class ShowComment extends AppCompatActivity {
+public class ShowCommentActivity extends AppCompatActivity {
 
     TextView a;
     LinearLayout r;
