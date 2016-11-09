@@ -14,7 +14,7 @@ public abstract class Handler {
     Errors errors;
 
     Handler() {
-        errors = null;
+        errors = new Errors();
     }
 
     public Errors getErrors() {
