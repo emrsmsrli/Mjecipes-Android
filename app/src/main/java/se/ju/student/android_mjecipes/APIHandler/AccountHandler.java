@@ -1,6 +1,7 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class AccountHandler extends Handler {
         super();
     }
 
+    @Nullable
     public Account getAccount(@NonNull String id) {
         Scanner s = null;
         HttpURLConnection connection = null;
@@ -61,6 +63,7 @@ public class AccountHandler extends Handler {
         return account;
     }
 
+    @Nullable
     public String postAccount(@NonNull Account account) {
         String passwordstr = "password/";
         HttpURLConnection connection = null;
@@ -194,6 +197,7 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
+    @Nullable
     public Recipe[] getRecipes(@NonNull String id) {
         String r = "/recipes";
         Scanner s = null;
@@ -233,6 +237,7 @@ public class AccountHandler extends Handler {
         return recipes;
     }
 
+    @Nullable
     public Comment[] getComments(@NonNull String id) {
         String c = "/comments";
         Scanner s = null;
@@ -339,6 +344,7 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
+    @Nullable
     public Recipe[] getFavorites(@NonNull String id, @NonNull JWToken token) {
         String f = "/favorites";
         Scanner s = null;

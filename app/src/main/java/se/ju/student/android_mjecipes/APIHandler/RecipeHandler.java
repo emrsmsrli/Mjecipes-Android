@@ -1,6 +1,7 @@
 package se.ju.student.android_mjecipes.APIHandler;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -23,11 +24,12 @@ public class RecipeHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
+    @Nullable
     public String postRecipe(@NonNull Recipe r, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
-        String toReturn = "";
+        String toReturn = null;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL).openConnection();
@@ -74,6 +76,7 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
+    @Nullable
     public Recipe[] getRecipeByPage(int page) {
         String pagestr = "recipes?page=";
         Scanner s = null;
@@ -113,6 +116,7 @@ public class RecipeHandler extends Handler {
         return recipes;
     }
 
+    @Nullable
     public Recipe getRecipe(int id) {
         Scanner s = null;
         HttpURLConnection connection = null;
@@ -249,12 +253,13 @@ public class RecipeHandler extends Handler {
     //public void postImage(int id, ) { }
 
     // FIXME: 09/11/2016 when specification fixed
+    @Nullable
     public String postComment(int id, @NonNull Comment c, @NonNull JWToken token) {
         String commentsstr = "/comments";
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
-        String toReturn = "";
+        String toReturn = null;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + commentsstr).openConnection();
@@ -305,6 +310,7 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
+    @Nullable
     public Comment[] getComments(int id) {
         String commentstr = "/comments";
         Scanner s = null;
@@ -344,6 +350,7 @@ public class RecipeHandler extends Handler {
         return comments;
     }
 
+    @Nullable
     public Recipe[] search(@NonNull String term) {
         String search = "search?term=";
         Scanner s = null;
