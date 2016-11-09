@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.UUID;
 
 import se.ju.student.android_mjecipes.Entities.JWToken;
 import se.ju.student.android_mjecipes.Entities.Recipe;
@@ -274,7 +275,7 @@ public class RecipeHandler extends Handler {
 
             dos = new DataOutputStream(connection.getOutputStream());
             dos.writeBytes(hypens + boundary + endl);
-            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"" + filename + "\"" + endl + endl);
+            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"" + UUID.randomUUID().toString() + ".jpg\"" + endl + endl);
 
             byte[] buffer = new byte[buffersize];
             fis = new FileInputStream(new File(filename));
