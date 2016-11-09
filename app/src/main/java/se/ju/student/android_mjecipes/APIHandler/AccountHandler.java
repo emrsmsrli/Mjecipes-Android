@@ -60,14 +60,14 @@ public class AccountHandler extends Handler {
         return account;
     }
 
-    public boolean postAccount(Account a) {
-        if (a == null) return false;
+    public String postAccount(Account account) {
+        if (account == null) return "";
 
         String passwordstr = "password/";
         HttpURLConnection connection = null;
         Scanner s = null;
         PrintWriter pw = null;
-        boolean toReturn = false;
+        String toReturn = "";
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + passwordstr).openConnection();
@@ -76,8 +76,7 @@ public class AccountHandler extends Handler {
             connection.setRequestProperty("Content-Type", "application/json");
 
             pw = new PrintWriter(connection.getOutputStream());
-            String str = gson.toJson(a, Account.class);
-            pw.print(str);
+            pw.print(gson.toJson(account, Account.class));
             pw.flush();
 
             switch(connection.getResponseCode()) {
@@ -87,7 +86,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_CREATED:
-                    toReturn = true;
+                    s = new Scanner(connection.getInputStream());
+                    toReturn = getLocation(s.nextLine());
                     errors.HTTPCode = Errors.HTTP_CREATED;
                     break;
                 default:
