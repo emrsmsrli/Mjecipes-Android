@@ -28,7 +28,7 @@ public class AccountHandler extends Handler {
         Account account = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + accounts + id).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -64,7 +64,7 @@ public class AccountHandler extends Handler {
         boolean toReturn = false;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + accounts + passwordstr).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + passwordstr).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -108,7 +108,7 @@ public class AccountHandler extends Handler {
         Recipe[] recipes = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + accounts + id + r).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id + r).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -141,7 +141,7 @@ public class AccountHandler extends Handler {
         Comment[] comments = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + accounts + id + c).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id + c).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -178,7 +178,7 @@ public class AccountHandler extends Handler {
         Recipe[] recipes = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + accounts + id + f).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id + f).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Authorization", "Bearer " + token.access_token);

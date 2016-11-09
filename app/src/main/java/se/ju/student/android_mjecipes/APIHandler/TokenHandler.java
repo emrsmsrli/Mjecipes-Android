@@ -28,7 +28,7 @@ public class TokenHandler extends Handler {
         JWToken token = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + tokens).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + TOKENS_URL).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

@@ -60,7 +60,7 @@ public class RecipeHandler extends Handler {
         Recipe recipe = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + recipes + id).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -101,7 +101,7 @@ public class RecipeHandler extends Handler {
         Comment[] comments = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + recipes + id + commentstr).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + commentstr).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -134,7 +134,7 @@ public class RecipeHandler extends Handler {
         Recipe[] recipes = null;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + recipes + search + (term != null ? term : "")).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + search + (term != null ? term : "")).openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
