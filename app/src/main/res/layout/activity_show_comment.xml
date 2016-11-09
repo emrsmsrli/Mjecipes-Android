@@ -7,44 +7,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/comment"
     tools:context="se.ju.student.android_mjecipes.ShowComment">
 
-
-    <Button android:id="@+id/flip_me"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Flip Me!"
-        android:onClick="flip"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-
-
-    <ViewFlipper android:id="@+id/details"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/flip_me">
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/commentlist"
-            android:entries="@array/comments"
-
-            android:layout_alignTop="@+id/details"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="28dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="#FFFF0000"
-            android:text="Single Comment Page"
-        />
-
-    </ViewFlipper>
-
-
+        android:id="@+id/commentsection">
+    </LinearLayout>
 </RelativeLayout>
