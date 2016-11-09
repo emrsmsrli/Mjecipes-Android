@@ -13,13 +13,15 @@ import se.ju.student.android_mjecipes.Entities.JWToken;
 
 public class TokenHandler extends Handler {
     private static TokenHandler instance;
-    private static final String TAG = "TOKEN_HANDLER";
+    private static final String TAG = "TokenHandler";
 
     private TokenHandler() {
         super();
     }
 
     public JWToken getToken(String username, String password) {
+        if(username == null || password == null) throw new NullPointerException();
+
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
@@ -27,15 +29,16 @@ public class TokenHandler extends Handler {
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + tokens).openConnection();
-            connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             pw = new PrintWriter(connection.getOutputStream());
             pw.print("grant_type=password&username=" + username + "&password=" + password);
+            pw.flush();
 
             if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                s = new Scanner(connection.getErrorStream());
                 errors = gson.fromJson(s.nextLine(), Errors.class);
                 errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                 Log.i(TAG, "getToken: HTTP Bad Request");
