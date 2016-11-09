@@ -37,4 +37,11 @@ public abstract class Handler {
     public static CommentHandler getCommentHandler() {
         return CommentHandler.getInstance();
     }
+
+    protected static String getLocation(String body) {
+        if(body == null)
+            return "";
+        return body.substring(9);
+    }
+
 }
