@@ -32,12 +32,18 @@ public class AccountHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                Log.i(TAG, "getAccount: HTTP Not Found");
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-            } else {
-                s = new Scanner(connection.getInputStream());
-                account = gson.fromJson(s.nextLine(), Account.class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "getAccount: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    account = gson.fromJson(s.nextLine(), Account.class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -74,13 +80,20 @@ public class AccountHandler extends Handler {
             pw.print(str);
             pw.flush();
 
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-                s = new Scanner(connection.getErrorStream());
-                errors = gson.fromJson(s.nextLine(), Errors.class);
-                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
-            } else {
-                toReturn = true;
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    break;
+                case HttpURLConnection.HTTP_CREATED:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_CREATED;
+                    break;
+                default:
+                    break;
             }
+
         } catch (MalformedURLException e) {
             Log.e(TAG, "postAccount: MALFORMED_URL", e);
         } catch (IOException e) {
@@ -112,12 +125,18 @@ public class AccountHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                Log.i(TAG, "getRecipes: HTTP Not Found");
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-            } else {
-                s = new Scanner(connection.getInputStream());
-                recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "getRecipes: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -145,12 +164,18 @@ public class AccountHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                Log.i(TAG, "getComments: HTTP Not Found");
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-            } else {
-                s = new Scanner(connection.getInputStream());
-                comments = gson.fromJson(s.nextLine(), Comment[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "getComments: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    comments = gson.fromJson(s.nextLine(), Comment[].class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -183,24 +208,30 @@ public class AccountHandler extends Handler {
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
 
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                Log.i(TAG, "getFavorites: HTTP Not Found");
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-            } else if(connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                Log.i(TAG, "getFavorites: HTTP Not Found or Unauth");
-                errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
-            } else {
-                s = new Scanner(connection.getInputStream());
-                recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "getFavorites: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "getFavorites: HTTP Not Found or Unauth");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
 
-                if(recipes != null || recipes.length != 0)
-                    for (int i = 0; i < recipes.length; ++i)
-                        recipes[i] = Handler.getRecipeHandler().getRecipe(recipes[i].id);
+                    if(recipes != null || recipes.length != 0)
+                        for (int i = 0; i < recipes.length; ++i)
+                            recipes[i] = Handler.getRecipeHandler().getRecipe(recipes[i].id);
+                    break;
+                default:
+                    break;
             }
 
-        } catch (MalformedURLException e) {
+        } catch(MalformedURLException e) {
             Log.e(TAG, "getFavorites: MALFORMED_URL", e);
-        } catch (IOException e) {
+        } catch(IOException e) {
             Log.e(TAG, "getFavorites: IO_ERROR", e);
         } finally {
             if(s != null)

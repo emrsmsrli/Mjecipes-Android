@@ -37,14 +37,20 @@ public class TokenHandler extends Handler {
             pw.print("grant_type=password&username=" + username + "&password=" + password);
             pw.flush();
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-                s = new Scanner(connection.getErrorStream());
-                errors = gson.fromJson(s.nextLine(), Errors.class);
-                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
-                Log.i(TAG, "getToken: HTTP Bad Request");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                token = gson.fromJson(s.nextLine(), JWToken.class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    Log.i(TAG, "getToken: HTTP Bad Request");
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    token = gson.fromJson(s.nextLine(), JWToken.class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {

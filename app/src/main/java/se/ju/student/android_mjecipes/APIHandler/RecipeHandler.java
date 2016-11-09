@@ -3,11 +3,13 @@ package se.ju.student.android_mjecipes.APIHandler;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import se.ju.student.android_mjecipes.Entities.JWToken;
 import se.ju.student.android_mjecipes.Entities.Recipe;
 import se.ju.student.android_mjecipes.Entities.Comment;
 
@@ -32,12 +34,18 @@ public class RecipeHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-                Log.i(TAG, "getRecipeByPage: HTTP Not Found");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    Log.i(TAG, "getRecipeByPage: HTTP Not Found");
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -64,12 +72,18 @@ public class RecipeHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-                Log.i(TAG, "getRecipe: HTTP Not Found");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                recipe = gson.fromJson(s.nextLine(), Recipe.class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    Log.i(TAG, "getRecipe: HTTP Not Found");
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    recipe = gson.fromJson(s.nextLine(), Recipe.class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -105,12 +119,18 @@ public class RecipeHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                errors.HTTPCode = Errors.HTTP_NOT_FOUND;
-                Log.i(TAG, "getComments: HTTP Not Found");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                comments = gson.fromJson(s.nextLine(), Comment[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    Log.i(TAG, "getComments: HTTP Not Found");
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    comments = gson.fromJson(s.nextLine(), Comment[].class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
@@ -138,14 +158,20 @@ public class RecipeHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-                s = new Scanner(connection.getErrorStream());
-                errors = gson.fromJson(s.nextLine(), Errors.class);
-                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
-                Log.i(TAG, "search: HTTP Bad Request");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    Log.i(TAG, "search: HTTP Bad Request");
+                    break;
+                case HttpURLConnection.HTTP_OK:
+                    s = new Scanner(connection.getInputStream());
+                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    errors.HTTPCode = Errors.HTTP_OK;
+                    break;
+                default:
+                    break;
             }
 
         } catch (MalformedURLException e) {
