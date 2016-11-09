@@ -111,7 +111,7 @@ public class AccountHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean patchAccount(int id, Account a, JWToken token) {
+    public boolean patchAccount(String id, Account a, JWToken token) {
         if(a == null || token == null) return false;
 
         PrintWriter pw = null;
@@ -159,7 +159,7 @@ public class AccountHandler extends Handler {
     }
 
     // FIXME: 09/11/2016 when specification fixed
-    public boolean deleteAccount(int id, JWToken token) {
+    public boolean deleteAccount(String id, JWToken token) {
         if(token == null) return false;
 
         HttpURLConnection connection = null;
@@ -277,7 +277,74 @@ public class AccountHandler extends Handler {
         return comments;
     }
 
-    //public void putFavorites(String id, int[] recipeids) { }
+    public boolean putFavorites(String id, int[] recipeids, JWToken token) {
+        Recipe[] recipes = new Recipe[recipeids.length];
+
+        for(int i = 0; i < recipeids.length; ++i) {
+            recipes[i].id = recipeids[i];
+        }
+
+        return putFavorites(id, recipes, token);
+    }
+
+    public boolean putFavorites(String id, Recipe[] recipes, JWToken token) {
+        if(id == null || recipes == null || token ==null) return false;
+
+        String favoritesstr = "/favorites";
+        Scanner s = null;
+        PrintWriter pw = null;
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id + favoritesstr).openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            pw.print(gson.toJson(recipes, Recipe[].class));
+            pw.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "putFavorites: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "putFavorites: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    Log.i(TAG, "putFavorites: HTTP Bad Request");
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "putFavorites: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "putFavorites: IO_EXCEPTION", e);
+        } finally {
+            if(s != null)
+                s.close();
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     public Recipe[] getFavorites(String id, JWToken token) {
         if(token == null) return null;
