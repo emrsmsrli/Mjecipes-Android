@@ -110,7 +110,53 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    //public void patchAccount(int id, Account a) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public boolean patchAccount(int id, Account a, JWToken token) {
+        if(a == null || token == null) return false;
+
+        PrintWriter pw = null;
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + id).openConnection();
+            connection.setRequestMethod("PATCH");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            pw.print(gson.toJson(a, Account.class));
+            pw.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "patchAccount: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "patchAccount: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    break;
+            }
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "patchAccount: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "patchAccount: IO_EXCEPTION", e);
+        } finally {
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     //public void deleteAccount(int id) { }
 
