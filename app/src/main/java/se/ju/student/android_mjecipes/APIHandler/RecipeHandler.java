@@ -23,7 +23,7 @@ public class RecipeHandler extends Handler {
 
     // FIXME: 09/11/2016 when specification fixed
     public String postRecipe(Recipe r, JWToken token) {
-        if(token == null) return null;
+        if(r == null || token == null) return "";
 
         Scanner s = null;
         PrintWriter pw = null;
@@ -41,17 +41,22 @@ public class RecipeHandler extends Handler {
             pw.print(gson.toJson(r, Recipe.class));
             pw.flush();
 
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
-                Log.i(TAG, "postRecipe: HTTP Unauthroized");
-            } else if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-                s = new Scanner(connection.getErrorStream());
-                errors = gson.fromJson(s.nextLine(),Errors.class);
-                errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
-                Log.i(TAG, "postRecipe: HTTP Bad Request");
-            } else {
-                s = new Scanner(connection.getInputStream());
-                toReturn = s.nextLine().substring(9);
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    Log.i(TAG, "postRecipe: HTTP Unauthroized");
+                    break;
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    Log.i(TAG, "postRecipe: HTTP Bad Request");
+                    break;
+                case HttpURLConnection.HTTP_CREATED:
+                    s = new Scanner(connection.getInputStream());
+                    toReturn = getLocation(s.nextLine());
+                    errors.HTTPCode = Errors.HTTP_CREATED;
+                    break;
             }
 
         } catch(MalformedURLException e) {
@@ -188,8 +193,9 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
+    // FIXME: 09/11/2016 when specification fixed
     public boolean patchRecipe(Recipe recipe, JWToken token) {
-        if(token == null) return false;
+        if(recipe == null || token == null) return false;
 
         Scanner s = null;
         PrintWriter pw = null;
