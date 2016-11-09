@@ -255,7 +255,7 @@ public class RecipeHandler extends Handler {
 
     // FIXME: 09/11/2016 when specification fixed
     public boolean postImage(int id, @NonNull String filename, @NonNull JWToken token) {
-        String imagesstr = "/images";
+        String imagestr = "/image";
         String boundary = "******";
         String hypens = "--";
         String endl = "\r\n";
@@ -266,7 +266,7 @@ public class RecipeHandler extends Handler {
         boolean toReturn = false;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + imagesstr).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + imagestr).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
             connection.setRequestProperty("Connection", "Keep-Alive");
