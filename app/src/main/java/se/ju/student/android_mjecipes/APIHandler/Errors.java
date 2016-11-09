@@ -43,6 +43,7 @@ public class Errors {
     public static final String SEARCH_TERM_MISSING = "TermMissing";
 
     public static final int HTTP_OK = HttpURLConnection.HTTP_OK;
+    public static final int HTTP_NO_CONTENT = HttpURLConnection.HTTP_NO_CONTENT;
     public static final int HTTP_CREATED = HttpURLConnection.HTTP_CREATED;
     public static final int HTTP_UNAUTHORIZED = HttpURLConnection.HTTP_UNAUTHORIZED;
     public static final int HTTP_NOT_FOUND = HttpURLConnection.HTTP_NOT_FOUND;
