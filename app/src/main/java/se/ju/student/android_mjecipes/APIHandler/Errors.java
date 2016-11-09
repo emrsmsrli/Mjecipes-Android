@@ -49,9 +49,13 @@ public class Errors {
     public static final int HTTP_BAD_REQUEST = HttpURLConnection.HTTP_BAD_REQUEST;
 
     public String[] errors;
+    public String error;
     public int HTTPCode;
 
     public boolean hasError(String error) {
+        if(errors == null)
+            return this.error.equals(error);
+
         for(String e: errors)
             if(e.equals(error))
                 return true;
