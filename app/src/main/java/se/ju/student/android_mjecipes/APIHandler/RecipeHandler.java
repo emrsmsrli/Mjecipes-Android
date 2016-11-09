@@ -138,13 +138,15 @@ public class RecipeHandler extends Handler {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
-            s = new Scanner(connection.getInputStream());
             if(connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                s = new Scanner(connection.getErrorStream());
                 errors = gson.fromJson(s.nextLine(), Errors.class);
                 errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                 Log.i(TAG, "search: HTTP Bad Request");
-            } else
+            } else {
+                s = new Scanner(connection.getInputStream());
                 recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+            }
 
         } catch (MalformedURLException e) {
             Log.e("RECIPEHANDLER", "doInBackground: MALFORMED_URL", e);
