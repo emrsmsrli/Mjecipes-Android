@@ -253,7 +253,64 @@ public class RecipeHandler extends Handler {
 
     //public void postImage(int id, ) { }
 
-    //public void postComment(int id, Comment c) { }
+    // FIXME: 09/11/2016 when specification fixed
+    public String postComment(int id, Comment c, JWToken token) {
+        if(c == null || token == null) return "";
+
+        String commentsstr = "/comments";
+        Scanner s = null;
+        PrintWriter pw = null;
+        HttpURLConnection connection = null;
+        String toReturn = "";
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + commentsstr).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            pw.print(gson.toJson(c, Comment.class));
+            pw.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "postComment: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "postComment: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    break;
+                case HttpURLConnection.HTTP_CREATED:
+                    s = new Scanner(connection.getInputStream());
+                    toReturn = getLocation(s.nextLine());
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "postComment: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "postComment: IO_EXCEPTION", e);
+        } finally {
+            if(s != null)
+                s.close();
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     public Comment[] getComments(int id) {
         String commentstr = "/comments";
