@@ -188,7 +188,62 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
-    //public void patchRecipe(int id) { }
+    public boolean patchRecipe(Recipe recipe, JWToken token) {
+        if(token == null) return false;
+
+        Scanner s = null;
+        PrintWriter pw = null;
+        HttpURLConnection connection = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + recipe.id).openConnection();
+            connection.setRequestMethod("PATCH");
+            connection.setRequestProperty("Authorizaton", "Bearer "+ token.access_token);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            pw = new PrintWriter(connection.getOutputStream());
+            pw.print(gson.toJson(recipe, Recipe.class));
+            pw.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    Log.i(TAG, "patchRecipe: HTTP Unauthorized");
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    Log.i(TAG, "patchRecipe: HTTP Not Found");
+                    break;
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    s = new Scanner(connection.getErrorStream());
+                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    toReturn = true;
+                    break;
+                default:
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "patchRecipe: MALFORMED_URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "patchRecipe: IO_EXCEPTION", e);
+        } finally {
+            if(s != null)
+                s.close();
+            if(pw != null)
+                pw.close();
+            if(connection != null)
+                connection.disconnect();
+        }
+
+        return toReturn;
+    }
 
     //public void postImage(int id, ) { }
 
