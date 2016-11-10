@@ -1,48 +1,47 @@
 package se.ju.student.android_mjecipes;
-
-import android.content.Intent;
-import android.graphics.Color;
+import android.view.View;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import se.ju.student.android_mjecipes.APIHandler.Handler;
+import se.ju.student.android_mjecipes.Entities.Recipe;
+
 public class ShowRecipeActivity extends AppCompatActivity {
 
-    ImageView recipeImage;
-    TextView recipeDesc;
 
-    LinearLayout directions;
+    LinearLayout r;
 
-    Button comments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_recipe);
+        r = (LinearLayout) findViewById(R.id.recipesection);
 
-        recipeImage = (ImageView) findViewById(R.id.show_recipe_img);
-        recipeDesc = (TextView) findViewById(R.id.show_recipe_desc);
-        comments = (Button) findViewById(R.id.show_recipes_b_comments);
-        directions = (LinearLayout) findViewById(R.id.show_recipes_ll_directions);
-
-        for(int i = 0; i < 30; ++i) {
-            TextView tv = new TextView(getBaseContext());
-            tv.setText("sjkfhaşskjfsa");
-            tv.setPadding(0,0,0,10);
-            tv.setTextColor(Color.rgb(128,128,128));
-            directions.addView(tv);
-            setTitle("asdasd"); //TODO set recipe name
-        }
-
-        comments.setOnClickListener(new View.OnClickListener() {
+        new AsyncTask<Integer,Void,Recipe[]>(){
             @Override
-            public void onClick(View v) {
-                //TODO intent comments activity
+            protected void onPreExecute() {
+
             }
-        });
+            protected Recipe[] doInBackground(Integer... p){
+                return Handler.getRecipeHandler().getRecipeByPage(p[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Recipe[] recipes) {
+                LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    for(int i=0;i<recipes.length;i++){
+                        inf.inflate(R.layout.recipe_list,r);
+                        TextView t = (TextView)r.getChildAt(i);
+                        t.setText(recipes[i].name);
+                    }
+            }
+        }.execute(1);
+
     }
 }

@@ -24,7 +24,7 @@ import se.ju.student.android_mjecipes.Entities.Recipe;
 
 public class ShowCommentActivity extends AppCompatActivity {
 
-    TextView a;
+
     LinearLayout r;
 
     @Override
@@ -32,7 +32,7 @@ public class ShowCommentActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.activity_show_comment);
         r = (LinearLayout) findViewById(R.id.commentsection);
-        Comment []c;
+
 
         new AsyncTask<Integer, Void, Comment[]>() {
             protected void onPreExecute() {
