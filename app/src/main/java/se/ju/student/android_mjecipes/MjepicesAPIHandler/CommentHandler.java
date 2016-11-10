@@ -125,7 +125,7 @@ public class CommentHandler extends Handler {
         String boundary = "******";
         String hypens = "--";
         String endl = "\r\n";
-        int buffersize = 1024*1024;
+        int buffersize = 1024 << 10;
         DataOutputStream dos = null;
         HttpURLConnection connection = null;
         FileInputStream fis = null;
