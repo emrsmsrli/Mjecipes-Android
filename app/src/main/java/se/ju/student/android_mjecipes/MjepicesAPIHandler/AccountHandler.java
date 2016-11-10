@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +11,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import se.ju.student.android_mjecipes.Entities.Account;
-import se.ju.student.android_mjecipes.Entities.Comment;
-import se.ju.student.android_mjecipes.Entities.JWToken;
-import se.ju.student.android_mjecipes.Entities.Recipe;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
 public class AccountHandler extends Handler {
     private static AccountHandler instance;
@@ -46,6 +46,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getAccount: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -63,13 +65,12 @@ public class AccountHandler extends Handler {
         return account;
     }
 
-    @Nullable
-    public String postAccount(@NonNull Account account) {
+    public boolean postAccount(@NonNull Account account) {
         String passwordstr = "password/";
         HttpURLConnection connection = null;
         Scanner s = null;
         PrintWriter pw = null;
-        String toReturn = null;
+        boolean toReturn = false;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + ACCOUNTS_URL + passwordstr).openConnection();
@@ -88,11 +89,12 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_CREATED:
-                    s = new Scanner(connection.getInputStream());
-                    toReturn = getLocation(s.nextLine());
+                    toReturn = true;
                     errors.HTTPCode = Errors.HTTP_CREATED;
                     break;
                 default:
+                    Log.i(TAG, "postAccount: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -112,7 +114,6 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean patchAccount(@NonNull String id, @NonNull Account a, @NonNull JWToken token) {
         PrintWriter pw = null;
         HttpURLConnection connection = null;
@@ -142,6 +143,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "patchAccount: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
         } catch(MalformedURLException e) {
@@ -158,7 +161,6 @@ public class AccountHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean deleteAccount(@NonNull String id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -182,6 +184,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "deleteAccount: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -220,6 +224,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getRecipes: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -260,6 +266,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getComments: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -281,6 +289,7 @@ public class AccountHandler extends Handler {
         Recipe[] recipes = new Recipe[recipeids.length];
 
         for(int i = 0; i < recipeids.length; ++i) {
+            recipes[i] = new Recipe();
             recipes[i].id = recipeids[i];
         }
 
@@ -325,6 +334,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "putFavorites: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -369,12 +380,11 @@ public class AccountHandler extends Handler {
                 case HttpURLConnection.HTTP_OK:
                     s = new Scanner(connection.getInputStream());
                     recipes = gson.fromJson(s.nextLine(), Recipe[].class);
-
-                    if(recipes != null || recipes.length != 0)
-                        for (int i = 0; i < recipes.length; ++i)
-                            recipes[i] = Handler.getRecipeHandler().getRecipe(recipes[i].id);
+                    errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getFavorites: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 

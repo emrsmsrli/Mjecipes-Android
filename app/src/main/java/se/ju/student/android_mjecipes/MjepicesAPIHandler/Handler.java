@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import com.google.gson.Gson;
 
@@ -21,7 +21,6 @@ public abstract class Handler {
         return errors;
     }
 
-
     public static AccountHandler getAccountHandler() {
         return AccountHandler.getInstance();
     }
@@ -36,12 +35,6 @@ public abstract class Handler {
 
     public static CommentHandler getCommentHandler() {
         return CommentHandler.getInstance();
-    }
-
-    protected static String getLocation(String body) {
-        if(body == null)
-            return "";
-        return body.substring(9);
     }
 
 }

@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,11 +13,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.UUID;
 
-import se.ju.student.android_mjecipes.Entities.JWToken;
-import se.ju.student.android_mjecipes.Entities.Recipe;
-import se.ju.student.android_mjecipes.Entities.Comment;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 
 public class RecipeHandler extends Handler {
     private static RecipeHandler instance;
@@ -27,13 +26,11 @@ public class RecipeHandler extends Handler {
         super();
     }
 
-    // FIXME: 09/11/2016 when specification fixed
-    @Nullable
-    public String postRecipe(@NonNull Recipe r, @NonNull JWToken token) {
+    public boolean postRecipe(@NonNull Recipe r, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
-        String toReturn = null;
+        boolean toReturn = false;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL).openConnection();
@@ -58,9 +55,12 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "postRecipe: HTTP Bad Request");
                     break;
                 case HttpURLConnection.HTTP_CREATED:
-                    s = new Scanner(connection.getInputStream());
-                    toReturn = getLocation(s.nextLine());
+                    toReturn = true;
                     errors.HTTPCode = Errors.HTTP_CREATED;
+                    break;
+                default:
+                    Log.i(TAG, "postRecipe: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -103,6 +103,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getRecipeByPage: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -142,6 +144,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getRecipe: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -159,7 +163,6 @@ public class RecipeHandler extends Handler {
         return recipe;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean deleteRecipe(int id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -183,6 +186,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "deleteRecipe: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -198,7 +203,6 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean patchRecipe(@NonNull Recipe recipe, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
@@ -208,7 +212,7 @@ public class RecipeHandler extends Handler {
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + recipe.id).openConnection();
             connection.setRequestMethod("PATCH");
-            connection.setRequestProperty("Authorizaton", "Bearer "+ token.access_token);
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
 
@@ -235,6 +239,8 @@ public class RecipeHandler extends Handler {
                     toReturn = true;
                     break;
                 default:
+                    Log.i(TAG, "patchRecipe: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -254,13 +260,12 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean postImage(int id, @NonNull String filename, @NonNull JWToken token) {
         String imagestr = "/image";
         String boundary = "******";
         String hypens = "--";
         String endl = "\r\n";
-        int buffersize = 1024*1024;
+        int buffersize = 1024 << 10;
         DataOutputStream dos = null;
         HttpURLConnection connection = null;
         FileInputStream fis = null;
@@ -268,14 +273,14 @@ public class RecipeHandler extends Handler {
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + imagestr).openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("PUT");
             connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
             connection.setRequestProperty("Connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
             dos = new DataOutputStream(connection.getOutputStream());
             dos.writeBytes(hypens + boundary + endl);
-            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"" + UUID.randomUUID().toString() + ".jpg\"" + endl + endl);
+            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"recipe-" + id + ".jpg\"" + endl + endl);
 
             byte[] buffer = new byte[buffersize];
             fis = new FileInputStream(new File(filename));
@@ -303,6 +308,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "postImage: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -326,14 +333,12 @@ public class RecipeHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
-    @Nullable
-    public String postComment(int id, @NonNull Comment c, @NonNull JWToken token) {
+    public boolean postComment(int id, @NonNull Comment c, @NonNull JWToken token) {
         String commentsstr = "/comments";
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
-        String toReturn = null;
+        boolean toReturn = false;
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + RECIPES_URL + id + commentsstr).openConnection();
@@ -361,10 +366,12 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_CREATED:
-                    s = new Scanner(connection.getInputStream());
-                    toReturn = getLocation(s.nextLine());
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_CREATED;
                     break;
                 default:
+                    Log.i(TAG, "postComment: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -407,6 +414,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getComments: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -449,6 +458,8 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "search: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 

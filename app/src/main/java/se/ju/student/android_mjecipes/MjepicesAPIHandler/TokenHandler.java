@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import se.ju.student.android_mjecipes.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 
 public class TokenHandler extends Handler {
     private static TokenHandler instance;
@@ -51,6 +51,8 @@ public class TokenHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getToken: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
