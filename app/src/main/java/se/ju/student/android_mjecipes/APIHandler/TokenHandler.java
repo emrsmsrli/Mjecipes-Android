@@ -51,6 +51,8 @@ public class TokenHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
+                    Log.i(TAG, "getToken: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 

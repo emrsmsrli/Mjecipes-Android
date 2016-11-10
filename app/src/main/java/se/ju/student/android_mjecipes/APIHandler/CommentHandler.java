@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.UUID;
 
 import se.ju.student.android_mjecipes.Entities.Comment;
 import se.ju.student.android_mjecipes.Entities.JWToken;
@@ -25,17 +24,16 @@ public class CommentHandler extends Handler {
         super();
     }
 
-    // FIXME: 09/11/2016 when specification fixed
-    public boolean patchComment(int id, @NonNull Comment comment, @NonNull JWToken token) {
+    public boolean patchComment(@NonNull Comment comment, @NonNull JWToken token) {
         Scanner s = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
 
         try {
-            connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + id).openConnection();
+            connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + comment.id).openConnection();
             connection.setRequestMethod("PATCH");
-            connection.setRequestProperty("Authentication", "Bearer " + token.access_token);
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
 
@@ -62,6 +60,8 @@ public class CommentHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "patchComment: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
@@ -81,7 +81,6 @@ public class CommentHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean deleteComment(int id, @NonNull JWToken token) {
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -89,7 +88,7 @@ public class CommentHandler extends Handler {
         try {
             connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + id).openConnection();
             connection.setRequestMethod("DELETE");
-            connection.setRequestProperty("Authentication", "Bearer " + token.access_token);
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
 
             switch(connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_UNAUTHORIZED:
@@ -104,6 +103,10 @@ public class CommentHandler extends Handler {
                     toReturn = true;
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
+                default:
+                    Log.i(TAG, "deleteComment: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
+                    break;
             }
 
         } catch(MalformedURLException e) {
@@ -117,7 +120,6 @@ public class CommentHandler extends Handler {
         return toReturn;
     }
 
-    // FIXME: 09/11/2016 when specification fixed
     public boolean postImage(int id, @NonNull String filename, @NonNull JWToken token) {
         String imagesstr = "/image";
         String boundary = "******";
@@ -131,14 +133,14 @@ public class CommentHandler extends Handler {
 
         try {
             connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + id + imagesstr).openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("PUT");
             connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
             connection.setRequestProperty("Connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
             dos = new DataOutputStream(connection.getOutputStream());
             dos.writeBytes(hypens + boundary + endl);
-            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"" + UUID.randomUUID().toString() + ".jpg\"" + endl + endl);
+            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"comment-" + id + ".jpg\"" + endl + endl);
 
             byte[] buffer = new byte[buffersize];
             fis = new FileInputStream(new File(filename));
@@ -166,6 +168,8 @@ public class CommentHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NO_CONTENT;
                     break;
                 default:
+                    Log.i(TAG, "postImage: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
                     break;
             }
 
