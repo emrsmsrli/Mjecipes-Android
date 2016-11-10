@@ -48,6 +48,7 @@ public class Errors {
     public static final int HTTP_UNAUTHORIZED = HttpURLConnection.HTTP_UNAUTHORIZED;
     public static final int HTTP_NOT_FOUND = HttpURLConnection.HTTP_NOT_FOUND;
     public static final int HTTP_BAD_REQUEST = HttpURLConnection.HTTP_BAD_REQUEST;
+    public static final int HTTP_INTERNAL_SERVER_ERROR = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
     public String[] errors;
     public String error;
