@@ -6,6 +6,7 @@ public class Comment {
     public String text;
     public int grade;
     public Account commenter;
+    public String commenterId;
     public String image;
     public long created;
 }
