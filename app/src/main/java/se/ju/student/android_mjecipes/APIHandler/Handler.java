@@ -21,7 +21,6 @@ public abstract class Handler {
         return errors;
     }
 
-
     public static AccountHandler getAccountHandler() {
         return AccountHandler.getInstance();
     }
@@ -36,12 +35,6 @@ public abstract class Handler {
 
     public static CommentHandler getCommentHandler() {
         return CommentHandler.getInstance();
-    }
-
-    protected static String getLocation(String body) {
-        if(body == null)
-            return "";
-        return body.substring(9);
     }
 
 }
