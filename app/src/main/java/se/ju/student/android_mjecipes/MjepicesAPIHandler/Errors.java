@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import java.net.HttpURLConnection;
 

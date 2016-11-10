@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import se.ju.student.android_mjecipes.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 
 public class TokenHandler extends Handler {
     private static TokenHandler instance;

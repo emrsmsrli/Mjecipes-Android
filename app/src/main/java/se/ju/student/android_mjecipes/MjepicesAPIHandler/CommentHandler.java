@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -13,8 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import se.ju.student.android_mjecipes.Entities.Comment;
-import se.ju.student.android_mjecipes.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 
 public class CommentHandler extends Handler {
     private static CommentHandler instance;

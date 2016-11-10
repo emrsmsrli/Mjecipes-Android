@@ -1,4 +1,4 @@
-package se.ju.student.android_mjecipes.APIHandler;
+package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,9 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import se.ju.student.android_mjecipes.Entities.JWToken;
-import se.ju.student.android_mjecipes.Entities.Recipe;
-import se.ju.student.android_mjecipes.Entities.Comment;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 
 public class RecipeHandler extends Handler {
     private static RecipeHandler instance;
