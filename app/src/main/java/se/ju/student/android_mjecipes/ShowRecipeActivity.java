@@ -8,8 +8,9 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import se.ju.student.android_mjecipes.APIHandler.Handler;
-import se.ju.student.android_mjecipes.Entities.Recipe;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
 
 public class ShowRecipeActivity extends AppCompatActivity {
 
@@ -38,7 +39,7 @@ public class ShowRecipeActivity extends AppCompatActivity {
                     for(int i=0;i<recipes.length;i++){
                         inf.inflate(R.layout.recipe_list,r);
                         TextView t = (TextView)r.getChildAt(i);
-                        t.setText(recipes[i].name);
+                        t.setText("Recipe name:"+recipes[i].name+"\n"+"Recipe description:"+recipes[i].description+"\n"+"Recipes directions:"+recipes[i].directions);
                     }
             }
         }.execute(1);

@@ -10,9 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import se.ju.student.android_mjecipes.APIHandler.Handler;
-import se.ju.student.android_mjecipes.Entities.Account;
-
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
 
 public class SignupActivity extends AppCompatActivity {
 

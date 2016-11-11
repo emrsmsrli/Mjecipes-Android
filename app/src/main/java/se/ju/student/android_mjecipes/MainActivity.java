@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private Button login;
     private Button b;
     private Button listcomment;
+    private Button showrecipes;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(), ShowRecipeActivity.class));
+                startActivity(new Intent(getBaseContext(), LoginActivity.class));
             }
         });
 
@@ -61,6 +62,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent c= new Intent(MainActivity.this,ShowCommentActivity.class);
+                startActivity(c);
+            }
+        });
+
+        showrecipes = (Button) findViewById(R.id.butrec);
+
+        showrecipes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent c= new Intent(MainActivity.this,ShowRecipeActivity.class);
                 startActivity(c);
             }
         });

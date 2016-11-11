@@ -2,25 +2,15 @@ package se.ju.student.android_mjecipes;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 
-import java.util.List;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 
-import se.ju.student.android_mjecipes.APIHandler.Handler;
-import se.ju.student.android_mjecipes.Entities.Comment;
-import se.ju.student.android_mjecipes.Entities.Recipe;
 
 public class ShowCommentActivity extends AppCompatActivity {
 
