@@ -11,10 +11,81 @@
     tools:context="se.ju.student.android_mjecipes.CreateRecipe">
 
     <TextView
-        android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/recipename"
+        android:text="recipe name"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/re" />
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="41dp"
+        android:id="@+id/decription"
+        android:layout_below="@+id/recipenamefield"
+        android:layout_alignEnd="@+id/recipename" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginEnd="14dp"
+        android:id="@+id/descriptionfield"
+        android:layout_alignBaseline="@+id/decription"
+        android:layout_alignBottom="@+id/decription"
+        android:layout_alignParentEnd="true"
+        android:hint="description" />
+
+    <TextView
+        android:text="Directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionfield"
+        android:layout_alignStart="@+id/decription"
+        android:layout_marginTop="34dp"
+        android:id="@+id/directions" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_below="@+id/descriptionfield"
+        android:layout_alignEnd="@+id/descriptionfield"
+        android:layout_marginTop="23dp"
+        android:id="@+id/directionfield"
+        android:hint="direction" />
+
+    <TextView
+        android:text="İmage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/directionfield"
+        android:layout_alignStart="@+id/directions"
+        android:layout_marginTop="39dp"
+        android:id="@+id/image" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:hint="recipename"
+        android:id="@+id/recipenamefield"
+        android:layout_alignBaseline="@+id/recipename"
+        android:layout_alignBottom="@+id/recipename"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="CREATE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image"
+        android:layout_alignEnd="@+id/directionfield"
+        android:layout_marginEnd="53dp"
+        android:layout_marginTop="97dp"
+        android:id="@+id/createrecipe" />
 </RelativeLayout>
