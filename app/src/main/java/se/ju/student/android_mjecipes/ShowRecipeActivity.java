@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
-import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
+
 
 public class ShowRecipeActivity extends AppCompatActivity {
 

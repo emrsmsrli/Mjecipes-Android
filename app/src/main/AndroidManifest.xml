@@ -17,11 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" android:label="@string/app_login">
-        </activity>
-        <activity android:name=".SignupActivity"></activity>
-        <activity android:name=".ShowCommentActivity"></activity>
-        <activity android:name=".ShowRecipeActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/app_login" />
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".ShowCommentActivity" />
+        <activity android:name=".ShowRecipeActivity" />
+        <activity android:name=".ShowSingleCommentActivity"></activity>
     </application>
 
 </manifest>
