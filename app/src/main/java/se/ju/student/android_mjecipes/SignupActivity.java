@@ -40,14 +40,19 @@ public class SignupActivity extends AppCompatActivity {
 
                 Account a=new Account();
 
-                a.userName=username.getText().toString();
-                a.password=hiddenpassword.getText().toString();
-                a.latitude= Double.parseDouble(latitude.getText().toString());
-                a.longitude= Double.parseDouble(longitude.getText().toString());
+                        a.userName=username.getText().toString();
+                        a.latitude=Double.parseDouble(latitude.getText().toString());
+                        a.longitude=Double.parseDouble(longitude.getText().toString());
+                        a.password=hiddenpassword.getText().toString();
+
 
                 Handler.getAccountHandler().postAccount(a);
 
-                tvResults.setText(a.userName+" "+a.password+""+a.latitude+" "+a.longitude);
+
+                tvResults.setText(username.getText().toString()+" "+hiddenpassword.getText().toString()+""+Double.parseDouble(latitude.getText().toString())+" "+Double.parseDouble(longitude.getText().toString()));
+
+
+
 
             }
         });

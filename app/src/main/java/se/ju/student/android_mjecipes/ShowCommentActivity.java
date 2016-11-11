@@ -59,9 +59,11 @@ public class ShowCommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent c= new Intent(ShowCommentActivity.this,ShowSingleCommentActivity.class);
-                int a=v.getId();
-                TextView t = (TextView)r.getChildAt(0);
-                c.putExtra("commentid",t.getText());
+                LinearLayout temp1=(LinearLayout)v;
+                TextView temp2= (TextView) temp1.getChildAt(0);
+                String temp3= (String) temp2.getText();
+                int temp4= Integer.parseInt(temp3);
+                c.putExtra("commentid",temp4);
                 startActivity(c);
             }
         });

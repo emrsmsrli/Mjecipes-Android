@@ -20,6 +20,8 @@ public class ShowSingleCommentActivity extends AppCompatActivity {
 
         Intent i=getIntent();
         commid=i.getStringExtra("commentid");
+
+        t.setText("Comment:"+commid);
         t= (TextView) findViewById(R.id.textView2);
         t1= (TextView) findViewById(R.id.textView3);
         t2= (TextView) findViewById(R.id.textView4);
@@ -44,12 +46,12 @@ public class ShowSingleCommentActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Comment[] comment) {
 
-
+/*
                 t1.setText("Grade:"+Integer.toString(comment[Integer.parseInt(commid)].grade));
                 t.setText("Comment:"+comment[Integer.parseInt(commid)].text);
                 t2.setText("Commenter:"+comment[Integer.parseInt(commid)].commenter.userName);
                 t3.setText("Image:"+comment[Integer.parseInt(commid)].image);
-
+*/
             }
         }.execute(1);
     }
