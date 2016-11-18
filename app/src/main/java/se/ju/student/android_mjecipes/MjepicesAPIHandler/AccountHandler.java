@@ -52,9 +52,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("ACCOUNTHANDLER", "doInBackground: MALFORMED_URL", e);
+            Log.e(TAG, "doInBackground: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("ACCOUNTHANDLER", "doInBackground: IO_ERROR", e);
+            Log.e(TAG, "doInBackground: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -99,9 +99,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e(TAG, "postAccount: MALFORMED_URL", e);
+            Log.e(TAG, "postAccount: Malformed URL", e);
         } catch (IOException e) {
-            Log.e(TAG, "postAccount: IO_EXCEPTION", e);
+            Log.e(TAG, "postAccount: IO Except", e);
          } finally {
             if(s != null)
                 s.close();
@@ -148,9 +148,9 @@ public class AccountHandler extends Handler {
                     break;
             }
         } catch(MalformedURLException e) {
-            Log.e(TAG, "patchAccount: MALFORMED_URL", e);
+            Log.e(TAG, "patchAccount: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "patchAccount: IO_EXCEPTION", e);
+            Log.e(TAG, "patchAccount: IO Exception", e);
         } finally {
             if(pw != null)
                 pw.close();
@@ -190,9 +190,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "deleteAccount: MALFORMED_URL", e);
+            Log.e(TAG, "deleteAccount: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "deleteAccount: IO_EXCEPTION", e);
+            Log.e(TAG, "deleteAccount: IO Exception", e);
         } finally {
             if(connection != null)
                 connection.disconnect();
@@ -230,9 +230,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("ACCOUNTHANDLER", "getRecipes: MALFORMED_URL", e);
+            Log.e(TAG, "getRecipes: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("ACCOUNTHANDLER", "getRecipes: IO_ERROR", e);
+            Log.e(TAG, "getRecipes: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -272,9 +272,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e(TAG, "getComments: MALFORMED_URL", e);
+            Log.e(TAG, "getComments: Malformed URL", e);
         } catch (IOException e) {
-            Log.e(TAG, "getComments: IO_ERROR", e);
+            Log.e(TAG, "getComments: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -340,9 +340,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "putFavorites: MALFORMED_URL", e);
+            Log.e(TAG, "putFavorites: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "putFavorites: IO_EXCEPTION", e);
+            Log.e(TAG, "putFavorites: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -389,9 +389,9 @@ public class AccountHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "getFavorites: MALFORMED_URL", e);
+            Log.e(TAG, "getFavorites: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "getFavorites: IO_ERROR", e);
+            Log.e(TAG, "getFavorites: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();

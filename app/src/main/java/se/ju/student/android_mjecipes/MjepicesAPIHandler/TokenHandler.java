@@ -57,9 +57,9 @@ public class TokenHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e(TAG, "getToken: MALFORMED_URL", e);
+            Log.e(TAG, "getToken: Malformed URL", e);
         } catch (IOException e) {
-            Log.e(TAG, "getToken: IO_EXCEPTION", e);
+            Log.e(TAG, "getToken: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();

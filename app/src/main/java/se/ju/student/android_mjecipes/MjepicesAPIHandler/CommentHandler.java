@@ -66,9 +66,9 @@ public class CommentHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "patchComment: MALFORMED_URL", e);
+            Log.e(TAG, "patchComment: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "patchComment: IO_ERROR", e);
+            Log.e(TAG, "patchComment: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -110,9 +110,9 @@ public class CommentHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "deleteComment: MALFORMED_URL", e);
+            Log.e(TAG, "deleteComment: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "deleteComment: IO_EXCEPTION", e);
+            Log.e(TAG, "deleteComment: IO Exception", e);
         } finally {
             if(connection != null) connection.disconnect();
         }
@@ -174,9 +174,9 @@ public class CommentHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "postImage: MALFORMED_URL", e);
+            Log.e(TAG, "postImage: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "postImage: IO_EXCEPTION", e);
+            Log.e(TAG, "postImage: IO Exception", e);
         } finally {
             if(connection != null)
                 connection.disconnect();
@@ -186,7 +186,7 @@ public class CommentHandler extends Handler {
                 if(dos != null)
                     dos.close();
             } catch(IOException e) {
-                Log.e(TAG, "postImage: IO_EXCEPTION", e);
+                Log.e(TAG, "postImage: IO Exception", e);
             }
         }
 

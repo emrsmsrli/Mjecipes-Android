@@ -65,9 +65,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "postRecipe: MALFORMED_URL", e);
+            Log.e(TAG, "postRecipe: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "postRecipe: IO_EXCEPTION", e);
+            Log.e(TAG, "postRecipe: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -109,9 +109,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: MALFORMED_URL", e);
+            Log.e(TAG, "getRecipeByPage: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: IO_ERROR", e);
+            Log.e(TAG, "getRecipeByPage: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -150,9 +150,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: MALFORMED_URL", e);
+            Log.e(TAG, "getRecipe: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: IO_ERROR", e);
+            Log.e(TAG, "getRecipe: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -192,9 +192,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "deleteRecipe: MALFORMED_URL", e);
+            Log.e(TAG, "deleteRecipe: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "deleteRecipe: IO_EXCEPTION", e);
+            Log.e(TAG, "deleteRecipe: IO Exception", e);
         } finally {
             if(connection != null)
                 connection.disconnect();
@@ -245,9 +245,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "patchRecipe: MALFORMED_URL", e);
+            Log.e(TAG, "patchRecipe: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "patchRecipe: IO_EXCEPTION", e);
+            Log.e(TAG, "patchRecipe: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -314,9 +314,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "postImage: MALFORMED_URL", e);
+            Log.e(TAG, "postImage: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "postImage: IO_EXCEPTION", e);
+            Log.e(TAG, "postImage: IO Exception", e);
         } finally {
             if(connection != null)
                 connection.disconnect();
@@ -326,7 +326,7 @@ public class RecipeHandler extends Handler {
                 if(dos != null)
                     dos.close();
             } catch(IOException e) {
-                Log.e(TAG, "postImage: IO_EXCEPTION", e);
+                Log.e(TAG, "postImage: IO Exception", e);
             }
         }
 
@@ -376,9 +376,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch(MalformedURLException e) {
-            Log.e(TAG, "postComment: MALFORMED_URL", e);
+            Log.e(TAG, "postComment: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "postComment: IO_EXCEPTION", e);
+            Log.e(TAG, "postComment: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -420,9 +420,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: MALFORMED_URL", e);
+            Log.e(TAG, "getComments: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: IO_ERROR", e);
+            Log.e(TAG, "getComments: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
@@ -464,9 +464,9 @@ public class RecipeHandler extends Handler {
             }
 
         } catch (MalformedURLException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: MALFORMED_URL", e);
+            Log.e(TAG, "search: Malformed URL", e);
         } catch (IOException e) {
-            Log.e("RECIPEHANDLER", "doInBackground: IO_ERROR", e);
+            Log.e(TAG, "search: IO Exception", e);
         } finally {
             if(s != null)
                 s.close();
