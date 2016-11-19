@@ -22,11 +22,9 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
-public class JSONCacheHandler {
+public class JSONCacheHandler extends CacheHandler {
     private static final String TAG = "JSONCacheHandler";
     private static final Gson gson = new Gson();
-    private static int EXPIRE_TIME = 24 * 60 * 60; //one day expiration
-    private static File cacheDir = null;
     private static JSONCacheHandler instance = null;
 
     private JSONCacheHandler(Context c) {
@@ -54,15 +52,8 @@ public class JSONCacheHandler {
                 });
 
                 if(files.length != 0) {
-                    if(!expired((files[0]))) {
-                        Log.w(TAG, "writeToCache: Cache already exists, type: " + type.getSimpleName(), null);
-                        return null;
-                    } else {
-                        String[] parts = files[0].getName().split("-");
-                        files[0].delete();
-                        Log.w(TAG, "writeToCache: Cache expired. Writing new one, type: " + type.getSimpleName(), null);
-                        f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d", parts[0], parts[1], unixTimeStamp()));
-                    }
+                    Log.w(TAG, "writeToCache: Cache already exists, type: " + type.getSimpleName() + ", name: " + files[0].getName(), null);
+                    return null;
                 } else
                     f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d", type.getSimpleName(), getID(data, type), unixTimeStamp()));
 
@@ -73,7 +64,7 @@ public class JSONCacheHandler {
                     osw.write(dataObj);
                     osw.flush();
 
-                    Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName());
+                    Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName() + ", name: " + f.getName());
                 } catch(FileNotFoundException e) {
                     Log.e(TAG, "writeToCache: File not found", e);
                 } catch(IOException e) {
@@ -118,10 +109,6 @@ public class JSONCacheHandler {
         if(files.length == 0) {
             Log.w(TAG, "readFromCache: Cache does not exist, type: " + type.getSimpleName(), null);
             return null;
-        } else if(expired(files[0])) {
-            files[0].delete();
-            Log.w(TAG, "readFromCache: Cache expired, type: " + type.getSimpleName(), null);
-            return null;
         }
 
         T data = null;
@@ -130,7 +117,7 @@ public class JSONCacheHandler {
             s = new Scanner(files[0]);
             data = gson.fromJson(s.nextLine(), type);
 
-            Log.i(TAG, "readFromCache: File read from cache, type: " + type.getSimpleName());
+            Log.i(TAG, "readFromCache: File read from cache, type: " + type.getSimpleName() + ", name: " + files[0].getName());
         } catch(IOException e) {
             Log.e(TAG, "readFromCache: IO Exception", e);
         } finally {
@@ -141,7 +128,7 @@ public class JSONCacheHandler {
         return data;
     }
 
-    public static synchronized JSONCacheHandler getInstance(Context c) {
+    static synchronized JSONCacheHandler getInstance(Context c) {
         if(instance == null)
             instance = new JSONCacheHandler(c);
 
@@ -158,12 +145,4 @@ public class JSONCacheHandler {
         else return "minus1";
     }
 
-    private boolean expired(File f) {
-        long expiration = Long.parseLong(f.getName().split("-")[2]);
-        return unixTimeStamp() - expiration > EXPIRE_TIME;
-    }
-
-    private long unixTimeStamp() {
-        return System.currentTimeMillis()/1000;
-    }
 }
