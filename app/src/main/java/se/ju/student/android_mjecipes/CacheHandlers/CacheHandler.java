@@ -12,9 +12,9 @@ public abstract class CacheHandler {
     protected static File cacheDir = null;
 
     public static void clearExpiredCaches(final Context c) {
-        new AsyncTask<Void, Void, Void>() {
+        new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... params) {
+            public void run() {
                 File[] files = c.getCacheDir().listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String filename) {
@@ -28,9 +28,8 @@ public abstract class CacheHandler {
                         if(f.delete()) Log.i(TAG, "clearExpiredCaches: Expired file deleted, name: " + f.getName());
                         else           Log.i(TAG, "clearExpiredCaches: Expired file not deleted, name " + f.getName());
                     }
-                return null;
             }
-        }.execute();
+        }).run();
     }
 
     protected static long unixTimeStamp() {
