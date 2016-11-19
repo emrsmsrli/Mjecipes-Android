@@ -68,7 +68,7 @@ public class ImageCacheHandler extends CacheHandler {
                     fos = new FileOutputStream(f);
                     if(b.compress(Bitmap.CompressFormat.PNG, 75, fos)) {
                         fos.flush();
-                        Log.i(TAG, "writeToCache: File written to cache, type: Image, compression rate: " + /*TODO*/75 + ", name: " + f.getName());
+                        Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName());
                     }
                 } catch(IOException e) {
                     Log.e(TAG, "writeToCache: IO Exception", e);
