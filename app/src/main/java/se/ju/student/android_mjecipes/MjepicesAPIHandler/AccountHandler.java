@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -26,7 +28,7 @@ public class AccountHandler extends Handler {
 
     @Nullable
     public Account getAccount(@NonNull String id) {
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Account account = null;
 
@@ -41,8 +43,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NOT_FOUND;
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    account = gson.fromJson(s.nextLine(), Account.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    account = gson.fromJson(br.readLine(), Account.class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -56,8 +58,13 @@ public class AccountHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "doInBackground: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
@@ -68,7 +75,7 @@ public class AccountHandler extends Handler {
     public boolean postAccount(@NonNull Account account) {
         String passwordstr = "password/";
         HttpURLConnection connection = null;
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         boolean toReturn = false;
 
@@ -84,8 +91,8 @@ public class AccountHandler extends Handler {
 
             switch(connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_CREATED:
@@ -103,8 +110,13 @@ public class AccountHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "postAccount: IO Except", e);
          } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "postAccount: IO Except", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)
@@ -204,7 +216,7 @@ public class AccountHandler extends Handler {
     @Nullable
     public Recipe[] getRecipes(@NonNull String id) {
         String r = "/recipes";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Recipe[] recipes = null;
 
@@ -219,8 +231,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NOT_FOUND;
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    recipes = gson.fromJson(br.readLine(), Recipe[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -234,8 +246,13 @@ public class AccountHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getRecipes: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getRecipes: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
@@ -246,7 +263,7 @@ public class AccountHandler extends Handler {
     @Nullable
     public Comment[] getComments(@NonNull String id) {
         String c = "/comments";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Comment[] comments = null;
 
@@ -261,8 +278,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NOT_FOUND;
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    comments = gson.fromJson(s.nextLine(), Comment[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    comments = gson.fromJson(br.readLine(), Comment[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -276,8 +293,13 @@ public class AccountHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getComments: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getComments: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
@@ -298,7 +320,7 @@ public class AccountHandler extends Handler {
 
     public boolean putFavorites(@NonNull String id, @NonNull Recipe[] recipes, @NonNull JWToken token) {
         String favoritesstr = "/favorites";
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -325,8 +347,8 @@ public class AccountHandler extends Handler {
                     break;
                 case HttpURLConnection.HTTP_BAD_REQUEST:
                     Log.i(TAG, "putFavorites: HTTP Bad Request");
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_NO_CONTENT:
@@ -344,8 +366,13 @@ public class AccountHandler extends Handler {
         } catch(IOException e) {
             Log.e(TAG, "putFavorites: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "putFavorites: IO Exception", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)
@@ -358,7 +385,7 @@ public class AccountHandler extends Handler {
     @Nullable
     public Recipe[] getFavorites(@NonNull String id, @NonNull JWToken token) {
         String f = "/favorites";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Recipe[] recipes = null;
 
@@ -378,8 +405,8 @@ public class AccountHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    recipes = gson.fromJson(br.readLine(), Recipe[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -393,8 +420,13 @@ public class AccountHandler extends Handler {
         } catch(IOException e) {
             Log.e(TAG, "getFavorites: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getFavorites: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }

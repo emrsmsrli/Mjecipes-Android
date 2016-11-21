@@ -4,12 +4,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 
@@ -23,7 +24,7 @@ public class TokenHandler extends Handler {
 
     @Nullable
     public JWToken getToken(@NonNull String username, @NonNull String password) {
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         JWToken token = null;
@@ -40,14 +41,14 @@ public class TokenHandler extends Handler {
 
             switch(connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
-                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     Log.i(TAG, "getToken: HTTP Bad Request");
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
+                    errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    token = gson.fromJson(s.nextLine(), JWToken.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    token = gson.fromJson(br.readLine(), JWToken.class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -61,8 +62,13 @@ public class TokenHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getToken: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getToken: IO Exception", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)

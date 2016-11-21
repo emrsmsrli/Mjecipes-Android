@@ -4,15 +4,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
@@ -27,7 +28,7 @@ public class RecipeHandler extends Handler {
     }
 
     public boolean postRecipe(@NonNull Recipe r, @NonNull JWToken token) {
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -49,8 +50,8 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "postRecipe: HTTP Unauthroized");
                     break;
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     Log.i(TAG, "postRecipe: HTTP Bad Request");
                     break;
@@ -69,8 +70,13 @@ public class RecipeHandler extends Handler {
         } catch(IOException e) {
             Log.e(TAG, "postRecipe: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "postRecipe: IO Exception", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)
@@ -83,7 +89,7 @@ public class RecipeHandler extends Handler {
     @Nullable
     public Recipe[] getRecipeByPage(int page) {
         String pagestr = "recipes?page=";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Recipe[] recipes = null;
 
@@ -98,8 +104,8 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "getRecipeByPage: HTTP Not Found");
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    recipes = gson.fromJson(br.readLine(), Recipe[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -113,8 +119,13 @@ public class RecipeHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getRecipeByPage: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getRecipeByPage: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
@@ -124,7 +135,7 @@ public class RecipeHandler extends Handler {
 
     @Nullable
     public Recipe getRecipe(int id) {
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Recipe recipe = null;
 
@@ -139,8 +150,8 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "getRecipe: HTTP Not Found");
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    recipe = gson.fromJson(s.nextLine(), Recipe.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    recipe = gson.fromJson(br.readLine(), Recipe.class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -154,8 +165,12 @@ public class RecipeHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getRecipe: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getRecipe: IO Exception", e);
+            }
             if(connection != null)
                 connection.disconnect();
         }
@@ -204,7 +219,7 @@ public class RecipeHandler extends Handler {
     }
 
     public boolean patchRecipe(@NonNull Recipe recipe, @NonNull JWToken token) {
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -230,8 +245,9 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "patchRecipe: HTTP Not Found");
                     break;
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    Log.i(TAG, "patchRecipe: HTTP Bad Request");
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_NO_CONTENT:
@@ -249,8 +265,13 @@ public class RecipeHandler extends Handler {
         } catch(IOException e) {
             Log.e(TAG, "patchRecipe: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "patchRecipe: IO Exception", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)
@@ -320,6 +341,7 @@ public class RecipeHandler extends Handler {
         } finally {
             if(connection != null)
                 connection.disconnect();
+
             try {
                 if(fis != null)
                     fis.close();
@@ -335,7 +357,7 @@ public class RecipeHandler extends Handler {
 
     public boolean postComment(int id, @NonNull Comment c, @NonNull JWToken token) {
         String commentsstr = "/comments";
-        Scanner s = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         HttpURLConnection connection = null;
         boolean toReturn = false;
@@ -361,8 +383,9 @@ public class RecipeHandler extends Handler {
                     errors.HTTPCode = Errors.HTTP_NOT_FOUND;
                     break;
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    Log.i(TAG, "postComment: HTTP Bad Request");
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     break;
                 case HttpURLConnection.HTTP_CREATED:
@@ -378,10 +401,15 @@ public class RecipeHandler extends Handler {
         } catch(MalformedURLException e) {
             Log.e(TAG, "postComment: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "postComment: IO Exception", e);
+            Log.e(TAG, "patchRecipe: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "patchRecipe: IO Exception", e);
+            }
+
             if(pw != null)
                 pw.close();
             if(connection != null)
@@ -394,7 +422,7 @@ public class RecipeHandler extends Handler {
     @Nullable
     public Comment[] getComments(int id) {
         String commentstr = "/comments";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Comment[] comments = null;
 
@@ -409,8 +437,8 @@ public class RecipeHandler extends Handler {
                     Log.i(TAG, "getComments: HTTP Not Found");
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    comments = gson.fromJson(s.nextLine(), Comment[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    comments = gson.fromJson(br.readLine(), Comment[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -424,8 +452,13 @@ public class RecipeHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "getComments: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "getComments: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
@@ -436,7 +469,7 @@ public class RecipeHandler extends Handler {
     @Nullable
     public Recipe[] search(@NonNull String term) {
         String search = "search?term=";
-        Scanner s = null;
+        BufferedReader br = null;
         HttpURLConnection connection = null;
         Recipe[] recipes = null;
 
@@ -447,14 +480,14 @@ public class RecipeHandler extends Handler {
 
             switch(connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST:
-                    s = new Scanner(connection.getErrorStream());
-                    errors = gson.fromJson(s.nextLine(), Errors.class);
+                    br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
+                    errors = gson.fromJson(br.readLine(), Errors.class);
                     errors.HTTPCode = Errors.HTTP_BAD_REQUEST;
                     Log.i(TAG, "search: HTTP Bad Request");
                     break;
                 case HttpURLConnection.HTTP_OK:
-                    s = new Scanner(connection.getInputStream());
-                    recipes = gson.fromJson(s.nextLine(), Recipe[].class);
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                    recipes = gson.fromJson(br.readLine(), Recipe[].class);
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
@@ -468,8 +501,13 @@ public class RecipeHandler extends Handler {
         } catch (IOException e) {
             Log.e(TAG, "search: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (br != null)
+                    br.close();
+            } catch(IOException e) {
+                Log.e(TAG, "search: IO Exception", e);
+            }
+
             if(connection != null)
                 connection.disconnect();
         }
