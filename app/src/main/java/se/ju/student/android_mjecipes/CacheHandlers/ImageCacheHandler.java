@@ -38,7 +38,7 @@ public class ImageCacheHandler extends CacheHandler {
         return rq;
     }
 
-    public synchronized void addRequest(@NonNull ImageRequest request) {
+    public synchronized void downloadImage(@NonNull ImageRequest request) {
         getRequestQueue().add(request);
     }
 
@@ -106,7 +106,7 @@ public class ImageCacheHandler extends CacheHandler {
 
         try {
             fis = new FileInputStream(files[0]);
-            bitmap = BitmapFactory.decodeStream(new FileInputStream(files[0]));
+            bitmap = BitmapFactory.decodeStream(fis);
             if(bitmap != null) Log.i(TAG, "readFromCache: File read from cache, type: Image, name: " + files[0].getName());
             else               Log.i(TAG, "readFromCache: File not read from cache, type: Image, name: " + files[0].getName());
         } catch(IOException e) {
