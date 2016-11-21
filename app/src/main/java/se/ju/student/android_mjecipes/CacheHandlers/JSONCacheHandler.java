@@ -8,15 +8,16 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Scanner;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
@@ -97,7 +98,7 @@ public class JSONCacheHandler extends CacheHandler {
     @Nullable
     public synchronized <T> T readFromCache(@NonNull final String id, final Class<T> type) {
         File[] files;
-        Scanner s = null;
+        BufferedReader bf = null;
 
         files = cacheDir.listFiles(new FilenameFilter() {
             @Override
@@ -114,15 +115,19 @@ public class JSONCacheHandler extends CacheHandler {
         T data = null;
 
         try {
-            s = new Scanner(files[0]);
-            data = gson.fromJson(s.nextLine(), type);
+            bf = new BufferedReader(new FileReader(files[0]));
+            data = gson.fromJson(bf.readLine(), type);
 
             Log.i(TAG, "readFromCache: File read from cache, type: " + type.getSimpleName() + ", name: " + files[0].getName());
         } catch(IOException e) {
             Log.e(TAG, "readFromCache: IO Exception", e);
         } finally {
-            if(s != null)
-                s.close();
+            try {
+                if (bf != null)
+                    bf.close();
+            } catch(IOException e) {
+                Log.e(TAG, "readFromCache: IO Exception", e);
+            }
         }
 
         return data;
