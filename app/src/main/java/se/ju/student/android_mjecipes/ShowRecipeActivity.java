@@ -1,5 +1,6 @@
 package se.ju.student.android_mjecipes;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ public class ShowRecipeActivity extends AppCompatActivity {
     private LinearLayout r;
     private TextView recipeidtv;
 
+    Button gocomments;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,19 @@ public class ShowRecipeActivity extends AppCompatActivity {
                     b.setText(d.order + ": " + d.description);
                     ((LinearLayout) r.findViewById(R.id.show_recipes_ll_directions)).addView(b);
                 }
+
+
+                gocomments=(Button)findViewById(R.id.show_recipes_b_comments);
+
+                gocomments.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent comm=new Intent(ShowRecipeActivity.this,ShowCommentActivity.class);
+                        TextView t= (TextView) findViewById(R.id.show_recipe_id);
+                        comm.putExtra("resid",t.getText());
+                        startActivity(comm);
+                    }
+                });
 
             }
         }.execute(1);

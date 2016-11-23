@@ -34,4 +34,22 @@
         android:paddingEnd="10dp"
         android:layout_alignParentRight="true"
         android:id="@+id/main_recipe_date" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_recipe_image"
+        android:paddingTop="27dp"
+        android:paddingStart="10dp"
+        android:id="@+id/main_recipe_description" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_recipe_image"
+        android:paddingTop="47dp"
+        android:paddingStart="10dp"
+        android:id="@+id/main_recipe_creatorname" />
+
+
 </RelativeLayout>

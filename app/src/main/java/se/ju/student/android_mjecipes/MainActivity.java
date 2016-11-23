@@ -81,9 +81,10 @@ public class MainActivity extends AppCompatActivity {
                     inf.inflate(R.layout.main_recipe_layout, (LinearLayout)findViewById(R.id.activity_main));
                     final View vv = ((LinearLayout)findViewById(R.id.activity_main)).getChildAt(i);
                     ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
-                    ((TextView) vv.findViewById(R.id.main_recipe_name)).setText(recipes[i].name);
+                    ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= "+recipes[i].name);
                     ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
-
+                   ((TextView)vv.findViewById(R.id.main_recipe_description)).setText("Description= "+recipes[i].description);
+                    ( (TextView)vv.findViewById(R.id.main_recipe_creatorname)).setText("Creator= "+recipes[i].creator.userName);
                     if(recipes[i].image != null) {
                         final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
                         CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
