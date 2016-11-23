@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -80,7 +81,21 @@ public class ShowSingleCommentActivity extends AppCompatActivity {
 
                     }
 
-                    }}
+                    }
+
+                Button tab=(Button)findViewById(R.id.tab);
+
+                tab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent comm=new Intent(ShowSingleCommentActivity.this,TabbedActivity.class);
+
+                        startActivity(comm);
+                    }
+                });
+
+
+            }
             }.execute(1);
 
         }

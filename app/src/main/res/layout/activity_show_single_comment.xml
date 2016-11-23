@@ -50,4 +50,11 @@
         android:id="@+id/main_single_comment_text" />
 
 
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/show_recipe_margins"
+        android:text="tab"
+        android:id="@+id/tab"/>
 </LinearLayout>

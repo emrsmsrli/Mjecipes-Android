@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     vv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
+                            Intent i = new Intent(getApplicationContext(), TabbedActivity.class);
                             i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                             startActivity(i);
                         }
