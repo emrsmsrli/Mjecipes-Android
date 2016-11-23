@@ -4,14 +4,14 @@ import com.google.gson.Gson;
 
 public abstract class Handler {
 
-    static String API_URL = "http://52.211.99.140/api/v1/";
-    static final String ACCOUNTS_URL = "accounts/";
-    static final String TOKENS_URL = "tokens/password";
-    static final String RECIPES_URL = "recipes/";
-    static final String COMMENTS_URL = "comments/";
-    static Gson gson = new Gson();
+    protected static final String API_URL = "http://52.211.99.140/api/v1/";
+    protected static final String ACCOUNTS_URL = "accounts/";
+    protected static final String TOKENS_URL = "tokens/password";
+    protected static final String RECIPES_URL = "recipes/";
+    protected static final String COMMENTS_URL = "comments/";
+    protected static final Gson gson = new Gson();
 
-    Errors errors;
+    protected Errors errors;
 
     Handler() {
         errors = new Errors();

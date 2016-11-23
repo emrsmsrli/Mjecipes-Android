@@ -123,8 +123,7 @@ public class ImageCacheHandler extends CacheHandler {
         return bitmap;
     }
 
-    public <T> void clearSingleImageCache(String url, Class<T> type) {
-        final String simpleName = type.getSimpleName();
+    public void clearSingleImageCache(String url) {
         final String name = getFileName(url);
         new Thread(new Runnable() {
             @Override
@@ -137,8 +136,8 @@ public class ImageCacheHandler extends CacheHandler {
                 });
 
                 for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+                    if(f.delete()) Log.i(TAG, "clearSingleImageCache: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearSingleImageCache: Cache file not deleted, name " + f.getName());
             }
         }).run();
     }
@@ -155,8 +154,8 @@ public class ImageCacheHandler extends CacheHandler {
                 });
 
                 for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+                    if(f.delete()) Log.i(TAG, "clearAllImageCaches: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllImageCaches: Cache file not deleted, name " + f.getName());
             }
         }).run();
     }
