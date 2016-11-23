@@ -204,12 +204,12 @@ public class JSONCacheHandler extends CacheHandler {
             return null;
         }
 
-        ArrayList<Comment> data = new ArrayList<>();
+        Comment[] data = new Comment[files.length];
 
         try {
-            for(File f: files) {
-                bf = new BufferedReader(new FileReader(f));
-                data.add(gson.fromJson(bf.readLine(), Comment.class));
+            for(int i = 0; i < files.length; ++i) {
+                bf = new BufferedReader(new FileReader(files[i]));
+                data[i] = gson.fromJson(bf.readLine(), Comment.class);
 
                 Log.i(TAG, "readCommentsOfRecipe: File read from cache, type: " + Comment.class.getSimpleName() + ", name: " + files[0].getName());
                 bf.close();
@@ -218,10 +218,7 @@ public class JSONCacheHandler extends CacheHandler {
             Log.e(TAG, "readCommentsOfRecipe: IO Exception", e);
         }
 
-        if(data.isEmpty())
-            return null;
-
-        return (Comment[]) data.toArray();
+        return data;
     }
 
     public <T> void clearSingleJSONCache(String id, Class<T> type) {
