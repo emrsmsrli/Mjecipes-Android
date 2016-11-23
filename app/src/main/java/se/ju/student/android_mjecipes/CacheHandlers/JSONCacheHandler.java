@@ -38,9 +38,59 @@ public class JSONCacheHandler extends CacheHandler {
     }
 
     public synchronized <T> void writeToCache(@NonNull final T data, final Class<T> type) {
-        new AsyncTask<Void, Void, Void>() {
+        if(!type.equals(Comment.class))
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... p) {
+                    File[] files;
+                    File f;
+                    OutputStreamWriter osw = null;
+
+                    files = cacheDir.listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String filename) {
+                            return filename.startsWith(String.format("%s-%s-", type.getSimpleName(), getID(data, type)));
+                        }
+                    });
+
+                    if(files.length != 0) {
+                        Log.w(TAG, "writeToCache: Cache already exists, type: " + type.getSimpleName() + ", name: " + files[0].getName(), null);
+                        return null;
+                    } else
+                        f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d", type.getSimpleName(), getID(data, type), unixTimeStamp()));
+
+                    String dataObj = gson.toJson(data, type);
+
+                    try {
+                        osw = new OutputStreamWriter(new FileOutputStream(f));
+                        osw.write(dataObj);
+                        osw.flush();
+
+                        Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName() + ", name: " + f.getName());
+                    } catch(FileNotFoundException e) {
+                        Log.e(TAG, "writeToCache: File not found", e);
+                    } catch(IOException e) {
+                        Log.e(TAG, "writeToCache: IO Exception", e);
+                    } finally {
+                        try {
+                            if (osw != null)
+                                osw.close();
+                        } catch(IOException e) {
+                            Log.e(TAG, "writeToCache: IO Exception", e);
+                        }
+                    }
+
+                    return null;
+                }
+            }.execute();
+        else
+            writeComment((Comment) data);
+    }
+
+    private void writeComment(final Comment c) {
+        new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... p) {
+            public void run() {
                 File[] files;
                 File f;
                 OutputStreamWriter osw = null;
@@ -48,24 +98,28 @@ public class JSONCacheHandler extends CacheHandler {
                 files = cacheDir.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String filename) {
-                        return filename.startsWith(String.format("%s-%s-", type.getSimpleName(), getID(data, type)));
+                        return filename.startsWith(String.format("%s-%s-%s-",
+                                Comment.class.getSimpleName(),
+                                c.commenter == null ? c.commenterId : c.commenter.id,
+                                getID(c, Comment.class)));
                     }
                 });
 
                 if(files.length != 0) {
-                    Log.w(TAG, "writeToCache: Cache already exists, type: " + type.getSimpleName() + ", name: " + files[0].getName(), null);
-                    return null;
+                    Log.w(TAG, "writeToCache: Cache already exists, type: " + Comment.class.getSimpleName() + ", name: " + files[0].getName(), null);
+                    return;
                 } else
-                    f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d", type.getSimpleName(), getID(data, type), unixTimeStamp()));
+                    f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%s-%d", Comment.class.getSimpleName(),
+                            getID(c, Comment.class), c.commenter == null ? c.commenterId : c.commenter.id, unixTimeStamp()));
 
-                String dataObj = gson.toJson(data, type);
+                String dataObj = gson.toJson(c, Comment.class);
 
                 try {
                     osw = new OutputStreamWriter(new FileOutputStream(f));
                     osw.write(dataObj);
                     osw.flush();
 
-                    Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName() + ", name: " + f.getName());
+                    Log.i(TAG, "writeToCache: File written to cache, type: " + Comment.class.getSimpleName() + ", name: " + f.getName());
                 } catch(FileNotFoundException e) {
                     Log.e(TAG, "writeToCache: File not found", e);
                 } catch(IOException e) {
@@ -78,10 +132,8 @@ public class JSONCacheHandler extends CacheHandler {
                         Log.e(TAG, "writeToCache: IO Exception", e);
                     }
                 }
-
-                return null;
             }
-        }.execute();
+        }).run();
     }
 
     @SuppressWarnings("unchecked")
@@ -95,6 +147,7 @@ public class JSONCacheHandler extends CacheHandler {
         return (T[]) array.toArray();
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     public synchronized <T> T readFromCache(@NonNull final String id, final Class<T> type) {
         File[] files;
@@ -107,7 +160,7 @@ public class JSONCacheHandler extends CacheHandler {
             }
         });
 
-        if(files.length == 0) {
+        if (files.length == 0) {
             Log.w(TAG, "readFromCache: Cache does not exist, type: " + type.getSimpleName(), null);
             return null;
         }
@@ -119,18 +172,56 @@ public class JSONCacheHandler extends CacheHandler {
             data = gson.fromJson(bf.readLine(), type);
 
             Log.i(TAG, "readFromCache: File read from cache, type: " + type.getSimpleName() + ", name: " + files[0].getName());
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "readFromCache: IO Exception", e);
         } finally {
             try {
                 if (bf != null)
                     bf.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 Log.e(TAG, "readFromCache: IO Exception", e);
             }
         }
 
         return data;
+    }
+
+    @Nullable
+    public Comment[] readCommentsOfRecipe(final String recipeId) {
+        File[] files;
+        BufferedReader bf;
+
+        files = cacheDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.startsWith(String.format("%s-", Comment.class.getSimpleName())) &&
+                        filename.contains(recipeId);
+            }
+        });
+
+        if (files.length == 0) {
+            Log.w(TAG, "readCommentsOfRecipe: Cache does not exist, type: " + Comment.class.getSimpleName(), null);
+            return null;
+        }
+
+        ArrayList<Comment> data = new ArrayList<>();
+
+        try {
+            for(File f: files) {
+                bf = new BufferedReader(new FileReader(f));
+                data.add(gson.fromJson(bf.readLine(), Comment.class));
+
+                Log.i(TAG, "readCommentsOfRecipe: File read from cache, type: " + Comment.class.getSimpleName() + ", name: " + files[0].getName());
+                bf.close();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "readCommentsOfRecipe: IO Exception", e);
+        }
+
+        if(data.isEmpty())
+            return null;
+
+        return (Comment[]) data.toArray();
     }
 
     public <T> void clearSingleJSONCache(String id, Class<T> type) {
