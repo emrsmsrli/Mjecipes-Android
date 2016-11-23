@@ -106,6 +106,10 @@ public class RecipeHandler extends Handler {
                 case HttpURLConnection.HTTP_OK:
                     br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                     recipes = gson.fromJson(br.readLine(), Recipe[].class);
+
+                    for(int i = 0; i < recipes.length; ++i)
+                        recipes[i] = getRecipe(recipes[i].id);
+
                     errors.HTTPCode = Errors.HTTP_OK;
                     break;
                 default:
