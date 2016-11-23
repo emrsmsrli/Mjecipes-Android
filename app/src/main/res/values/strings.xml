@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Mjecipes</string>
 
+    <string name="search_hint">Search recipes</string>
+
     <!-- login strings -->
     <string name="app_login">Login to Mjecipes</string>
     <string name="login_email_t">Email</string>
@@ -13,12 +15,5 @@
     <!-- showrecipe strings -->
     <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
-    <array name="comments">
-        <item>Comment1</item>
-        <item>Comment2</item>
-        <item>Comment3</item>
-        <item>Comment4</item>
-        <item>Comment5</item>
-    </array>
 
 </resources>
