@@ -1,7 +1,6 @@
 package se.ju.student.android_mjecipes.CacheHandlers;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,7 +15,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
@@ -39,9 +37,9 @@ public class JSONCacheHandler extends CacheHandler {
 
     public synchronized <T> void writeToCache(@NonNull final T data, final Class<T> type) {
         if(!type.equals(Comment.class))
-            new AsyncTask<Void, Void, Void>() {
+            new Thread(new Runnable() {
                 @Override
-                protected Void doInBackground(Void... p) {
+                public void run() {
                     File[] files;
                     File f;
                     OutputStreamWriter osw = null;
@@ -55,7 +53,7 @@ public class JSONCacheHandler extends CacheHandler {
 
                     if(files.length != 0) {
                         Log.w(TAG, "writeToCache: Cache already exists, type: " + type.getSimpleName() + ", name: " + files[0].getName(), null);
-                        return null;
+                        return;
                     } else
                         f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d", type.getSimpleName(), getID(data, type), unixTimeStamp()));
 
@@ -79,10 +77,8 @@ public class JSONCacheHandler extends CacheHandler {
                             Log.e(TAG, "writeToCache: IO Exception", e);
                         }
                     }
-
-                    return null;
                 }
-            }.execute();
+            }).run();
         else
             writeComment((Comment) data);
     }
@@ -136,18 +132,6 @@ public class JSONCacheHandler extends CacheHandler {
         }).run();
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public synchronized <T> T[] readFromCache(@NonNull String[] ids, Class<T> type) {
-        ArrayList<T> array = new ArrayList<>();
-
-        for(String id: ids)
-            array.add(readFromCache(id, type));
-
-        return (T[]) array.toArray();
-    }
-
-    @SuppressWarnings("unchecked")
     @Nullable
     public synchronized <T> T readFromCache(@NonNull final String id, final Class<T> type) {
         File[] files;

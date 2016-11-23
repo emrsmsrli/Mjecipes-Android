@@ -3,7 +3,6 @@ package se.ju.student.android_mjecipes.CacheHandlers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -43,47 +42,45 @@ public class ImageCacheHandler extends CacheHandler {
     }
 
     public synchronized void writeToCache(@NonNull final String url, @NonNull final Bitmap b) {
-        new AsyncTask<Void, Void, Void>() {
+        new Thread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... p) {
-                File[] files;
-                File f;
-                FileOutputStream fos = null;
-                final String fname = getFileName(url);
+            public void run() {
+            File[] files;
+            File f;
+            FileOutputStream fos = null;
+            final String fname = getFileName(url);
 
-                files = cacheDir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.startsWith(String.format("image-%s-", fname));
-                    }
-                });
+            files = cacheDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.startsWith(String.format("image-%s-", fname));
+                }
+            });
 
-                if(files.length != 0) {
-                    Log.w(TAG, "writeToCache: Cache already exists, type: Image, name: " + files[0].getName(), null);
-                    return null;
-                } else
-                    f = new File(cacheDir, String.format(Locale.ENGLISH, "image-%s-%d", fname, unixTimeStamp()));
+            if(files.length != 0) {
+                Log.w(TAG, "writeToCache: Cache already exists, type: Image, name: " + files[0].getName(), null);
+                return;
+            } else
+                f = new File(cacheDir, String.format(Locale.ENGLISH, "image-%s-%d", fname, unixTimeStamp()));
 
+            try {
+                fos = new FileOutputStream(f);
+                if(b.compress(Bitmap.CompressFormat.PNG, 75, fos)) {
+                    fos.flush();
+                    Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName());
+                }
+            } catch(IOException e) {
+                Log.e(TAG, "writeToCache: IO Exception", e);
+            } finally {
                 try {
-                    fos = new FileOutputStream(f);
-                    if(b.compress(Bitmap.CompressFormat.PNG, 75, fos)) {
-                        fos.flush();
-                        Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName());
-                    }
+                    if(fos != null)
+                        fos.close();
                 } catch(IOException e) {
                     Log.e(TAG, "writeToCache: IO Exception", e);
-                } finally {
-                    try {
-                        if(fos != null)
-                            fos.close();
-                    } catch(IOException e) {
-                        Log.e(TAG, "writeToCache: IO Exception", e);
-                    }
                 }
-
-                return null;
             }
-        }.execute();
+            }
+        }).run();
     }
 
     @Nullable
