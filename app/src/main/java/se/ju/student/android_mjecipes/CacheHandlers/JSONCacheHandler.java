@@ -32,7 +32,7 @@ public class JSONCacheHandler extends CacheHandler {
         cacheDir = c.getCacheDir();
     }
 
-    public <T> void writeToCache(@NonNull T[] data, Class<T> type) {
+    public synchronized <T> void writeToCache(@NonNull T[] data, Class<T> type) {
         for(T s: data)
             writeToCache(s, type);
     }
@@ -86,7 +86,7 @@ public class JSONCacheHandler extends CacheHandler {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public <T> T[] readFromCache(@NonNull String[] ids, Class<T> type) {
+    public synchronized <T> T[] readFromCache(@NonNull String[] ids, Class<T> type) {
         ArrayList<T> array = new ArrayList<>();
 
         for(String id: ids)
@@ -131,6 +131,45 @@ public class JSONCacheHandler extends CacheHandler {
         }
 
         return data;
+    }
+
+    public <T> void clearSingleJSONCache(String id, Class<T> type) {
+        final String simpleName = type.getSimpleName();
+        final String typeID = id;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith(simpleName + "-" + typeID);
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
+    }
+
+    public <T> void clearAllJSONCachesOfType(Class<T> type) {
+        final String simpleName = type.getSimpleName();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith(simpleName);
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
     }
 
     static synchronized JSONCacheHandler getInstance(Context c) {

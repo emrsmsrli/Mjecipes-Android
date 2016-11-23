@@ -11,49 +11,6 @@ public abstract class CacheHandler {
     private static final String TAG = "CacheHandler";
     protected static File cacheDir = null;
 
-    /*
-     * TODO implement this in seperate handlers
-     *
-    public static <T> void clearSingleCache(Context c, Class<T> type, String id) {
-        final File cacheDir = c.getCacheDir();
-        final String simpleName = type.getSimpleName();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                File[] files = cacheDir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.startsWith(simpleName);
-                    }
-                });
-
-                for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
-            }
-        }).run();
-    }
-
-    public static <T> void clearCachesOf(Context c, Class<T> type) {
-        final File cacheDir = c.getCacheDir();
-        final String simpleName = type.getSimpleName();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                File[] files = cacheDir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.startsWith(simpleName);
-                    }
-                });
-
-                for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
-            }
-        }).run();
-    } */
-
     public static void clearAllCaches(Context c) {
         final File cacheDir = c.getCacheDir();
         new Thread(new Runnable() {

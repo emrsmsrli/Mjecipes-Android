@@ -123,6 +123,44 @@ public class ImageCacheHandler extends CacheHandler {
         return bitmap;
     }
 
+    public <T> void clearSingleImageCache(String url, Class<T> type) {
+        final String simpleName = type.getSimpleName();
+        final String name = getFileName(url);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith("image-" + name);
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
+    }
+
+    public void clearAllImageCaches() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith("image-");
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
+    }
+
     synchronized static ImageCacheHandler getInstance(@NonNull Context c) {
         if(instance == null)
             instance = new ImageCacheHandler(c.getApplicationContext());
