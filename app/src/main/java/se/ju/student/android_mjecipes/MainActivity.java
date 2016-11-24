@@ -3,8 +3,11 @@ package se.ju.student.android_mjecipes;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -40,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private Button listcomment;
     private Button showrecipes;*/
 
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle Toggle;
     private ListView recipeList;
-
+public static String a;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -50,8 +55,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+        if(Toggle.onOptionsItemSelected(item)){
+            return true;
+        }
         int id=item.getItemId();
         onSearchRequested();
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -60,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        drawerLayout=(DrawerLayout) findViewById(R.id.drawer);
+        Toggle=new ActionBarDrawerToggle(this, drawerLayout,R.string.open,R.string.close);
+
+        drawerLayout.addDrawerListener(Toggle);
+        Toggle.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent i = getIntent();
 
         if(i.getAction().equals(Intent.ACTION_SEARCH)) {
@@ -99,8 +116,16 @@ public class MainActivity extends AppCompatActivity {
                     vv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent i = new Intent(getApplicationContext(), TabbedActivity.class);
-                            i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
+
+
+                            String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
+                            SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
+                            SharedPreferences.Editor editor=sharedPreferences.edit();
+                            editor.putString("recid",data);
+                            editor.commit();
+
+                            Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
+                            //i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                             startActivity(i);
                         }
                     });
@@ -206,5 +231,7 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
     }
+
+
 
 }

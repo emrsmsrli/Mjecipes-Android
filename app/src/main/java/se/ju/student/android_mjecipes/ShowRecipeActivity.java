@@ -1,6 +1,7 @@
 package se.ju.student.android_mjecipes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
@@ -34,6 +35,10 @@ public class ShowRecipeActivity extends AppCompatActivity {
         r = (LinearLayout) findViewById(R.id.show_recipe_main);
         recipeidtv = (TextView) findViewById(R.id.show_recipe_id);
 
+
+        SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
+        final String rID =sharedPreferences.getString("recid","Nothing Found");
+
        /* ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if(ni == null || !ni.isConnected()) {
@@ -45,7 +50,7 @@ public class ShowRecipeActivity extends AppCompatActivity {
             }).show();
         }*/
 
-        final String rID = getIntent().getStringExtra("recipeId");
+     //   final String rID = getIntent().getStringExtra("recipeId");
 
         new AsyncTask<Integer,Void,Recipe>() {
             @Override

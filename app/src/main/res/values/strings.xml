@@ -21,4 +21,9 @@
     <string name="title_activity_recipe_tab__comments">Recipe_tab_Comments</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
 </resources>

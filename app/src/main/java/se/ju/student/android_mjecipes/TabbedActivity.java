@@ -58,7 +58,6 @@ public class TabbedActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
 
-
     }
 
 
