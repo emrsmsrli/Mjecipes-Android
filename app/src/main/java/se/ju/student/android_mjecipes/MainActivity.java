@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.design.internal.NavigationMenu;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -43,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private Button listcomment;
     private Button showrecipes;*/
 
-    private DrawerLayout drawerLayout;
+    DrawerLayout drawerLayout;
     private ActionBarDrawerToggle Toggle;
+    NavigationView navigationView;
     private ListView recipeList;
 public static String a;
     @Override
@@ -77,6 +80,51 @@ public static String a;
         Toggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView=(NavigationView)findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()){
+
+                    case R.id.a1:
+                        Intent i1=new Intent(MainActivity.this,MainActivity.class);
+
+                        startActivity(i1);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a2:
+                        Intent i2=new Intent(MainActivity.this,MainActivity.class);
+                        startActivity(i2);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a3:
+                        Intent i3=new Intent(getApplicationContext(),SignupActivity.class);
+                        startActivity(i3);
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.a4:
+                        Intent i4=new Intent(getApplicationContext(),LoginActivity.class);
+                        startActivity(i4);
+                        drawerLayout.closeDrawers();
+                        break;
+
+
+                    case R.id.a5:
+                        Intent i5=new Intent(MainActivity.this,MainActivity.class);
+                        startActivity(i5);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                }
+
+                return false;
+            }
+        });
+
+
+
         Intent i = getIntent();
 
         if(i.getAction().equals(Intent.ACTION_SEARCH)) {
