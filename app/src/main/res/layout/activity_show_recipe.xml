@@ -72,12 +72,7 @@
                     android:layout_height="wrap_content" />
 
                 <!-- show comments -->
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/show_recipe_margins"
-                    android:text="@string/show_recipe_comments"
-                    android:id="@+id/show_recipes_b_comments"/>
+
 
             </LinearLayout>
         </ScrollView>

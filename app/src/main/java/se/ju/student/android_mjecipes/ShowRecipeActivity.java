@@ -5,7 +5,11 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -28,6 +32,28 @@ public class ShowRecipeActivity extends AppCompatActivity {
     private TextView recipeidtv;
 
     Button gocomments;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int res_id=item.getItemId();
+        switch (res_id){
+            case R.id.commentcloud:
+                Intent i=new Intent(getApplicationContext(),ShowCommentActivity.class);
+                TextView t= (TextView) findViewById(R.id.show_recipe_id);
+                i.putExtra("resid",t.getText());
+                startActivity(i);
+                break;
+        }
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +61,9 @@ public class ShowRecipeActivity extends AppCompatActivity {
         r = (LinearLayout) findViewById(R.id.show_recipe_main);
         recipeidtv = (TextView) findViewById(R.id.show_recipe_id);
 
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setIcon(R.mipmap.ic_forum_white_24dp);
 
         SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
         final String rID =sharedPreferences.getString("recid","Nothing Found");
@@ -76,18 +105,6 @@ public class ShowRecipeActivity extends AppCompatActivity {
                     ((LinearLayout) r.findViewById(R.id.show_recipes_ll_directions)).addView(b);
                 }
 
-
-                gocomments=(Button)findViewById(R.id.show_recipes_b_comments);
-
-                gocomments.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent comm=new Intent(ShowRecipeActivity.this,ShowCommentActivity.class);
-                        TextView t= (TextView) findViewById(R.id.show_recipe_id);
-                        comm.putExtra("resid",t.getText());
-                        startActivity(comm);
-                    }
-                });
 
             }
         }.execute(1);

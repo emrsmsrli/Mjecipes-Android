@@ -82,7 +82,7 @@ public class ShowSingleCommentActivity extends AppCompatActivity {
                     }
 
                     }
-
+/*
                 Button tab=(Button)findViewById(R.id.tab);
 
                 tab.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +93,7 @@ public class ShowSingleCommentActivity extends AppCompatActivity {
                         startActivity(comm);
                     }
                 });
-
+*/
 
             }
             }.execute(1);
