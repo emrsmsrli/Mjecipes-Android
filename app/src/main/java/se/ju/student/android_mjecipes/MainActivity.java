@@ -76,7 +76,7 @@ public static String a;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        final int[] l = new int[1];
         drawerLayout=(DrawerLayout) findViewById(R.id.drawer);
         Toggle=new ActionBarDrawerToggle(this, drawerLayout,R.string.open,R.string.close);
 
@@ -121,6 +121,21 @@ public static String a;
                         drawerLayout.closeDrawers();
                         break;
 
+                    case R.id.a6:
+                        Intent i6=new Intent(MainActivity.this,ShowRecipeActivity.class);
+                        int sayi = ((int)(Math.random()*3));
+                        i6.putExtra("recipeId",Integer.toString(sayi));
+                        startActivity(i6);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a7:
+                        Intent i7=new Intent(MainActivity.this,CreateRecipe.class);
+                        startActivity(i7);
+                        drawerLayout.closeDrawers();
+                        break;
+
+
                 }
 
                 return false;
@@ -128,9 +143,9 @@ public static String a;
         });
 
 
-        Intent i = getIntent();
+        final Intent[] i = {getIntent()};
 
-        if(i.getAction().equals(Intent.ACTION_SEARCH)) {
+        if(i[0].getAction().equals(Intent.ACTION_SEARCH)) {
             //search with i.getStringExtra(SearchManager.QUERY);
         }
 
@@ -145,6 +160,7 @@ public static String a;
 
                 LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                l[0] =recipes.length;
                 for(int i = 0; i < recipes.length; ++i) {
                     inf.inflate(R.layout.main_recipe_layout, (LinearLayout)findViewById(R.id.activity_main));
                     final View vv = ((LinearLayout)findViewById(R.id.activity_main)).getChildAt(i);
@@ -168,15 +184,15 @@ public static String a;
                         @Override
                         public void onClick(View v) {
 
-
+                    /*
                             String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
                             SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
                             SharedPreferences.Editor editor=sharedPreferences.edit();
                             editor.putString("recid",data);
                             editor.commit();
-
+                     */
                             Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
-                            //i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
+                            i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                             startActivity(i);
                         }
                     });

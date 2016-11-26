@@ -28,7 +28,7 @@ public class ShowCommentActivity extends AppCompatActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_show_comment);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final String rid=getIntent().getStringExtra("resid");
 
         new AsyncTask<Integer, Void, Comment[]>() {
