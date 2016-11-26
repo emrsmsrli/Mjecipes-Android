@@ -3,13 +3,18 @@ package se.ju.student.android_mjecipes.UserAgent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.R;
 
 public class UserAgent {
+
+    public interface LoginListener {
+        void onLogin(boolean loggedIn);
+    }
+
     private static UserAgent instance = null;
     private static SharedPreferences sharedPreferences = null;
     private static Resources resources = null;
@@ -23,10 +28,10 @@ public class UserAgent {
         load();
     }
 
-    public boolean login(final String userName, final String password) {
-        if(loggedIn) return true;
+    public void login(final String userName, final String password, @NonNull final LoginListener listener) {
+        if(loggedIn) listener.onLogin(isLoggedIn());
 
-        Thread t = new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 JWToken token = Handler.getTokenHandler().getToken(userName, password);
@@ -38,17 +43,9 @@ public class UserAgent {
                 }
 
                 save();
+                listener.onLogin(isLoggedIn());
             }
-        });
-
-        try {
-            t.start();
-            t.join();
-        } catch(InterruptedException e) {
-            return false;
-        }
-
-        return isLoggedIn();
+        }).run();
     }
 
     public boolean logout() {
