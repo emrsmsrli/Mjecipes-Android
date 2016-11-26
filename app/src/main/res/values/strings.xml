@@ -16,4 +16,10 @@
     <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
 
+    <!-- sharedprefs keys -->
+    <string name="shared_preference_key">se.ju.student.android_mjecipes.SharedPreferences</string>
+    <string name="shared_preference_logged_in_key">se.ju.student.android_mjecipes.SharedPreferences.UserLoggedIn</string>
+    <string name="shared_preference_username_key">se.ju.student.android_mjecipes.SharedPreferences.UserName</string>
+    <string name="shared_preference_userid_key">se.ju.student.android_mjecipes.SharedPreferences.UserID</string>
+
 </resources>
