@@ -3,10 +3,17 @@ package se.ju.student.android_mjecipes;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.design.internal.NavigationMenu;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
     private Button listcomment;
     private Button showrecipes;*/
 
+    DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle Toggle;
+    NavigationView navigationView;
     private ListView recipeList;
 
+
+public static String a;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -50,8 +62,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+        if(Toggle.onOptionsItemSelected(item)){
+            return true;
+        }
         int id=item.getItemId();
         onSearchRequested();
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -60,9 +76,76 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent i = getIntent();
+        final int[] l = new int[1];
+        drawerLayout=(DrawerLayout) findViewById(R.id.drawer);
+        Toggle=new ActionBarDrawerToggle(this, drawerLayout,R.string.open,R.string.close);
 
-        if(i.getAction().equals(Intent.ACTION_SEARCH)) {
+        drawerLayout.addDrawerListener(Toggle);
+        Toggle.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView=(NavigationView)findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()){
+
+                    case R.id.a1:
+                        Intent i1=new Intent(MainActivity.this,MainActivity.class);
+
+                        startActivity(i1);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a2:
+                        Intent i2=new Intent(MainActivity.this,MainActivity.class);
+                        startActivity(i2);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a3:
+                        Intent i3=new Intent(getApplicationContext(),SignupActivity.class);
+                        startActivity(i3);
+                        drawerLayout.closeDrawers();
+                        break;
+                    case R.id.a4:
+                        Intent i4=new Intent(getApplicationContext(),LoginActivity.class);
+                        startActivity(i4);
+                        drawerLayout.closeDrawers();
+                        break;
+
+
+                    case R.id.a5:
+                        Intent i5=new Intent(MainActivity.this,MainActivity.class);
+                        startActivity(i5);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a6:
+                        Intent i6=new Intent(MainActivity.this,ShowRecipeActivity.class);
+                        int sayi = ((int)(Math.random()*3));
+                        i6.putExtra("recipeId",Integer.toString(sayi));
+                        startActivity(i6);
+                        drawerLayout.closeDrawers();
+                        break;
+
+                    case R.id.a7:
+                        Intent i7=new Intent(MainActivity.this,CreateRecipe.class);
+                        startActivity(i7);
+                        drawerLayout.closeDrawers();
+                        break;
+
+
+                }
+
+                return false;
+            }
+        });
+
+
+        final Intent[] i = {getIntent()};
+
+        if(i[0].getAction().equals(Intent.ACTION_SEARCH)) {
             //search with i.getStringExtra(SearchManager.QUERY);
         }
 
@@ -77,13 +160,15 @@ public class MainActivity extends AppCompatActivity {
 
                 LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                l[0] =recipes.length;
                 for(int i = 0; i < recipes.length; ++i) {
                     inf.inflate(R.layout.main_recipe_layout, (LinearLayout)findViewById(R.id.activity_main));
                     final View vv = ((LinearLayout)findViewById(R.id.activity_main)).getChildAt(i);
                     ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
-                    ((TextView) vv.findViewById(R.id.main_recipe_name)).setText(recipes[i].name);
+                    ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= "+recipes[i].name);
                     ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
-
+                   ((TextView)vv.findViewById(R.id.main_recipe_description)).setText("Description= "+recipes[i].description);
+                    ( (TextView)vv.findViewById(R.id.main_recipe_creatorname)).setText("Creator= "+recipes[i].creator.userName);
                     if(recipes[i].image != null) {
                         final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
                         CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
@@ -98,6 +183,14 @@ public class MainActivity extends AppCompatActivity {
                     vv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
+                    /*
+                            String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
+                            SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
+                            SharedPreferences.Editor editor=sharedPreferences.edit();
+                            editor.putString("recid",data);
+                            editor.commit();
+                     */
                             Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
                             i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                             startActivity(i);
@@ -205,5 +298,7 @@ public class MainActivity extends AppCompatActivity {
         });*/
 
     }
+
+
 
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/a1"
+        android:icon="@mipmap/ic_face_black_24dp"
+        android:title="My Account"/>
+    <item android:id="@+id/a2"
+        android:icon="@mipmap/ic_store_black_24dp"
+        android:title="My Recipes"/>
+
+    <item android:id="@+id/a7"
+        android:icon="@mipmap/ic_shopping_cart_black_24dp"
+        android:title="Create A Recipe "/>
+
+    <item android:id="@+id/a6"
+        android:icon="@mipmap/ic_cake_black_24dp"
+        android:title="Recipe Of The Day"/>
+
+    <item android:id="@+id/a3"
+        android:icon="@mipmap/ic_fingerprint_black_24dp"
+        android:title="Sing Up"/>
+    <item android:id="@+id/a4"
+    android:icon="@mipmap/ic_flight_takeoff_black_24dp"
+    android:title="Log in"/>
+    <item android:id="@+id/a5"
+        android:icon="@mipmap/ic_flight_land_black_24dp"
+        android:title="Log out"/>
+
+</menu>

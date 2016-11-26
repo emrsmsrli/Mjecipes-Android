@@ -20,17 +20,5 @@ public class CreateRecipe extends AppCompatActivity {
 
 
 
-        name=(EditText) findViewById(R.id.recipenamefield);
-        direction=(EditText) findViewById(R.id.directionfield);
-        description= (EditText) findViewById(R.id.descriptionfield);
-
-        createrecipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Recipe r=new Recipe();
-
-
-            }
-        });
     }
 }

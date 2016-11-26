@@ -15,6 +15,16 @@
     <!-- showrecipe strings -->
     <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
+    <string name="title_activity_recipe__tab__comments">Recipe_Tab_Comments</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_recipe_tab__comments">Recipe_tab_Comments</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 
     <!-- sharedprefs keys -->
     <string name="shared_preference_key">se.ju.student.android_mjecipes.SharedPreferences</string>

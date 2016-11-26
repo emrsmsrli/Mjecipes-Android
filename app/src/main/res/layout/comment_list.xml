@@ -1,11 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_marginBottom="10dp"
+    android:id="@+id/comment_list"
+    android:scrollbars="vertical"
+    android:orientation="vertical"
+
+    android:background="@color/colorAccent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/main_comment_id"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/main_comment_grade" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/main_comment_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/main_comment_commenter" />
+
+
+    <!--
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@id/activity_show_comment"
+           android:paddingTop="5dp"
+           android:paddingStart="10dp"
+           android:layout_alignParentRight="true"
+           android:id="@+id/main_comment_grade" />
+
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@id/activity_show_comment"
+           android:paddingTop="5dp"
+           android:paddingStart="20dp"
+           android:layout_alignParentRight="true"
+           android:id="@+id/main_comment_text" />
+
+
+        <ImageView
+           android:layout_width="match_parent"
+           android:layout_height="100dp"
+           android:id="@+id/main_recipe_image" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/main_recipe_image"
+               android:paddingTop="5dp"
+               android:paddingStart="10dp"
+               android:id="@+id/main_recipe_name" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/main_recipe_image"
+               android:paddingTop="5dp"
+               android:paddingEnd="10dp"
+               android:layout_alignParentRight="true"
+               android:id="@+id/main_recipe_date" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/main_recipe_image"
+               android:paddingTop="27dp"
+               android:paddingStart="10dp"
+               android:id="@+id/main_recipe_description" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/main_recipe_image"
+               android:paddingTop="47dp"
+               android:paddingStart="10dp"
+               android:id="@+id/main_recipe_creatorname" />
+
+       -->
+    </LinearLayout>
+
+        <!--
+        <?xml version="1.0" encoding="utf-8"?>
 
 
 
-<TextView
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:id="@+id/commentlist"
-android:layout_alignParentStart="true"
-android:layout_marginTop="28dp" />
+        <TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/commentlist"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="28dp" />
+        -->
