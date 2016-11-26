@@ -5,96 +5,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:id="@+id/activity_show_recipe_swipe"
     tools:context="se.ju.student.android_mjecipes.ShowRecipeActivity" >
 
-    <RelativeLayout
+    <!-- show comments -->
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_marginTop="100dp"
+        android:layout_height="200dp"
+        android:layout_width="match_parent" ><ScrollView
         android:id="@+id/activity_show_recipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin" >
+        android:fillViewport="true"
+        android:paddingTop="40dp"
+        android:clipToPadding="true"
+        android:animateLayoutChanges="true">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/show_recipe_id"
-            android:visibility="gone" />
-
-        <ScrollView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:paddingTop="40dp"
-            android:clipToPadding="true"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:id="@+id/show_recipe_main"
             android:animateLayoutChanges="true">
 
-            <LinearLayout
-                android:orientation="vertical"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/show_recipe_id"
+                android:visibility="gone" />
+
+            <ImageView
+                android:src="@drawable/norecipeimg"
                 android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/show_recipe_img"
+                android:adjustViewBounds="true"
+                android:layout_rowWeight="2"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:paddingTop="@dimen/show_recipe_margins"
+                android:paddingBottom="@dimen/show_recipe_margins"
+                android:layout_width="323dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/show_recipe_main"
-                android:animateLayoutChanges="true">
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:id="@+id/show_recipe_desc" />
 
-                <ImageView
-                    android:src="@drawable/norecipeimg"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:id="@+id/show_recipe_img"
-                    android:adjustViewBounds="true"
-                    android:layout_rowWeight="2"
-                    android:scaleType="centerCrop" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_recipe_directions"
+                android:id="@+id/show_recipe_t_directions"
+                android:textStyle="bold"/>
 
-                <TextView
-                    android:paddingTop="@dimen/show_recipe_margins"
-                    android:paddingBottom="@dimen/show_recipe_margins"
-                    android:layout_width="323dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:id="@+id/show_recipe_desc" />
+            <!-- for directions -->
+            <LinearLayout
+                android:paddingTop="@dimen/show_recipe_margins"
+                android:paddingStart="@dimen/show_recipe_margins"
+                android:paddingEnd="@dimen/show_recipe_margins"
+                android:paddingBottom="@dimen/show_recipe_margins"
+                android:orientation="vertical"
+                android:id="@+id/show_recipes_ll_directions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/show_recipe_directions"
-                    android:id="@+id/show_recipe_t_directions"
-                    android:textStyle="bold"/>
+    </ScrollView>
 
-                <!-- for directions -->
-                <LinearLayout
-                    android:paddingTop="@dimen/show_recipe_margins"
-                    android:paddingStart="@dimen/show_recipe_margins"
-                    android:paddingEnd="@dimen/show_recipe_margins"
-                    android:paddingBottom="@dimen/show_recipe_margins"
-                    android:orientation="vertical"
-                    android:id="@+id/show_recipes_ll_directions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <!-- show comments -->
-                <android.support.design.widget.CoordinatorLayout
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
-                    >
-                    <android.support.design.widget.FloatingActionButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="@dimen/fab_margin"
-                        app:backgroundTint="@color/colorPrimaryDark"
-                        android:src="@drawable/ic_action_compose2"
-                        android:id="@+id/writecomm"/>
-                </android.support.design.widget.CoordinatorLayout>
-
-            </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorPrimaryDark"
+            android:src="@drawable/ic_action_compose2"
+            android:id="@+id/writecomm"/>
+    </android.support.design.widget.CoordinatorLayout>
 
 
 
-        </ScrollView>
-
-
-
-
-    </RelativeLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
