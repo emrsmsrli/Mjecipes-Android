@@ -29,8 +29,6 @@ public class UserAgent {
     }
 
     public void login(final String userName, final String password, @NonNull final LoginListener listener) {
-        if(loggedIn) listener.onLogin(isLoggedIn());
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -48,15 +46,11 @@ public class UserAgent {
         }).run();
     }
 
-    public boolean logout() {
-        if(!loggedIn) return true;
-
+    public void logout() {
         userID = null;
         username = null;
         loggedIn = false;
         save();
-
-        return !isLoggedIn();
     }
 
     public static boolean isLoggedIn() {
