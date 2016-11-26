@@ -54,40 +54,10 @@ public class ShowCommentActivity extends AppCompatActivity {
 
                         ((TextView)v.findViewById(R.id.main_comment_text)).setText(comments[i].text);
                         ((TextView)v.findViewById(R.id.main_comment_commenter)).setText("Commenter= " +(CharSequence) comments[i].commenter.userName);
-
-
-                        v.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(getApplicationContext(),ShowSingleCommentActivity.class);
-                                i.putExtra("cid", ((TextView) v.findViewById(R.id.main_comment_id)).getText());
-                                i.putExtra("rid", rid);
-                                startActivity(i);
-                            }
-                        });
                     }
 
             }
         }.execute(1);
-
-
-        /*
-
-        r.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent c= new Intent(ShowCommentActivity.this,ShowSingleCommentActivity.class);
-                LinearLayout temp1=(LinearLayout)v;
-                TextView temp2= (TextView) temp1.getChildAt(0);
-                String temp3= (String) temp2.getText();
-                int temp4= Integer.parseInt(temp3);
-                c.putExtra("commentid",temp4);
-                startActivity(c);
-            }
-        });
-
-        */
-
     }
 }
 
