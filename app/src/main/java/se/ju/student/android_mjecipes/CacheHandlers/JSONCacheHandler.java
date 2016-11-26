@@ -83,6 +83,51 @@ public class JSONCacheHandler extends CacheHandler {
             writeComment((Comment) data);
     }
 
+    public synchronized void writeRecipePage(@NonNull final Recipe[] data, final int page) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files;
+                File f;
+                OutputStreamWriter osw = null;
+
+                files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith(String.format(Locale.ENGLISH, "%s-%s-%d", Recipe.class.getSimpleName(), "page", page));
+                    }
+                });
+
+                if(files.length != 0) {
+                    Log.w(TAG, "writeRecipePages: Cache already exists, type: " + Recipe.class.getSimpleName() + " page, name: " + files[0].getName(), null);
+                    return;
+                } else
+                    f = new File(cacheDir, String.format(Locale.ENGLISH, "%s-%s-%d-%d", Recipe.class.getSimpleName(), "page", page, unixTimeStamp()));
+
+                String dataObj = gson.toJson(data, Recipe[].class);
+
+                try {
+                    osw = new OutputStreamWriter(new FileOutputStream(f));
+                    osw.write(dataObj);
+                    osw.flush();
+
+                    Log.i(TAG, "writeRecipePages: File written to cache, type: " + Recipe.class.getSimpleName() + " page, name: " + f.getName());
+                } catch(FileNotFoundException e) {
+                    Log.e(TAG, "writeRecipePages: File not found", e);
+                } catch(IOException e) {
+                    Log.e(TAG, "writeRecipePages: IO Exception", e);
+                } finally {
+                    try {
+                        if (osw != null)
+                            osw.close();
+                    } catch(IOException e) {
+                        Log.e(TAG, "writeRecipePages: IO Exception", e);
+                    }
+                }
+            }
+        }).run();
+    }
+
     private void writeComment(final Comment c) {
         new Thread(new Runnable() {
             @Override
@@ -164,6 +209,44 @@ public class JSONCacheHandler extends CacheHandler {
                     bf.close();
             } catch (IOException e) {
                 Log.e(TAG, "readFromCache: IO Exception", e);
+            }
+        }
+
+        return data;
+    }
+
+    @Nullable
+    public synchronized Recipe[] readRecipePage(final int page) {
+        File[] files;
+        BufferedReader bf = null;
+
+        files = cacheDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.startsWith(String.format(Locale.ENGLISH, "%s-%s-%d", Recipe.class.getSimpleName(), "page", page));
+            }
+        });
+
+        if (files.length == 0) {
+            Log.w(TAG, "readRecipePage: Cache does not exist, type: " + Recipe.class.getSimpleName() + " page", null);
+            return null;
+        }
+
+        Recipe[] data = null;
+
+        try {
+            bf = new BufferedReader(new FileReader(files[0]));
+            data = gson.fromJson(bf.readLine(), Recipe[].class);
+
+            Log.i(TAG, "readRecipePage: File read from cache, type: " + Recipe.class.getSimpleName() + " page, name: " + files[0].getName());
+        } catch (IOException e) {
+            Log.e(TAG, "readRecipePage: IO Exception", e);
+        } finally {
+            try {
+                if (bf != null)
+                    bf.close();
+            } catch (IOException e) {
+                Log.e(TAG, "readRecipePage: IO Exception", e);
             }
         }
 
