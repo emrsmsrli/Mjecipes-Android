@@ -29,6 +29,9 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
 public class ShowRecipeActivity extends AppCompatActivity {
 
+
+    static String rID;
+
     private LinearLayout r;
     private TextView recipeidtv;
     FloatingActionButton floatingActionButton;
@@ -54,36 +57,30 @@ public class ShowRecipeActivity extends AppCompatActivity {
         }
         return true;
     }
-    /*
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
-    }
-*/
+
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_recipe);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         r = (LinearLayout) findViewById(R.id.show_recipe_main);
         recipeidtv = (TextView) findViewById(R.id.show_recipe_id);
-        //savedInstanceState.getInt()
-        ActionBar actionBar=getSupportActionBar();
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setIcon(R.mipmap.ic_forum_white_24dp);
 
 
-
-        floatingActionButton= (FloatingActionButton) findViewById(R.id.writecomm);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.writecomm);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(getApplicationContext(),ShowCommentActivity.class);
-                TextView t= (TextView) findViewById(R.id.show_recipe_id);
-                i.putExtra("resid",t.getText());
+                Intent i = new Intent(getApplicationContext(), ShowCommentActivity.class);
+
+                i.putExtra("resid", recipeidtv.getText());
                 startActivity(i);
             }
         });
@@ -101,37 +98,46 @@ public class ShowRecipeActivity extends AppCompatActivity {
                 }
             }).show();
         }*/
+        
 
-         final String rID = getIntent().getStringExtra("recipeId");
 
-        new AsyncTask<Integer,Void,Recipe>() {
-            @Override
-            protected Recipe doInBackground(Integer... p){
-                Recipe r = CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readFromCache(rID, Recipe.class);
 
-                if(r == null) {
-                    r = Handler.getRecipeHandler().getRecipe(Integer.parseInt(rID));
-                     CacheHandler.getJSONJsonCacheHandler(getBaseContext()).writeToCache(r, Recipe.class);
+
+            if(getIntent().hasExtra("recipeId"))
+                rID = getIntent().getStringExtra("recipeId");
+
+            new AsyncTask<Integer, Void, Recipe>() {
+                @Override
+                protected Recipe doInBackground(Integer... p) {
+                    Recipe r = CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readFromCache(rID, Recipe.class);
+
+                    if (r == null) {
+                        r = Handler.getRecipeHandler().getRecipe(Integer.parseInt(rID));
+                        CacheHandler.getJSONJsonCacheHandler(getBaseContext()).writeToCache(r, Recipe.class);
+                    }
+
+                    return r;
                 }
 
-                return r;
-            }
+                @Override
+                protected void onPostExecute(Recipe recipe) {
+                    setTitle(recipe.name);
+                    recipeidtv.setText(Integer.toString(recipe.id));
+                    ((TextView) r.findViewById(R.id.show_recipe_desc)).setText(recipe.description);
+                    for (Direction d : recipe.directions) {
+                        Button b = new Button(getBaseContext());
+                        b.setText(d.order + ": " + d.description);
+                        ((LinearLayout) r.findViewById(R.id.show_recipes_ll_directions)).addView(b);
+                    }
 
-            @Override
-            protected void onPostExecute(Recipe recipe) {
-                setTitle(recipe.name);
-                recipeidtv.setText(Integer.toString(recipe.id));
-                ((TextView)r.findViewById(R.id.show_recipe_desc)).setText(recipe.description);
-                for(Direction d: recipe.directions) {
-                    Button b = new Button(getBaseContext());
-                    b.setText(d.order + ": " + d.description);
-                    ((LinearLayout) r.findViewById(R.id.show_recipes_ll_directions)).addView(b);
+
                 }
+            }.execute(1);
 
 
-            }
-        }.execute(1);
 
     }
+
+
 
 }

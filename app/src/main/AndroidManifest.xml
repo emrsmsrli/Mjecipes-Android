@@ -33,17 +33,7 @@
             android:name=".LoginActivity"
             android:label="@string/app_login" />
         <activity android:name=".SignupActivity" />
-        <activity android:name=".ShowCommentActivity"
-            android:parentActivityName=".ShowRecipeActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".ShowRecipeActivity"
-
-            />
-        </activity>
         <activity android:name=".ShowRecipeActivity"
-
-            android:label="ShowRecipeActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -51,6 +41,14 @@
 
                 />
         </activity>
+        <activity android:name=".ShowCommentActivity"
+            android:parentActivityName=".ShowRecipeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                 android:value=".ShowRecipeActivity"
+                />
+        </activity>
+
         <activity android:name=".ShowSingleCommentActivity" />
         <activity android:name=".CreateRecipe" />
         <activity

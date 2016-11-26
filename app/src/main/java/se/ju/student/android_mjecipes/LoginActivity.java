@@ -1,6 +1,7 @@
 package se.ju.student.android_mjecipes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.support.design.widget.Snackbar;
+import android.widget.TextView;
+
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
+import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,7 +41,21 @@ public class LoginActivity extends AppCompatActivity {
         login_b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptLogin();
+
+                UserAgent.getInstance(getBaseContext()).login(email_t_view.getText().toString(), password_t_view.getText().toString(), new UserAgent.LoginListener() {
+                    @Override
+                    public void onLogin(boolean loggedIn) {
+                        if(loggedIn==true){
+                            Intent i=new Intent(getApplicationContext(),MainActivity.class);
+                            i.setAction("");
+                            startActivity(i);
+                        }
+                        else{
+                            email_t_view .setError("Password or Username wrong!");
+                            email_t_view .requestFocus();
+                        }
+                    }
+                });
             }
         });
 
@@ -53,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
     private void attemptLogin() {
         password_t_view.setError(null);
         email_t_view.setError(null);
@@ -108,6 +127,8 @@ public class LoginActivity extends AppCompatActivity {
 
         return true;
     }
+
+    */
 
     private void login(String email, String password) {
         new AsyncTask<Void, Void, Boolean>() {

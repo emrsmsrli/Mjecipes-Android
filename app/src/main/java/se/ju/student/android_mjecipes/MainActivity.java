@@ -143,9 +143,9 @@ public static String a;
         });
 
 
-        final Intent[] i = {getIntent()};
+        final Intent i = getIntent();
 
-        if(i[0].getAction().equals(Intent.ACTION_SEARCH)) {
+        if(i.getAction().equals(Intent.ACTION_SEARCH)) {
             //search with i.getStringExtra(SearchManager.QUERY);
         }
 
