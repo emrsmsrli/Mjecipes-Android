@@ -59,7 +59,7 @@ public class UserAgent {
         save();
     }
 
-    public static boolean isLoggedIn() {
+    public boolean isLoggedIn() {
         return loggedIn;
     }
 
@@ -79,11 +79,11 @@ public class UserAgent {
         username = sharedPreferences.getString(resources.getString(R.string.shared_preference_username_key), null);
     }
 
-    public static String getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
