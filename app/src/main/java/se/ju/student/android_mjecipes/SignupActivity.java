@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Account;
+import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -44,14 +45,6 @@ public class SignupActivity extends AppCompatActivity {
                         a.latitude=Double.parseDouble(latitude.getText().toString());
                         a.longitude=Double.parseDouble(longitude.getText().toString());
                         a.password=hiddenpassword.getText().toString();
-
-
-                Handler.getAccountHandler().postAccount(a);
-
-
-                tvResults.setText(username.getText().toString()+" "+hiddenpassword.getText().toString()+""+Double.parseDouble(latitude.getText().toString())+" "+Double.parseDouble(longitude.getText().toString()));
-
-
 
 
             }

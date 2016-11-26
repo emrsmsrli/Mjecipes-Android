@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/myaccount"
+    <item android:id="@+id/myaccount_login"
         android:icon="@mipmap/ic_face_black_24dp"
         android:title="My Account"/>
-    <item android:id="@+id/myrecipes"
+    <item android:id="@+id/myrecipes_login"
         android:icon="@mipmap/ic_store_black_24dp"
         android:title="My Recipes"/>
 
-    <item android:id="@+id/createarecipe"
+    <item android:id="@+id/createarecipe_login"
         android:icon="@mipmap/ic_shopping_cart_black_24dp"
         android:title="Create A Recipe "/>
 
-    <item android:id="@+id/recipeofday"
+    <item android:id="@+id/recipeofday_login"
         android:icon="@mipmap/ic_cake_black_24dp"
         android:title="Recipe Of The Day"/>
 
-    <item android:id="@+id/signup"
-        android:icon="@mipmap/ic_fingerprint_black_24dp"
-        android:title="Sing Up"/>
-    <item android:id="@+id/login"
-    android:icon="@mipmap/ic_flight_takeoff_black_24dp"
-    android:title="Log in"/>
-
+    <item android:id="@+id/logout_login"
+        android:icon="@mipmap/ic_flight_land_black_24dp"
+        android:title="Log out"/>
 
 </menu>
