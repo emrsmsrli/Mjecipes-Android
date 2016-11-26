@@ -3,6 +3,7 @@ package se.ju.student.android_mjecipes.UserAgent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
@@ -25,7 +26,7 @@ public class UserAgent {
     public boolean login(final String userName, final String password) {
         if(loggedIn) return true;
 
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 JWToken token = Handler.getTokenHandler().getToken(userName, password);
@@ -38,7 +39,14 @@ public class UserAgent {
 
                 save();
             }
-        }).run();
+        });
+
+        try {
+            t.start();
+            t.join();
+        } catch(InterruptedException e) {
+            return false;
+        }
 
         return isLoggedIn();
     }
