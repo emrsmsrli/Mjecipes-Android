@@ -53,7 +53,8 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
         activityLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actionMode.finish();
+                if(actionMode != null)
+                    actionMode.finish();
             }
         });
 
