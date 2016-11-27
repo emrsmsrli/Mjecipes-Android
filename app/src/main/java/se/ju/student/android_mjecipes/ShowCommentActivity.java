@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,7 +33,7 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 
-public class ShowCommentActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ShowCommentActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, CreateCommentFragment.OnCommentPostedListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout activityLayout;
@@ -39,6 +41,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
     private boolean imgloaded = false;
     private String recipeIDExtra;
     private ActionMode actionMode;
+    private CreateCommentFragment fragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -208,10 +211,17 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                                             }.execute();
                                             break;
                                         case R.id.edit_comment:
-                                            //TODO
+                                            FragmentManager fm = getSupportFragmentManager();
+                                            fm.beginTransaction()
+                                                    .add(R.id.create_comment_fragment_holder,
+                                                    CreateCommentFragment.newInstance(((TextView) v.findViewById(R.id.main_comment_text)).getText().toString(),
+                                                            (int)((RatingBar) v.findViewById(R.id.main_comment_grade)).getRating(),
+                                                            Integer.parseInt(((TextView) v.findViewById(R.id.main_comment_id)).getText().toString())), "CreateComment")
+                                                    .addToBackStack("CreateComment")
+                                                    .commit();
                                             break;
                                         case R.id.upload_image_comment:
-                                            //TODO
+                                            //TODO comment image upload
                                             break;
                                         default:
                                             return false;
@@ -235,6 +245,14 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
         }.execute(recipeIDExtra);
     }
 
+    @Override
+    public void onCommentPosted(boolean posted) {
+        if(posted) {
+            Snackbar.make(activityLayout, "Comment edited", Snackbar.LENGTH_SHORT).show();
+            onRefresh();
+        } else
+            Snackbar.make(activityLayout, "Comment not edited", Snackbar.LENGTH_SHORT).show();
+    }
 }
 
 

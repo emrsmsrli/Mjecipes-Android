@@ -36,4 +36,12 @@
     <string name="shared_preference_userid_key">se.ju.student.android_mjecipes.SharedPreferences.UserID</string>
     <string name="shared_preference_password_key">se.ju.student.android_mjecipes.SharedPreferences.Password</string>
 
+    <!-- createcommentfragment strings -->
+    <string name="create_comment_text">Comment</string>
+    <string name="create_comment_text_hint">Enter comment</string>
+    <string name="create_comment_grade">Grade</string>
+    <string name="create_comment_upload_image">Upload an image</string>
+    <string name="create_comment_upload_image_button">Pick image</string>
+    <string name="create_comment_post_button">Post</string>
+
 </resources>

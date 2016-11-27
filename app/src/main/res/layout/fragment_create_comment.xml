@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/c_comment_w"
+    android:layout_height="@dimen/c_comment_h"
+    android:padding="@dimen/c_comment_mini"
+    android:background="#269"
+    android:id="@+id/create_comment_fragment"
+    tools:context="se.ju.student.android_mjecipes.CreateCommentFragment">
+
+    <Button
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:id="@+id/create_comment_close"
+        android:background="@android:drawable/ic_menu_close_clear_cancel"
+        android:textColor="#ddd"
+        android:layout_gravity="top|end"
+        android:layout_width="@dimen/c_comment_big"
+        android:layout_height="@dimen/c_comment_big" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:text="@string/create_comment_text" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/c_comment_text_size"
+        android:layout_gravity="top|start"
+        android:lines="10"
+        android:layout_marginTop="@dimen/c_comment_mini"
+        android:id="@+id/create_comment_text"
+        android:hint="@string/create_comment_text_hint" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center"
+        android:layout_marginTop="@dimen/c_comment_default"
+        android:text="@string/create_comment_grade"/>
+
+    <RatingBar
+        style="?android:attr/ratingBarStyleSmall"
+        android:theme="@style/RatingBarStyle"
+        android:numStars="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/c_comment_default"
+        android:layout_gravity="center"
+        android:stepSize="1"
+        android:id="@+id/create_comment_grade"
+        android:isIndicator="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_comment_post_button"
+        android:layout_gravity="bottom|end"
+        android:text="@string/create_comment_post_button"/>
+
+</FrameLayout>
