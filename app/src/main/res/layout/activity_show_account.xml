@@ -80,10 +80,20 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_delete_black_24dp"
+        android:layout_marginEnd="7dp"
+        android:id="@+id/deleteaccount"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/editaccount" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_create_black_24dp"
-        android:layout_toStartOf="@+id/imageButton"
         android:id="@+id/editaccount"
-        android:layout_alignBottom="@+id/imageButton" />
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/imageButton"
+        android:layout_marginEnd="8dp" />
 
 
 </RelativeLayout>
