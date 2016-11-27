@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.UserHandle;
 import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -186,13 +187,6 @@ public static String a;
                             @Override
                             public void onClick(View v) {
 
-                    /*
-                            String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
-                            SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
-                            SharedPreferences.Editor editor=sharedPreferences.edit();
-                            editor.putString("recid",data);
-                            editor.commit();
-                     */
                                 Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
                                 i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                                 startActivity(i);
@@ -200,25 +194,6 @@ public static String a;
                         });
                     }
 
-                    //recipeList.setAdapter(new ArrayAdapter<>(getBaseContext(), R.layout.main_recipe_layout, recipes));
-                    //recipeList.addView(new Button(getBaseContext()));
-
-                /*for(int x = 0; x < recipes.length; ++x) {
-                    final View recipe = recipeList.getChildAt(x);
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_name)).setText(recipes[x].name);
-
-                    if(recipes[x].image != null) {
-                        CacheHandler.getImageCacheHandler(getBaseContext()).addRequest(new ImageRequest(recipes[x].image, new Response.Listener<Bitmap>() {
-                            @Override
-                            public void onResponse(Bitmap response) {
-                                ((ImageView) recipe.findViewById(R.id.main_recipe_image)).setImageBitmap(response);
-                            }
-                        }, 200, 100, null, null, null));
-                    }
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_date)).setText(new Date(recipes[x].created * 1000).toString());
-                }*/
                 }
             }.execute();
 
@@ -231,6 +206,7 @@ public static String a;
 
             setContentView(R.layout.activity_main_login);
 
+            final Intent i=getIntent();
 
             drawerLayout = (DrawerLayout) findViewById(R.id.drawer_login);
             Toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
@@ -254,12 +230,13 @@ public static String a;
 
                         case R.id.myrecipes_login:
                             Intent i2 = new Intent(MainActivity.this, LoginActivity.class);
+                            i2.setAction("myrecipes");
                             startActivity(i2);
                             drawerLayout.closeDrawers();
                             break;
 
                         case R.id.createarecipe_login:
-                            Intent i3 = new Intent(getApplicationContext(), LoginActivity.class);
+                            Intent i3 = new Intent(getApplicationContext(), CreateRecipe.class);
                             startActivity(i3);
                             drawerLayout.closeDrawers();
                             break;
@@ -272,7 +249,7 @@ public static String a;
 
                         case R.id.logout_login:
                             UserAgent.getInstance(getBaseContext()).logout();
-                            Intent i6 = new Intent(MainActivity.this, LoginActivity.class);
+                            Intent i6 = new Intent(MainActivity.this, MainActivity.class);
                             startActivity(i6);
                             drawerLayout.closeDrawers();
                             break;
@@ -286,11 +263,12 @@ public static String a;
             });
 
 
-            final Intent i = getIntent();
+
 
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
             }
+
 
             new AsyncTask<Void, Void, Recipe[]>() {
                 @Override
@@ -327,13 +305,6 @@ public static String a;
                             @Override
                             public void onClick(View v) {
 
-                    /*
-                            String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
-                            SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
-                            SharedPreferences.Editor editor=sharedPreferences.edit();
-                            editor.putString("recid",data);
-                            editor.commit();
-                     */
                                 Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
                                 i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                                 startActivity(i);
@@ -341,27 +312,9 @@ public static String a;
                         });
                     }
 
-                    //recipeList.setAdapter(new ArrayAdapter<>(getBaseContext(), R.layout.main_recipe_layout, recipes));
-                    //recipeList.addView(new Button(getBaseContext()));
-
-                /*for(int x = 0; x < recipes.length; ++x) {
-                    final View recipe = recipeList.getChildAt(x);
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_name)).setText(recipes[x].name);
-
-                    if(recipes[x].image != null) {
-                        CacheHandler.getImageCacheHandler(getBaseContext()).addRequest(new ImageRequest(recipes[x].image, new Response.Listener<Bitmap>() {
-                            @Override
-                            public void onResponse(Bitmap response) {
-                                ((ImageView) recipe.findViewById(R.id.main_recipe_image)).setImageBitmap(response);
-                            }
-                        }, 200, 100, null, null, null));
-                    }
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_date)).setText(new Date(recipes[x].created * 1000).toString());
-                }*/
                 }
             }.execute();
+
 
 
         }
@@ -493,26 +446,6 @@ public static String a;
                             }
                         });
                     }
-
-                    //recipeList.setAdapter(new ArrayAdapter<>(getBaseContext(), R.layout.main_recipe_layout, recipes));
-                    //recipeList.addView(new Button(getBaseContext()));
-
-                /*for(int x = 0; x < recipes.length; ++x) {
-                    final View recipe = recipeList.getChildAt(x);
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_name)).setText(recipes[x].name);
-
-                    if(recipes[x].image != null) {
-                        CacheHandler.getImageCacheHandler(getBaseContext()).addRequest(new ImageRequest(recipes[x].image, new Response.Listener<Bitmap>() {
-                            @Override
-                            public void onResponse(Bitmap response) {
-                                ((ImageView) recipe.findViewById(R.id.main_recipe_image)).setImageBitmap(response);
-                            }
-                        }, 200, 100, null, null, null));
-                    }
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_date)).setText(new Date(recipes[x].created * 1000).toString());
-                }*/
                 }
             }.execute();
 
@@ -525,13 +458,12 @@ public static String a;
 
             setContentView(R.layout.activity_main_login);
 
-
             drawerLayout = (DrawerLayout) findViewById(R.id.drawer_login);
             Toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
 
             drawerLayout.addDrawerListener(Toggle);
             Toggle.syncState();
-
+            final Intent i=getIntent();
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             navigationView = (NavigationView) findViewById(R.id.navigation_view_login);
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -547,13 +479,13 @@ public static String a;
                             break;
 
                         case R.id.myrecipes_login:
-                            Intent i2 = new Intent(MainActivity.this, LoginActivity.class);
+                            Intent i2 = new Intent(MainActivity.this, ShowRecipeActivity.class);
                             startActivity(i2);
                             drawerLayout.closeDrawers();
                             break;
 
                         case R.id.createarecipe_login:
-                            Intent i3 = new Intent(getApplicationContext(), LoginActivity.class);
+                            Intent i3 = new Intent(getApplicationContext(), CreateRecipe.class);
                             startActivity(i3);
                             drawerLayout.closeDrawers();
                             break;
@@ -566,11 +498,10 @@ public static String a;
 
                         case R.id.logout_login:
                             UserAgent.getInstance(getBaseContext()).logout();
-                            Intent i6 = new Intent(MainActivity.this, LoginActivity.class);
+                            Intent i6 = new Intent(MainActivity.this, MainActivity.class);
                             startActivity(i6);
                             drawerLayout.closeDrawers();
                             break;
-
 
 
                     }
@@ -580,82 +511,61 @@ public static String a;
             });
 
 
-            final Intent i = getIntent();
+
 
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
             }
 
-            new AsyncTask<Void, Void, Recipe[]>() {
-                @Override
-                protected Recipe[] doInBackground(Void... p) {
-                    return Handler.getRecipeHandler().getRecipeByPage(1);
-                }
 
-                @Override
-                protected void onPostExecute(Recipe[] recipes) {
 
-                    LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                new AsyncTask<Void, Void, Recipe[]>() {
+                    @Override
+                    protected Recipe[] doInBackground(Void... p) {
+                        return Handler.getRecipeHandler().getRecipeByPage(1);
+                    }
 
-                    for (int i = 0; i < recipes.length; ++i) {
-                        inf.inflate(R.layout.main_recipe_layout, (LinearLayout) findViewById(R.id.activity_main_login));
-                        final View vv = ((LinearLayout) findViewById(R.id.activity_main_login)).getChildAt(i);
-                        ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
-                        ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= " + recipes[i].name);
-                        ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
-                        ((TextView) vv.findViewById(R.id.main_recipe_description)).setText("Description= " + recipes[i].description);
-                        ((TextView) vv.findViewById(R.id.main_recipe_creatorname)).setText("Creator= " + recipes[i].creator.userName);
-                        if (recipes[i].image != null) {
-                            final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
-                            CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
+                    @Override
+                    protected void onPostExecute(Recipe[] recipes) {
+
+                        LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                        for (int i = 0; i < recipes.length; ++i) {
+                            inf.inflate(R.layout.main_recipe_layout, (LinearLayout) findViewById(R.id.activity_main_login));
+                            final View vv = ((LinearLayout) findViewById(R.id.activity_main_login)).getChildAt(i);
+                            ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
+                            ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= " + recipes[i].name);
+                            ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
+                            ((TextView) vv.findViewById(R.id.main_recipe_description)).setText("Description= " + recipes[i].description);
+                            ((TextView) vv.findViewById(R.id.main_recipe_creatorname)).setText("Creator= " + recipes[i].creator.userName);
+                            if (recipes[i].image != null) {
+                                final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
+                                CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
+                                    @Override
+                                    public void onResponse(Bitmap response) {
+                                        iv.setImageBitmap(response);
+                                        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                    }
+                                }, iv.getWidth(), iv.getHeight(), null, null, null));
+                            }
+
+                            vv.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onResponse(Bitmap response) {
-                                    iv.setImageBitmap(response);
-                                    iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                public void onClick(View v) {
+
+                                    Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
+                                    i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
+                                    startActivity(i);
                                 }
-                            }, iv.getWidth(), iv.getHeight(), null, null, null));
+                            });
                         }
 
-                        vv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                    /*
-                            String data=((TextView) vv.findViewById(R.id.main_recipe_id)).getText().toString();
-                            SharedPreferences sharedPreferences=getSharedPreferences("mydata",0);
-                            SharedPreferences.Editor editor=sharedPreferences.edit();
-                            editor.putString("recid",data);
-                            editor.commit();
-                     */
-                                Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
-                                i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
-                                startActivity(i);
-                            }
-                        });
                     }
+                }.execute();
 
-                    //recipeList.setAdapter(new ArrayAdapter<>(getBaseContext(), R.layout.main_recipe_layout, recipes));
-                    //recipeList.addView(new Button(getBaseContext()));
 
-                /*for(int x = 0; x < recipes.length; ++x) {
-                    final View recipe = recipeList.getChildAt(x);
 
-                    ((TextView)recipe.findViewById(R.id.main_recipe_name)).setText(recipes[x].name);
-
-                    if(recipes[x].image != null) {
-                        CacheHandler.getImageCacheHandler(getBaseContext()).addRequest(new ImageRequest(recipes[x].image, new Response.Listener<Bitmap>() {
-                            @Override
-                            public void onResponse(Bitmap response) {
-                                ((ImageView) recipe.findViewById(R.id.main_recipe_image)).setImageBitmap(response);
-                            }
-                        }, 200, 100, null, null, null));
-                    }
-
-                    ((TextView)recipe.findViewById(R.id.main_recipe_date)).setText(new Date(recipes[x].created * 1000).toString());
-                }*/
-                }
-            }.execute();
 
 
         }
