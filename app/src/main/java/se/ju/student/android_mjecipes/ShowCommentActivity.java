@@ -1,15 +1,19 @@
 package se.ju.student.android_mjecipes;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -32,7 +36,11 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
@@ -237,10 +245,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                                             break;
                                         case R.id.upload_image_comment:
                                             commentIdforImage = Integer.parseInt(((TextView) v.findViewById(R.id.main_comment_id)).getText().toString());
-                                            Intent i = new Intent();
-                                            i.setAction(Intent.ACTION_PICK);
-                                            i.setType("image/*");
-                                            startActivityForResult(i, IMAGE_REQUEST_CODE);
+                                            openImageIntent();
                                             break;
                                         default:
                                             return false;
@@ -264,6 +269,90 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
         }.execute(recipeIDExtra);
     }
 
+    private Uri outputFileUri;
+
+    private void openImageIntent() {
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "MjecipesImages" + File.separator);
+        root.mkdirs();
+        final String fname = UUID.randomUUID().toString();
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        // Camera.
+        final List<Intent> cameraIntents = new ArrayList<>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // Chooser of filesystem options.
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+        startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == IMAGE_REQUEST_CODE) {
+                final boolean isCamera;
+                if (data == null) {
+                    isCamera = true;
+                } else {
+                    final String action = data.getAction();
+                    isCamera = action != null && action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                }
+
+                Uri selectedImageUri;
+                if (isCamera) {
+                    selectedImageUri = outputFileUri;
+                } else {
+                    selectedImageUri = data == null ? null : data.getData();
+                }
+
+                new AsyncTask<String, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(String... params) {
+                        JWToken token = Handler.getTokenHandler().getToken(
+                                UserAgent.getInstance(getBaseContext()).getUsername(),
+                                UserAgent.getInstance(getBaseContext()).getPassword()
+                        );
+
+                        return token != null && Handler.getCommentHandler().postImage(commentIdforImage, params[0], token);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean result) {
+                        super.onPostExecute(result);
+
+                        if(result) {
+                            Snackbar.make(activityLayout, "Image posted", Snackbar.LENGTH_SHORT).show();
+                            onRefresh();
+                        } else
+                            Snackbar.make(activityLayout, "Image not posted", Snackbar.LENGTH_SHORT).show();
+
+                        commentIdforImage = -1;
+                    }
+                }.execute(getRealPathFromURI(selectedImageUri));
+            }
+        }
+    }
+
     @Override
     public void onCommentPosted(boolean posted) {
         if(posted) {
@@ -273,7 +362,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
             Snackbar.make(activityLayout, "Comment not edited", Snackbar.LENGTH_SHORT).show();
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -306,7 +395,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                     }.execute(getRealPathFromURI(data.getData()));
                     break;
         }
-    }
+    }*/
 
     private String getRealPathFromURI(Uri contentURI) {
         String result;
