@@ -1,10 +1,15 @@
 package se.ju.student.android_mjecipes;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,7 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class CreateCommentFragment extends Fragment implements View.OnClickListener {
+    private static final int IMAGE_REQUEST_CODE = 1;
     private static final String ARG_TEXT = "text";
     private static final String ARG_RATING = "rating";
     private static final String ARG_ID = "id";
@@ -29,6 +35,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
     private EditText textField;
     private RatingBar gradeBar;
+    private String imageDir = null;
 
     private OnCommentPostedListener mListener;
 
@@ -68,6 +75,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
         gradeBar = (RatingBar) view.findViewById(R.id.create_comment_grade);
         Button postButton = (Button) view.findViewById(R.id.create_comment_post_button);
         Button close = (Button) view.findViewById(R.id.create_comment_close);
+        Button uploadImage = (Button)  view.findViewById(R.id.create_comment_upload_button);
 
         textField.setText(text);
         gradeBar.setRating(rating);
@@ -79,8 +87,51 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
             }
         });
 
+        if(TextUtils.isEmpty(textField.getText())) {
+            uploadImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // FIXME: 28/11/2016 add camera request
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_PICK);
+                    i.setType("image/*");
+                    startActivityForResult(i, IMAGE_REQUEST_CODE);
+                }
+            });
+        } else {
+            uploadImage.setClickable(false);
+            uploadImage.setVisibility(View.INVISIBLE);
+        }
+
         postButton.setOnClickListener(this);
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case IMAGE_REQUEST_CODE:
+                if(resultCode == MainActivity.RESULT_OK) {
+                    imageDir = getRealPathFromURI(data.getData());
+                }
+        }
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+
+        Cursor cursor = getActivity().getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) {
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
     }
 
     @Override
@@ -98,13 +149,23 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                         UserAgent.getInstance(getActivity()).getPassword()
                 );
 
-                return token != null && Handler.getCommentHandler().patchComment(params[0], token);
+                if(token != null) {
+                    if(imageDir != null)
+                        Handler.getCommentHandler().postImage(id, imageDir, token);
+                    return Handler.getCommentHandler().patchComment(params[0], token);
+                }
+
+                return false;
             }
 
             @Override
             protected void onPostExecute(Boolean result) {
-                if(result)
+                if(result) {
                     CacheHandler.getJSONJsonCacheHandler(getActivity()).clearSingleJSONCache(Integer.toString(id), Comment.class);
+                    if (imageDir != null)
+                        CacheHandler.getImageCacheHandler(getActivity()).clearSingleImageCache(imageDir);
+                }
+
                 if(mListener != null)
                     mListener.onCommentPosted(result);
                 getActivity().getSupportFragmentManager().popBackStack();
