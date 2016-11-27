@@ -146,11 +146,12 @@ public static String a;
 
 
             final Intent i = getIntent();
-
+/*
 
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
             }
+            */
 
             new AsyncTask<Void, Void, Recipe[]>() {
                 @Override
@@ -222,8 +223,8 @@ public static String a;
                     switch (item.getItemId()) {
 
                         case R.id.myaccount_login:
-                            Intent i1 = new Intent(MainActivity.this, LoginActivity.class);
-
+                            Intent i1 = new Intent(MainActivity.this, ShowAccount.class);
+                            i1.setAction(Intent.ACTION_USER_PRESENT);
                             startActivity(i1);
                             drawerLayout.closeDrawers();
                             break;
@@ -264,11 +265,11 @@ public static String a;
 
 
 
-
+            /*
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
             }
-
+*/
 
             new AsyncTask<Void, Void, Recipe[]>() {
                 @Override
@@ -393,10 +394,10 @@ public static String a;
 
             final Intent i = getIntent();
 
-
+            /*
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
-            }
+            }*/
 
             new AsyncTask<Void, Void, Recipe[]>() {
                 @Override
@@ -472,8 +473,8 @@ public static String a;
                     switch (item.getItemId()) {
 
                         case R.id.myaccount_login:
-                            Intent i1 = new Intent(MainActivity.this, LoginActivity.class);
-
+                            Intent i1 = new Intent(MainActivity.this, ShowAccount.class);
+                            i1.setAction(Intent.ACTION_USER_PRESENT);
                             startActivity(i1);
                             drawerLayout.closeDrawers();
                             break;
@@ -511,13 +512,13 @@ public static String a;
             });
 
 
-
+/*
 
             if (i.getAction().equals(Intent.ACTION_SEARCH)) {
                 //search with i.getStringExtra(SearchManager.QUERY);
             }
 
-
+*/
 
                 new AsyncTask<Void, Void, Recipe[]>() {
                     @Override
