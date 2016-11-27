@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#4571b8</color>
     <color name="background_recipes">#00aaff</color>
+    <color name="comment_action_mode_enabled_background">#ff0066cc</color>
 </resources>
