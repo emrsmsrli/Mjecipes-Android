@@ -302,8 +302,8 @@ public class JSONCacheHandler extends CacheHandler {
                 });
 
                 for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+                    if(f.delete()) Log.i(TAG, "clearSingleJSONCache: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearSingleJSONCache: Cache file not deleted, name " + f.getName());
             }
         }).run();
     }
@@ -321,8 +321,8 @@ public class JSONCacheHandler extends CacheHandler {
                 });
 
                 for(File f: files)
-                    if(f.delete()) Log.i(TAG, "clearAllCaches: Cache file deleted, name: " + f.getName());
-                    else           Log.i(TAG, "clearAllCaches: Cache file not deleted, name " + f.getName());
+                    if(f.delete()) Log.i(TAG, "clearAllJSONCachesOfType: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearAllJSONCachesOfType: Cache file not deleted, name " + f.getName());
             }
         }).run();
     }
