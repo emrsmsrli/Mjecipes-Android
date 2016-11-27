@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:id="@+id/comment_list"
+    android:layout_marginBottom="@dimen/comment_entry_default"
+    android:background="@drawable/comment_entry_background">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/main_comment_id"
+        android:visibility="gone" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@drawable/norecipeimg"
+        android:scaleType="centerCrop"
+        android:layout_height="@dimen/image_height"
+        android:id="@+id/main_comment_image" />
+
+    <RatingBar
+        style="?android:attr/ratingBarStyleSmall"
+        android:theme="@style/RatingBarStyle"
+        android:rating="3"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_comment_image"
+        android:paddingTop="@dimen/comment_entry_default"
+        android:paddingBottom="@dimen/comment_entry_default"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/main_comment_grade" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/comment_entry_mini"
+        android:layout_below="@id/main_comment_grade"
+        android:text="@string/show_comment_text_placeholder"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:id="@+id/main_comment_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_comment_text"
+        android:text="@string/show_comment_commenter_placeholder"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/comment_entry_default"
+        android:layout_marginBottom="@dimen/comment_entry_default"
+        android:textColor="@android:color/white"
+        android:id="@+id/main_comment_commenter" />
+</RelativeLayout>

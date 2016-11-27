@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO add drawable -->
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/delete_comment"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/show_recipe_action_menu_delete_comment" />
+    <item android:id="@+id/edit_comment"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="@string/show_recipe_action_menu_edit_comment" />
+    <item android:id="@+id/upload_image_comment"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:icon="@drawable/ic_image_white_24dp"
+        android:title="@string/show_recipe_action_menu_upload_image" />
+</menu>
