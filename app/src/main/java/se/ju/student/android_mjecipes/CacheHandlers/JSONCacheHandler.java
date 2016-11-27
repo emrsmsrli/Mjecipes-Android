@@ -141,8 +141,8 @@ public class JSONCacheHandler extends CacheHandler {
                     public boolean accept(File dir, String filename) {
                         return filename.startsWith(String.format("%s-%s-%s-",
                                 Comment.class.getSimpleName(),
-                                c.commenter == null ? c.commenterId : c.commenter.id,
-                                getID(c, Comment.class)));
+                                getID(c, Comment.class),
+                                c.commenter == null ? c.commenterId : c.commenter.id));
                     }
                 });
 
@@ -278,7 +278,7 @@ public class JSONCacheHandler extends CacheHandler {
                 bf = new BufferedReader(new FileReader(files[i]));
                 data[i] = gson.fromJson(bf.readLine(), Comment.class);
 
-                Log.i(TAG, "readCommentsOfRecipe: File read from cache, type: " + Comment.class.getSimpleName() + ", name: " + files[0].getName());
+                Log.i(TAG, "readCommentsOfRecipe: File read from cache, type: " + Comment.class.getSimpleName() + ", name: " + files[i].getName());
                 bf.close();
             }
         } catch (IOException e) {
