@@ -21,7 +21,10 @@
         <item name="android:textColorPrimary">#00F</item>
         <item name="android:background">#ffff6cef</item>
     </style>
-
-    <style name="PopupTheme"></style>
+    
+    <style name="RatingBarStyle" parent="Theme.AppCompat">
+        <item name="android:colorControlNormal">#fff</item>
+        <item name="android:colorControlActivated">#8dd</item>
+    </style>
 
 </resources>
