@@ -22,16 +22,9 @@ import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class ShowAccount extends AppCompatActivity {
 
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Intent i=this.getIntent();
-        String action= i.getAction();
-        if(action==Intent.ACTION_USER_PRESENT) {
-
-            final TextView username,latitude,longitude;
-            ImageButton showrecipesbutton,editaccountbutton;
+    void showaccount(){
+        final TextView username,latitude,longitude;
+        ImageButton showrecipesbutton,editaccountbutton;
 
         setContentView(R.layout.activity_show_account);
 
@@ -92,81 +85,97 @@ public class ShowAccount extends AppCompatActivity {
 
     }
 
-    else if(action==Intent.ACTION_EDIT){
 
-            setContentView(R.layout.edit_account);
+    void editaccount(){
+        setContentView(R.layout.edit_account);
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            final EditText longitude,latitude;
-            final RelativeLayout l= (RelativeLayout) findViewById(R.id.editaccount);
+        final EditText longitude,latitude;
+        final RelativeLayout l= (RelativeLayout) findViewById(R.id.editaccount);
 
-            longitude=(EditText)findViewById(R.id.showlongitude_edit);
-            latitude=(EditText )findViewById(R.id.showlatitude_edit);
-
-
-            final Button b;
-
-            b=(Button) findViewById(R.id.buttonsave);
-
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        longitude=(EditText)findViewById(R.id.showlongitude_edit);
+        latitude=(EditText )findViewById(R.id.showlatitude_edit);
 
 
+        final Button b;
 
-            final Account a=new Account();
+        b=(Button) findViewById(R.id.buttonsave);
 
-            if(longitude!=null)
-                a.longitude=Double.parseDouble(longitude.getText().toString());
-            if(latitude!=null)
-                a.latitude=Double.parseDouble(latitude.getText().toString());
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            new AsyncTask<Void,Void,Boolean>(){
-                @Override
-                protected Boolean doInBackground(Void... params) {
 
-                    String userid=UserAgent.getInstance(getBaseContext()).getUserID();
-                    JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
-                            UserAgent.getInstance(getBaseContext()).getPassword());
-                    Boolean b=Handler.getAccountHandler().patchAccount(userid,a,token);
-                    return b;
-                }
 
-                @Override
-                protected void onPostExecute(Boolean aBoolean) {
-                    final Boolean check=aBoolean;
-                    if(aBoolean==true) {
-                        Snackbar.make(l, "Account updated", Snackbar.LENGTH_SHORT).show();
+                final Account a=new Account();
 
-                    }
-                    else{
-                        Errors e = Handler.getRecipeHandler().getErrors();
-                       latitude.setError("Error");
+                if(longitude!=null)
+                    a.longitude=Double.parseDouble(longitude.getText().toString());
+                if(latitude!=null)
+                    a.latitude=Double.parseDouble(latitude.getText().toString());
+
+                new AsyncTask<Void,Void,Boolean>(){
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+
+                        String userid=UserAgent.getInstance(getBaseContext()).getUserID();
+                        JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
+                                UserAgent.getInstance(getBaseContext()).getPassword());
+                        Boolean b=Handler.getAccountHandler().patchAccount(userid,a,token);
+                        return b;
                     }
 
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        final Boolean check=aBoolean;
+                        if(aBoolean==true) {
+                            Snackbar.make(l, "Account updated", Snackbar.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            Errors e = Handler.getRecipeHandler().getErrors();
+                            latitude.setError("Error");
+                        }
 
 
 
 
 
-                }
-            }.execute();
+
+                    }
+                }.execute();
 
 
-                        Intent i = new Intent(getBaseContext(), ShowAccount.class);
-                        i.setAction(Intent.ACTION_USER_PRESENT);
-                        startActivity(i);
+                Intent i = new Intent(getBaseContext(), ShowAccount.class);
+                i.setAction(Intent.ACTION_USER_PRESENT);
+                startActivity(i);
 
 
 
 
 
 
-                }
-            });
+            }
+        });
 
 
+
+    }
+
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Intent i=this.getIntent();
+        String action= i.getAction();
+        if(action==Intent.ACTION_USER_PRESENT)
+            showaccount();
+
+
+
+        else if(action==Intent.ACTION_EDIT){
+
+           editaccount();
 
 
         }
