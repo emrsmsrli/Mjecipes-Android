@@ -74,7 +74,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setIcon(R.drawable.ic_forum_white_24dp);
+        actionBar.setIcon(R.mipmap.ic_forum_white_24dp);
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.writecomm);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

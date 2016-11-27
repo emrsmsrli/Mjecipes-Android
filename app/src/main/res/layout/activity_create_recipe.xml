@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_create_recipe"
     android:layout_width="match_parent"
@@ -8,84 +9,108 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="se.ju.student.android_mjecipes.CreateRecipe">
+    tools:context="se.ju.student.android_mjecipes.CreateRecipe"
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <TextView
+        android:text="Recipe Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/recipename"
-        android:text="recipe name"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/textView"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/recipe_name"
+        android:inputType="text" />
+
+    <TextView
+        android:text="Upload an image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recipe_direction"
+
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/textView4"
+        android:textStyle="bold"/>
 
     <TextView
         android:text="Description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="41dp"
-        android:id="@+id/decription"
-        android:layout_below="@+id/recipenamefield"
-        android:layout_alignEnd="@+id/recipename" />
+
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/recipe_name"
+        android:textStyle="bold"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:ems="10"
-        android:layout_marginEnd="14dp"
-        android:id="@+id/descriptionfield"
-        android:layout_alignBaseline="@+id/decription"
-        android:layout_alignBottom="@+id/decription"
-        android:layout_alignParentEnd="true"
-        android:hint="description" />
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/recipe_description"
+        android:inputType="text"
+        android:layout_below="@+id/textView2"
+        />
 
     <TextView
         android:text="Directions"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionfield"
-        android:layout_alignStart="@+id/decription"
-        android:layout_marginTop="34dp"
-        android:id="@+id/directions" />
+        android:ems="10"
+
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/textView3"
+        android:inputType="text"
+        android:layout_below="@+id/recipe_description"
+        android:layout_alignParentEnd="true"
+        android:textStyle="bold"/>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_below="@+id/descriptionfield"
-        android:layout_alignEnd="@+id/descriptionfield"
-        android:layout_marginTop="23dp"
-        android:id="@+id/directionfield"
-        android:hint="direction" />
+        android:inputType="text"
 
-    <TextView
-        android:text="İmage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/directionfield"
-        android:layout_alignStart="@+id/directions"
-        android:layout_marginTop="39dp"
-        android:id="@+id/image" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
         android:ems="10"
-        android:hint="recipename"
-        android:id="@+id/recipenamefield"
-        android:layout_alignBaseline="@+id/recipename"
-        android:layout_alignBottom="@+id/recipename"
+        android:id="@+id/recipe_direction"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        android:layout_width="28dp"
+        android:layout_height="33dp"
+
+        app:srcCompat="@mipmap/ic_insert_photo_white_24dp"
+        android:id="@+id/imageButton7"
+        android:layout_marginLeft="20dp"
+        android:layout_alignTop="@+id/textView4"
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:text="CREATE"
+        android:text="Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image"
-        android:layout_alignEnd="@+id/directionfield"
-        android:layout_marginEnd="53dp"
-        android:layout_marginTop="97dp"
-        android:id="@+id/createrecipe" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="21dp"
+        android:id="@+id/button2"
+        style="@android:style/Widget.Button" />
+
+
 </RelativeLayout>
