@@ -79,13 +79,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
     public void onRefresh() {
         if(!swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(true);
 
-        if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-        }
-
         new AsyncTask<String, Void, Comment[]>() {
-
             @Override
             protected Comment[] doInBackground(String... p) {
                 Comment[] comments;
@@ -234,6 +228,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                                                     .commit();
                                             break;
                                         case R.id.upload_image_comment:
+                                            requestReadPermission();
                                             commentIdforImage = Integer.parseInt(((TextView) v.findViewById(R.id.main_comment_id)).getText().toString());
                                             Intent i = new Intent();
                                             i.setAction(Intent.ACTION_PICK);
@@ -269,6 +264,13 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
             onRefresh();
         } else
             Snackbar.make(activityLayout, "Comment not edited", Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void requestReadPermission() {
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+        }
     }
 
     @Override
@@ -338,7 +340,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == 0) {
-            if(grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Snackbar.make(activityLayout, "You have to give read permission upload an image", Snackbar.LENGTH_SHORT);
             }
         }
