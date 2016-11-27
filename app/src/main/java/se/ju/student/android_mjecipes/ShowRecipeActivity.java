@@ -114,7 +114,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo ni = cm.getActiveNetworkInfo();
                 if (ni == null || !ni.isConnected()) {
-                    Snackbar.make(mainLinearLayout, "No connection", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                     return null;
                 }
 
