@@ -58,6 +58,8 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 i.putExtra("resid",t.getText());
                 startActivity(i);
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
