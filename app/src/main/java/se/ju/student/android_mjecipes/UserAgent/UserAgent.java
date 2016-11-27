@@ -15,6 +15,9 @@ public class UserAgent {
     public interface LoginListener {
         void onLogin(boolean loggedIn);
     }
+    public interface TokenListener {
+        void onTokenReturned(JWToken token);
+    }
 
     private static UserAgent instance = null;
     private static SharedPreferences sharedPreferences = null;
@@ -22,6 +25,7 @@ public class UserAgent {
     private static boolean loggedIn = false;
     private static String userID = null;
     private static String username = null;
+    private static String password = null;
 
     private UserAgent(Context c) {
         resources = c.getResources();
@@ -29,15 +33,16 @@ public class UserAgent {
         load();
     }
 
-    public void login(final String userName, final String password, @NonNull final LoginListener listener) {
+    public void login(final String userName, final String passWord, @NonNull final LoginListener listener) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                JWToken token = Handler.getTokenHandler().getToken(userName, password);
+                JWToken token = Handler.getTokenHandler().getToken(userName, passWord);
 
                 if(token != null) {
                     userID = token.getUserID();
                     username = userName;
+                    password = passWord;
                     loggedIn = true;
                 }
 
@@ -55,6 +60,7 @@ public class UserAgent {
     public void logout() {
         userID = null;
         username = null;
+        password = null;
         loggedIn = false;
         save();
     }
@@ -69,6 +75,7 @@ public class UserAgent {
         editor.putBoolean(resources.getString(R.string.shared_preference_logged_in_key), loggedIn);
         editor.putString(resources.getString(R.string.shared_preference_userid_key), userID);
         editor.putString(resources.getString(R.string.shared_preference_username_key), username);
+        editor.putString(resources.getString(R.string.shared_preference_password_key), password);
 
         editor.apply();
     }
@@ -77,6 +84,7 @@ public class UserAgent {
         loggedIn = sharedPreferences.getBoolean(resources.getString(R.string.shared_preference_logged_in_key), false);
         userID = sharedPreferences.getString(resources.getString(R.string.shared_preference_userid_key), null);
         username = sharedPreferences.getString(resources.getString(R.string.shared_preference_username_key), null);
+        password = sharedPreferences.getString(resources.getString(R.string.shared_preference_password_key), null);
     }
 
     public String getUserID() {
@@ -85,6 +93,25 @@ public class UserAgent {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void newToken(final TokenListener listener) {
+        new AsyncTask<Void, Void, JWToken>() {
+            @Override
+            protected void onPostExecute(JWToken token) {
+                listener.onTokenReturned(token);
+            }
+
+            @Override
+            protected JWToken doInBackground(Void... params) {
+                if(!loggedIn) return null;
+                return Handler.getTokenHandler().getToken(username, password);
+            }
+        }.execute();
     }
 
     public static UserAgent getInstance(Context c) {
