@@ -53,6 +53,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/create_comment_upload_button"
+        android:layout_gravity="bottom|start"
+        android:text="@string/create_comment_upload_image_button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/create_comment_post_button"
         android:layout_gravity="bottom|end"
         android:text="@string/create_comment_post_button"/>
