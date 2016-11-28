@@ -112,7 +112,8 @@ public static String a;
 
         setContentView(R.layout.activity_main);
 
-
+        Intent i=this.getIntent();
+        i.setAction(null);
 
         final LinearLayout l= (LinearLayout) findViewById(R.id.activity_main);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
@@ -190,6 +191,8 @@ public static String a;
                 if(b==true) {
                     Snackbar.make(l, "Account deleted", Snackbar.LENGTH_SHORT).show();
 
+
+
                 }
                 else{
                     Errors e = Handler.getRecipeHandler().getErrors();
@@ -262,18 +265,21 @@ public static String a;
                         Intent i1 = new Intent(MainActivity.this, LoginActivity.class);
 
                         startActivity(i1);
+                        finish();
                         drawerLayout.closeDrawers();
                         break;
 
                     case R.id.myrecipes:
                         Intent i2 = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(i2);
+                        finish();
                         drawerLayout.closeDrawers();
                         break;
 
                     case R.id.createarecipe:
                         Intent i3 = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(i3);
+                        finish();
                         drawerLayout.closeDrawers();
                         break;
                     case R.id.recipeofday:
@@ -288,6 +294,7 @@ public static String a;
                         int sayi = ((int) (Math.random() * 3));
                         i6.putExtra("recipeId", Integer.toString(sayi));
                         startActivity(i6);
+                        finish();
                         drawerLayout.closeDrawers();
                         break;
 
@@ -295,7 +302,8 @@ public static String a;
 
                         Intent i7 = new Intent(MainActivity.this, LoginActivity.class);
 
-                        startActivity(i7);
+                        startActivity(i7);finish();
+
                         drawerLayout.closeDrawers();
 
                         break;
@@ -354,6 +362,7 @@ public static String a;
                             Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
                             i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
                             startActivity(i);
+                            finish();
                         }
                     });
                 }
@@ -525,6 +534,7 @@ public static String a;
                             i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
 
                             startActivity(i);
+
                         }
                     });
                 }

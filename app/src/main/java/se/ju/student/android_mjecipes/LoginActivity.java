@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                             Intent i=new Intent(getApplicationContext(),MainActivity.class);
                             i.setAction("");
                             startActivity(i);
+                            finish();
                         }
                         else{
                             email_t_view .setError("Password or Username wrong!");

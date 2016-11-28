@@ -82,6 +82,7 @@ public class SignupActivity extends AppCompatActivity {
 
                                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                                 startActivity(i);
+                                finish();
                             } else {
                                 //error var
                                 if (Handler.getAccountHandler().getErrors().hasError(Errors.ACCOUNT_USERNAME_MISSING)) {

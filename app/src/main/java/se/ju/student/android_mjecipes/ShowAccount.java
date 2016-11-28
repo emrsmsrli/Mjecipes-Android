@@ -111,6 +111,7 @@ public class ShowAccount extends AppCompatActivity {
               Intent i=new Intent(getApplicationContext(),MainActivity.class);
               i.setAction(Intent.ACTION_DELETE);
               startActivity(i);
+              finish();
           }
       });
     }
