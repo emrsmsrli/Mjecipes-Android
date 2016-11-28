@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
@@ -28,11 +29,11 @@ import java.util.Locale;
 
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Direction;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Errors;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
-
-public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, CreateCommentFragment.OnCommentPostedListener {
     private static String rID;
 
     private LinearLayout mainLinearLayout;
@@ -76,16 +77,23 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setIcon(R.mipmap.ic_forum_white_24dp);
+        actionBar.setIcon(R.drawable.ic_forum_white_24dp);
 
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.writecomm);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.main_recipe_create_comment_fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), ShowCommentActivity.class);
-
-                i.putExtra("resid", recipeidtv.getText());
-                startActivity(i);
+                FragmentManager fm = getSupportFragmentManager();
+                if(fm.findFragmentByTag("CreateComment") == null) {
+                    fm.beginTransaction()
+                            .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeidtv.getText().toString())), "CreateComment")
+                            .addToBackStack("CreateComment")
+                            .commit();
+                    floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
+                } else {
+                    fm.popBackStack();
+                    floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
+                }
             }
         });
 
@@ -185,4 +193,22 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
         }.execute(1);
     }
 
+    @Override
+    public void onCommentPosted(boolean posted) {
+        if(posted)
+            Snackbar.make(mainLinearLayout, "Comment posted", Snackbar.LENGTH_SHORT).show();
+         else {
+            Errors errors = Handler.getRecipeHandler().getErrors();
+            if(errors.hasError(Errors.COMMENT_COMMENTER_ALREDY_COMMENT))
+                Snackbar.make(mainLinearLayout, "Comment not posted, you have already comment", Snackbar.LENGTH_SHORT).show();
+            else if(errors.hasError(Errors.COMMENT_TEXT_MISSING))
+                Snackbar.make(mainLinearLayout, "Comment not posted, text is missing", Snackbar.LENGTH_SHORT).show();
+            else if(errors.hasError(Errors.COMMENT_TEXT_WRONG_LENGTH))
+                Snackbar.make(mainLinearLayout, "Comment not posted, wrong text length", Snackbar.LENGTH_SHORT).show();
+            else if(errors.hasError(Errors.COMMENT_GRADE_INVALID))
+                Snackbar.make(mainLinearLayout, "Comment not posted, missing grade", Snackbar.LENGTH_SHORT).show();
+        }
+        getSupportFragmentManager().popBackStack();
+        floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
+    }
 }
