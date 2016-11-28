@@ -36,6 +36,7 @@ public class Errors {
     public static final String COMMENT_TEXT_MISSING = "TextMissing";
     public static final String COMMENT_TEXT_WRONG_LENGTH = "TextWrongLength";
     public static final String COMMENT_GRADE_MISSING = "GradeMissing";
+    public static final String COMMENT_GRADE_INVALID = "GradeInvalid";
     public static final String COMMENT_GRADE_WRONG_VALUE = "GradeWrongValue";
     public static final String COMMENT_COMMENTER_ID_MISSING = "CommenterIdMissing";
     public static final String COMMENT_COMMENTER_ALREDY_COMMENT = "CommenterAlreadyComment";
