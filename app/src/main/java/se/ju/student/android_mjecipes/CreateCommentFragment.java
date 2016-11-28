@@ -158,10 +158,14 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                         return Handler.getCommentHandler().patchComment(params[0], token);
                     } else {
                         params[0].commenterId = UserAgent.getInstance(getActivity()).getUserID();
-                        boolean toReturn = Handler.getRecipeHandler().postComment(id, params[0], token);
-                        if (imageDir != null)
-                            toReturn &= Handler.getCommentHandler().postImage(id, imageDir, token);
-                        return toReturn;
+
+                        if(Handler.getRecipeHandler().postComment(id, params[0], token)) {
+                            int commentid = Integer.parseInt(Handler.getRecipeHandler().getErrors().error);
+
+                            if (imageDir != null)
+                                return Handler.getCommentHandler().postImage(commentid, imageDir, token);
+                        }
+                        return false;
                     }
                 }
 
