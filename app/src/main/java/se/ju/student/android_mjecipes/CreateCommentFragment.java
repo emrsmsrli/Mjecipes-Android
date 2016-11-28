@@ -24,6 +24,11 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class CreateCommentFragment extends Fragment implements View.OnClickListener {
+
+    public interface OnCommentPostedListener {
+        void onCommentPosted(boolean posted);
+    }
+
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String ARG_TEXT = "text";
     private static final String ARG_RATING = "rating";
@@ -32,6 +37,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
     private String text;
     private int rating;
     private int id;
+    private boolean edit;
 
     private EditText textField;
     private RatingBar gradeBar;
@@ -41,16 +47,6 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
     public CreateCommentFragment() {
 
-    }
-
-    public static CreateCommentFragment newInstance(String text, int rating, int commentID) {
-        CreateCommentFragment fragment = new CreateCommentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_TEXT, text);
-        args.putInt(ARG_RATING, rating);
-        args.putInt(ARG_ID, commentID);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -98,9 +94,11 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                     startActivityForResult(i, IMAGE_REQUEST_CODE);
                 }
             });
+            edit = false;
         } else {
             uploadImage.setClickable(false);
             uploadImage.setVisibility(View.INVISIBLE);
+            edit = true;
         }
 
         postButton.setOnClickListener(this);
@@ -137,7 +135,6 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         Comment c = new Comment();
-        c.id = id;
         c.text = textField.getText().toString();
         c.grade = (int)gradeBar.getRating();
 
@@ -149,10 +146,17 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                         UserAgent.getInstance(getActivity()).getPassword()
                 );
 
-                if(token != null) {
-                    if(imageDir != null)
-                        Handler.getCommentHandler().postImage(id, imageDir, token);
-                    return Handler.getCommentHandler().patchComment(params[0], token);
+                if (token != null) {
+                    if(edit) {
+                        params[0].id = id;
+                        return Handler.getCommentHandler().patchComment(params[0], token);
+                    } else {
+                        params[0].commenterId = UserAgent.getInstance(getActivity()).getUserID();
+                        boolean toReturn = Handler.getRecipeHandler().postComment(id, params[0], token);
+                        if (imageDir != null)
+                            toReturn &= Handler.getCommentHandler().postImage(id, imageDir, token);
+                        return toReturn;
+                    }
                 }
 
                 return false;
@@ -196,8 +200,14 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
         mListener = null;
     }
 
-    public interface OnCommentPostedListener {
-        void onCommentPosted(boolean posted);
+    public static CreateCommentFragment newInstance(String text, int rating, int commentID) {
+        CreateCommentFragment fragment = new CreateCommentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TEXT, text);
+        args.putInt(ARG_RATING, rating);
+        args.putInt(ARG_ID, commentID);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 }
