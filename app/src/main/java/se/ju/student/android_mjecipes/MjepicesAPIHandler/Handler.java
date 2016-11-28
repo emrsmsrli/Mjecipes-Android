@@ -21,6 +21,11 @@ public abstract class Handler {
         return errors;
     }
 
+    protected String getCreatedId(String location) {
+        String[] tokens = location.split("/");
+        return tokens[tokens.length - 1];
+    }
+
     public static AccountHandler getAccountHandler() {
         return AccountHandler.getInstance();
     }

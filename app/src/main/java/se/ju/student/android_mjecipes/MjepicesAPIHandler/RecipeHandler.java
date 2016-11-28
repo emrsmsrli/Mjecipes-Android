@@ -58,6 +58,8 @@ public class RecipeHandler extends Handler {
                 case HttpURLConnection.HTTP_CREATED:
                     toReturn = true;
                     errors.HTTPCode = Errors.HTTP_CREATED;
+                    Log.i(TAG, "postRecipe: HTTP Created");
+                    errors.error = getCreatedId(connection.getHeaderField("Location"));
                     break;
                 default:
                     Log.i(TAG, "postRecipe: Internal Server Error");
@@ -395,6 +397,8 @@ public class RecipeHandler extends Handler {
                 case HttpURLConnection.HTTP_CREATED:
                     toReturn = true;
                     errors.HTTPCode = Errors.HTTP_CREATED;
+                    Log.i(TAG, "postComment: HTTP Created");
+                    errors.error = getCreatedId(connection.getHeaderField("Location"));
                     break;
                 default:
                     Log.i(TAG, "postComment: Internal Server Error");
