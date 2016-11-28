@@ -409,13 +409,13 @@ public class RecipeHandler extends Handler {
         } catch(MalformedURLException e) {
             Log.e(TAG, "postComment: Malformed URL", e);
         } catch(IOException e) {
-            Log.e(TAG, "patchRecipe: IO Exception", e);
+            Log.e(TAG, "postComment: IO Exception", e);
         } finally {
             try {
                 if (br != null)
                     br.close();
             } catch(IOException e) {
-                Log.e(TAG, "patchRecipe: IO Exception", e);
+                Log.e(TAG, "postComment: IO Exception", e);
             }
 
             if(pw != null)
