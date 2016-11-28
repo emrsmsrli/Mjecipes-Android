@@ -22,9 +22,30 @@ import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class ShowAccount extends AppCompatActivity {
 
+
+
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Intent i=this.getIntent();
+        String action= i.getAction();
+        if(action==Intent.ACTION_USER_PRESENT)
+            showaccount();
+
+
+
+        else if(action==Intent.ACTION_EDIT){
+
+            editaccount();
+
+
+
+
+    }}
+
     void showaccount(){
         final TextView username,latitude,longitude;
-        ImageButton showrecipesbutton,editaccountbutton;
+        ImageButton showrecipesbutton,editaccountbutton,deleteaccount;
 
         setContentView(R.layout.activity_show_account);
 
@@ -35,6 +56,7 @@ public class ShowAccount extends AppCompatActivity {
         longitude=(TextView)  findViewById(R.id.showlongitude);
         showrecipesbutton=(ImageButton) findViewById(R.id.imageButton);
         editaccountbutton=(ImageButton) findViewById(R.id.editaccount);
+        deleteaccount=(ImageButton)findViewById(R.id.deleteaccount);
 
 
         new AsyncTask<Void,Void,Account>(){
@@ -83,6 +105,15 @@ public class ShowAccount extends AppCompatActivity {
             }
         });
 
+      deleteaccount.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              Intent i=new Intent(getApplicationContext(),MainActivity.class);
+              i.setAction(Intent.ACTION_DELETE);
+              startActivity(i);
+              finish();
+          }
+      });
     }
 
 
@@ -163,24 +194,6 @@ public class ShowAccount extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Intent i=this.getIntent();
-        String action= i.getAction();
-        if(action==Intent.ACTION_USER_PRESENT)
-            showaccount();
 
 
-
-        else if(action==Intent.ACTION_EDIT){
-
-           editaccount();
-
-
-        }
-
-
-
-    }
 }

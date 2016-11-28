@@ -54,7 +54,7 @@ public class SignupActivity extends AppCompatActivity {
                 username= (EditText) findViewById(R.id.enterusername);
                 hiddenpassword=(EditText)findViewById(R.id.hiddenpassword);
                 longitude=(EditText)findViewById(R.id.longi_tude);
-                latitude=(EditText)findViewById(R.id.longi_tude);
+                latitude=(EditText)findViewById(R.id.lati_tude);
                 /*
                 if(username.getText().toString().equals(null)||hiddenpassword.getText().toString().equals(null)||latitude.getText().toString().equals(null)||longitude.getText().toString().equals(null)){
                     username.setError("bos");
@@ -82,6 +82,7 @@ public class SignupActivity extends AppCompatActivity {
 
                                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                                 startActivity(i);
+                                finish();
                             } else {
                                 //error var
                                 if (Handler.getAccountHandler().getErrors().hasError(Errors.ACCOUNT_USERNAME_MISSING)) {
