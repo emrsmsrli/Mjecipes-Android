@@ -6,7 +6,10 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.R;
 
@@ -15,8 +18,9 @@ public class UserAgent {
     public interface LoginListener {
         void onLogin(boolean loggedIn);
     }
-    public interface TokenListener {
-        void onTokenReturned(JWToken token);
+
+    public interface FavoriteListener {
+        void onFavoritePosted(boolean posted);
     }
 
     private static UserAgent instance = null;
@@ -26,6 +30,7 @@ public class UserAgent {
     private static String userID = null;
     private static String username = null;
     private static String password = null;
+    private static ArrayList<Integer> favoriteRecipeIDs = null;
 
     private UserAgent(Context c) {
         resources = c.getResources();
@@ -44,6 +49,7 @@ public class UserAgent {
                     username = userName;
                     password = passWord;
                     loggedIn = true;
+                    getFavorites();
                 }
 
                 save();
@@ -54,6 +60,7 @@ public class UserAgent {
             protected void onPostExecute(Void aVoid) {
                 listener.onLogin(isLoggedIn());
             }
+
         }.execute();
     }
 
@@ -62,6 +69,7 @@ public class UserAgent {
         username = null;
         password = null;
         loggedIn = false;
+        favoriteRecipeIDs = null;
         save();
     }
 
@@ -87,6 +95,32 @@ public class UserAgent {
         password = sharedPreferences.getString(resources.getString(R.string.shared_preference_password_key), null);
     }
 
+    private void getFavorites() {
+        new AsyncTask<Void, Void, Recipe[]>() {
+            @Override
+            protected Recipe[] doInBackground(Void... params) {
+                JWToken token = Handler.getTokenHandler().getToken(
+                        getUsername(),
+                        getPassword()
+                );
+
+                if(token != null)
+                    return Handler.getAccountHandler().getFavorites(userID, token);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Recipe[] recipes) {
+                if(recipes != null && recipes.length > 0) {
+                    favoriteRecipeIDs = new ArrayList<>();
+                    for(Recipe r: recipes)
+                        favoriteRecipeIDs.add(r.id);
+                }
+            }
+
+        }.execute();
+    }
+
     public String getUserID() {
         return userID;
     }
@@ -97,6 +131,40 @@ public class UserAgent {
 
     public String getPassword() {
         return password;
+    }
+
+    public boolean hasFavorite(int recipeId) {
+        return favoriteRecipeIDs != null && favoriteRecipeIDs.contains(recipeId);
+    }
+
+    public void postFavorite(int recipeId, @NonNull final FavoriteListener listener) {
+        new AsyncTask<Integer, Void, Boolean>() {
+            private int rid;
+
+            @Override
+            protected Boolean doInBackground(Integer... params) {
+                rid = params[0];
+                JWToken token = Handler.getTokenHandler().getToken(
+                        getUsername(),
+                        getPassword()
+                );
+
+                return token != null && Handler.getAccountHandler().putFavorites(
+                        getUserID(),
+                        new int[]{rid},
+                        token
+                );
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if(result)
+                    favoriteRecipeIDs.add(rid);
+
+                listener.onFavoritePosted(result);
+            }
+
+        }.execute(recipeId);
     }
 
     public static UserAgent getInstance(Context c) {
