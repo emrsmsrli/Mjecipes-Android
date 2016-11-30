@@ -89,7 +89,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                             .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeidtv.getText().toString())), "CreateComment")
                             .addToBackStack("CreateComment")
                             .commit();
-                    floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
+                    floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
                 } else {
                     fm.popBackStack();
                     floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
