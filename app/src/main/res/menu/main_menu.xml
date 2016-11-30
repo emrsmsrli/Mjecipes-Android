@@ -19,9 +19,15 @@
     <item android:id="@+id/signup"
         android:icon="@mipmap/ic_fingerprint_black_24dp"
         android:title="Sing Up"/>
+
     <item android:id="@+id/login"
     android:icon="@mipmap/ic_flight_takeoff_black_24dp"
     android:title="Log in"/>
+
+    <item android:id="@+id/logout"
+        android:icon="@mipmap/ic_flight_land_black_24dp"
+        android:title="Log out"/>
+
 
 
 </menu>
