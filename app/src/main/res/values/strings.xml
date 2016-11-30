@@ -13,6 +13,9 @@
     <string name="error_comment_text_wrong_length">Not done, wrong text length</string>
     <string name="error_comment_grade_invalid">Not done, missing grade</string>
     <string name="error_image_upload">Image not uploaded</string>
+    <string name="error_favorite_recipe">Problem when making favorite</string>
+    <string name="error_delete_recipe">Problem when deleting recipe</string>
+    <string name="error_upload_image_permission_needed">You have to give permissions upload an image</string>
 
     <!-- common strings -->
     <string name="upload_image">Upload image</string>
@@ -57,6 +60,7 @@
     <string name="create_comment_text_hint">Enter comment</string>
     <string name="create_comment_grade">Grade</string>
     <string name="create_comment_upload_image_button">Pick image</string>
+    <string name="create_comment_remove_image_button">Remove image</string>
     <string name="create_comment_post_button">Post</string>
 
 </resources>
