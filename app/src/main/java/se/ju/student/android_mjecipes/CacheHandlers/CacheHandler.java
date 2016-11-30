@@ -14,6 +14,11 @@ public abstract class CacheHandler {
     private static long EXPIRE_TIME = 0;
     protected static File cacheDir = null;
 
+    public static void setExpireTime(long newExpireTime, Context c) {
+        EXPIRE_TIME = newExpireTime;
+        save(c);
+    }
+
     public static void clearAllCaches(Context c) {
         final File cacheDir = c.getCacheDir();
         new Thread(new Runnable() {
@@ -58,20 +63,22 @@ public abstract class CacheHandler {
 
     public static void clearExternalImageData(Context c) {
         File extdir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File[] files = null;
         if(extdir != null)
-            files = extdir.listFiles();
-        if(files != null) {
-            for(File f: files) {
-                if (f.delete()) Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
-                else            Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
-            }
-        }
-
+            deleteRecursive(extdir);
     }
 
     protected static long unixTimeStamp() {
         return System.currentTimeMillis() / 1000;
+    }
+
+    private static void deleteRecursive(File f) {
+        if(f.isDirectory())
+            for(File file: f.listFiles())
+                deleteRecursive(file);
+        else if(f.delete())
+            Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
+        else
+            Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
     }
 
     private static boolean isExpired(File f) {
@@ -81,11 +88,6 @@ public abstract class CacheHandler {
         long expiration = Long.parseLong(tokens[tokens.length - 1]);
 
         return now - expiration > EXPIRE_TIME;
-    }
-
-    public static void setExpireTime(long newExpireTime, Context c) {
-        EXPIRE_TIME = newExpireTime;
-        save(c);
     }
 
     private static void save(Context c) {
