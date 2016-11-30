@@ -99,21 +99,6 @@ public class UserAgent {
         return password;
     }
 
-    public void newToken(final TokenListener listener) {
-        new AsyncTask<Void, Void, JWToken>() {
-            @Override
-            protected void onPostExecute(JWToken token) {
-                listener.onTokenReturned(token);
-            }
-
-            @Override
-            protected JWToken doInBackground(Void... params) {
-                if(!loggedIn) return null;
-                return Handler.getTokenHandler().getToken(username, password);
-            }
-        }.execute();
-    }
-
     public static UserAgent getInstance(Context c) {
         if(instance == null)
             instance = new UserAgent(c);
