@@ -21,13 +21,14 @@ import android.widget.RatingBar;
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Errors;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class CreateCommentFragment extends Fragment implements View.OnClickListener {
 
     public interface OnCommentPostedListener {
-        void onCommentPosted(boolean posted);
+        void onCommentPosted(boolean posted, Errors errors);
     }
 
     private static final int IMAGE_REQUEST_CODE = 1;
@@ -42,6 +43,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
     private EditText textField;
     private RatingBar gradeBar;
+    private FloatingActionButton fab;
     private String imageDir = null;
 
     private OnCommentPostedListener mListener;
@@ -70,6 +72,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
         textField = (EditText) view.findViewById(R.id.create_comment_text);
         gradeBar = (RatingBar) view.findViewById(R.id.create_comment_grade);
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.create_comment_fab);
         Button postButton = (Button) view.findViewById(R.id.create_comment_post_button);
         Button close = (Button) view.findViewById(R.id.create_comment_close);
         Button uploadImage = (Button)  view.findViewById(R.id.create_comment_upload_button);
@@ -80,11 +83,7 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!edit) {
-                    FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.main_recipe_create_comment_fab);
-                    if(fab != null)
-                        fab.setImageResource(R.drawable.ic_edit_white_24dp);
-                }
+                fixFAB();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -100,9 +99,9 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                     startActivityForResult(i, IMAGE_REQUEST_CODE);
                 }
             });
+            close.setVisibility(View.INVISIBLE);
             edit = false;
         } else {
-            uploadImage.setClickable(false);
             uploadImage.setVisibility(View.INVISIBLE);
             edit = true;
         }
@@ -136,6 +135,16 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
             cursor.close();
         }
         return result;
+    }
+
+    private void fixFAB() {
+        if(!edit) {
+            if(fab != null)
+                fab.setImageResource(R.drawable.ic_format_quote_white_24dp);
+        } else {
+            if(fab != null && fab.getVisibility() == View.INVISIBLE)
+                fab.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -181,7 +190,9 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                 }
 
                 if(mListener != null)
-                    mListener.onCommentPosted(result);
+                    mListener.onCommentPosted(result, result ? null : (edit ? Handler.getCommentHandler().getErrors() : Handler.getRecipeHandler().getErrors()));
+
+                fixFAB();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         }.execute(c);
