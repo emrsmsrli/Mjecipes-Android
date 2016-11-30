@@ -10,7 +10,7 @@
     <Button
         style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:id="@+id/create_comment_close"
-        android:background="@android:drawable/ic_menu_close_clear_cancel"
+        android:background="@drawable/ic_close_white_24dp"
         android:textColor="#ddd"
         android:layout_gravity="top|end"
         android:layout_width="@dimen/c_comment_big"
@@ -62,6 +62,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/create_comment_post_button"
         android:layout_gravity="bottom|end"
+        android:drawableEnd="@drawable/ic_send_black_24dp"
+        android:drawableTint="@color/colorAccent"
         android:text="@string/create_comment_post_button"/>
 
 </FrameLayout>
