@@ -235,8 +235,8 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                                     return false;
                                 }
                             }
+                            return true;
                         }
-                        return true;
                     }
                 }
 
