@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -51,18 +52,28 @@ public class MainActivity extends AppCompatActivity {
     private Button b;
     private Button listcomment;
     private Button showrecipes;*/
-
+    View vv;
     DrawerLayout drawerLayout;
     private ActionBarDrawerToggle Toggle;
     NavigationView navigationView;
-    private ListView recipeList;
+
 
 
 public static String a;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.menu,menu);
+        MenuItem item =menu.findItem(R.id.search);
+        SearchManager searchManager=(SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView=null;
+
+        if(item!=null)
+            searchView=(SearchView) item.getActionView();
+        if(searchView!=null)
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -86,26 +97,32 @@ public static String a;
         String action= i.getAction();
 
         if(!(action==Intent.ACTION_DELETE)) {
-            if (!(action == Intent.ACTION_VIEW)) {
-                if (!UserAgent.getInstance(this).isLoggedIn())
-                    whileloginandnotloginjobs();
 
 
-                else
-                    whileloginandnotloginjobs();
-            } else {
-                if (!UserAgent.getInstance(this).isLoggedIn())
-                    whileloginandnotloginjobs();
 
-
-                else
+                if(action==Intent.ACTION_VIEW)
                     showaccountrecipes();
-            }
-        }
 
-        else
-            deleteaccount();
+                else if(action==Intent.ACTION_PICK)
+                    showfavorite();
+
+                else{
+                    whileloginandnotloginjobs();
+
+
+
+
+        }}
+
+        else{
+            final LinearLayout l= (LinearLayout) findViewById(R.id.activity_main);
+            Snackbar.make(l,"Account deleted", Snackbar.LENGTH_SHORT).show();
+            whileloginandnotloginjobs();
+                action=null;
+
+            }
     }
+
 
 
     void deleteaccount(){
@@ -143,7 +160,7 @@ public static String a;
 
                 for (int i = 0; i < recipes.length; ++i) {
                     inf.inflate(R.layout.main_recipe_layout, (LinearLayout) findViewById(R.id.activity_main));
-                    final View vv = ((LinearLayout) findViewById(R.id.activity_main)).getChildAt(i);
+                    vv = ((LinearLayout) findViewById(R.id.activity_main)).getChildAt(i);
                     ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
                     ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= " + recipes[i].name);
                     ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
@@ -181,6 +198,7 @@ public static String a;
     void whileloginandnotloginjobs(){
 
         drawermenu();
+
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
@@ -247,8 +265,10 @@ public static String a;
         if(UserAgent.getInstance(getBaseContext()).isLoggedIn()){
             navigationView.getMenu().removeItem(R.id.login);
             navigationView.getMenu().removeItem(R.id.signup);
+
         }
         else if(!(UserAgent.getInstance(getBaseContext()).isLoggedIn())){
+            navigationView.getMenu().removeItem(R.id.favoriterecipes);
             navigationView.getMenu().removeItem(R.id.logout);
         }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -330,6 +350,14 @@ public static String a;
 
                         break;
 
+                    case R.id.favoriterecipes:
+                        Intent i9 = new Intent(MainActivity.this, MainActivity.class);
+                        i9.setAction(Intent.ACTION_PICK);
+                        startActivity(i9);finish();
+
+                        drawerLayout.closeDrawers();
+
+
 
                 }
 
@@ -398,6 +426,64 @@ public static String a;
     }
 
 
+    void showfavorite(){
+        drawermenu();
+
+        new AsyncTask<Void, Void, Recipe[]>() {
+            @Override
+            protected Recipe[] doInBackground(Void... p) {
+                JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
+                        UserAgent.getInstance(getBaseContext()).getPassword());
+                return Handler.getAccountHandler().getFavorites(UserAgent.getInstance(getBaseContext()).getUserID(),token);
+            }
+
+            @Override
+            protected void onPostExecute(Recipe[] recipes) {
+
+                if(recipes!=null){
+
+                    LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                    for (int i = 0; i < recipes.length; ++i) {
+                        inf.inflate(R.layout.main_recipe_layout, (LinearLayout) findViewById(R.id.activity_main));
+                        final View vv = ((LinearLayout) findViewById(R.id.activity_main)).getChildAt(i);
+                        ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(Integer.toString(recipes[i].id));
+                        ((TextView) vv.findViewById(R.id.main_recipe_name)).setText("Name= " + recipes[i].name);
+                        ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
+                        ((TextView) vv.findViewById(R.id.main_recipe_description)).setText("Description= " + recipes[i].description);
+                        ((TextView) vv.findViewById(R.id.main_recipe_creatorname)).setText("Creator= " + UserAgent.getInstance(getBaseContext()).getUsername());
+                        if (recipes[i].image != null) {
+                            final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
+                            CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
+                                @Override
+                                public void onResponse(Bitmap response) {
+                                    iv.setImageBitmap(response);
+                                    iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                }
+                            }, iv.getWidth(), iv.getHeight(), null, null, null));
+                        }
+
+                        vv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
+                                i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
+
+                                startActivity(i);
+
+                            }
+                        });
+                    }
+
+                }
+
+            }
+        }.execute();
+
+
+    }
 
 
 

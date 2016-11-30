@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,14 +35,64 @@ public class ShowAccount extends AppCompatActivity {
 
 
 
-        else if(action==Intent.ACTION_EDIT){
+        else if(action==Intent.ACTION_EDIT)
 
             editaccount();
 
+        else if(action==Intent.ACTION_DELETE)
+             deleteaccount();
 
 
 
-    }}
+
+    }
+
+
+    void deleteaccount(){
+
+        final TextView username,latitude,longitude;
+        ImageButton showrecipesbutton,editaccountbutton,deleteaccount;
+
+        setContentView(R.layout.activity_show_account);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        username=(TextView) findViewById(R.id.showusername);
+        latitude=(TextView) findViewById(R.id.showlatitude);
+        longitude=(TextView)  findViewById(R.id.showlongitude);
+        showrecipesbutton=(ImageButton) findViewById(R.id.imageButton);
+        editaccountbutton=(ImageButton) findViewById(R.id.editaccount);
+        deleteaccount=(ImageButton)findViewById(R.id.deleteaccount);
+        final RelativeLayout l= (RelativeLayout) findViewById(R.id.activity_show_account);
+
+        new AsyncTask<Void,Void,Boolean>(){
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
+                        UserAgent.getInstance(getBaseContext()).getPassword());
+                Boolean b=Handler.getAccountHandler().deleteAccount(UserAgent.getInstance(getBaseContext()).getUserID(),token);
+                UserAgent.getInstance(getBaseContext()).logout();
+
+                if(b==true) {
+
+                    Intent i=new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(i);
+
+
+
+                }
+                else{
+                    Errors e = Handler.getRecipeHandler().getErrors();
+                    Snackbar.make(l,e+" Error occured while deleting", Snackbar.LENGTH_SHORT).show();
+
+
+                }
+
+                return null;
+            }
+        }.execute();
+
+    }
 
     void showaccount(){
         final TextView username,latitude,longitude;
@@ -108,7 +159,7 @@ public class ShowAccount extends AppCompatActivity {
       deleteaccount.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              Intent i=new Intent(getApplicationContext(),MainActivity.class);
+              Intent i=new Intent(getApplicationContext(),ShowAccount.class);
               i.setAction(Intent.ACTION_DELETE);
               startActivity(i);
               finish();
