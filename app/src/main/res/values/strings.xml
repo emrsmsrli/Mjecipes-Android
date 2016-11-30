@@ -47,6 +47,7 @@
     <string name="show_comment_commenter_placeholder">[COMMENTER_TEXT]</string>
     <string name="show_comment_action_menu_delete">Delete comment</string>
     <string name="show_comment_action_menu_edit">Edit comment</string>
+    <string name="show_comment_no_comments">No comments</string>
 
     <!-- sharedprefs keys -->
     <string name="shared_preference_key">se.ju.student.android_mjecipes.SharedPreferences</string>

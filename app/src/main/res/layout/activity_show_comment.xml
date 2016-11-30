@@ -13,8 +13,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_blue_bright" >
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:id="@+id/activity_show_comment"
@@ -28,6 +27,17 @@
                 tools:context="se.ju.student.android_mjecipes.MainActivity" />
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/no_comment_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:text="@string/show_comment_no_comments"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="@dimen/c_comment_w"

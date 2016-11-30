@@ -160,6 +160,11 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                 if(comments == null) {
                     swipeRefreshLayout.setRefreshing(false);
                     return;
+                } else if(comments.length == 0) {
+                    View v = findViewById(R.id.no_comment_view);
+                    if(v != null)
+                        v.setVisibility(View.VISIBLE);
+                    return;
                 }
 
                 LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
