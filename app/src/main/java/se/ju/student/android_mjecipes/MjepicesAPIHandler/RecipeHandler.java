@@ -429,6 +429,7 @@ public class RecipeHandler extends Handler {
                     bis.close();
                 if(dos != null)
                     dos.close();
+                filestream.close();
             } catch(IOException e) {
                 Log.e(TAG, "postImage: IO Exception", e);
             }
