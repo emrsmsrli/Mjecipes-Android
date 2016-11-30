@@ -6,7 +6,8 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
@@ -30,12 +31,15 @@ public class UserAgent {
     private static String userID = null;
     private static String username = null;
     private static String password = null;
-    private static ArrayList<Integer> favoriteRecipeIDs = null;
+    private static Set<Integer> favoriteRecipeIDs = null;
 
     private UserAgent(Context c) {
         resources = c.getResources();
         sharedPreferences = c.getSharedPreferences(resources.getString(R.string.shared_preference_key), Context.MODE_PRIVATE);
         load();
+
+        if(loggedIn)
+            getFavorites();
     }
 
     public void login(final String userName, final String passWord, @NonNull final LoginListener listener) {
@@ -49,7 +53,9 @@ public class UserAgent {
                     username = userName;
                     password = passWord;
                     loggedIn = true;
-                    getFavorites();
+
+                    if(favoriteRecipeIDs == null)
+                        getFavorites();
                 }
 
                 save();
@@ -112,7 +118,8 @@ public class UserAgent {
             @Override
             protected void onPostExecute(Recipe[] recipes) {
                 if(recipes != null && recipes.length > 0) {
-                    favoriteRecipeIDs = new ArrayList<>();
+                    if(favoriteRecipeIDs == null)
+                        favoriteRecipeIDs = new HashSet<>();
                     for(Recipe r: recipes)
                         favoriteRecipeIDs.add(r.id);
                 }
@@ -149,9 +156,15 @@ public class UserAgent {
                         getPassword()
                 );
 
+                Integer[] temp = favoriteRecipeIDs.toArray(new Integer[favoriteRecipeIDs.size()]);
+                int[] ids = new int[temp.length + 1];
+                for(int i = 0; i < temp.length; ++i)
+                    ids[i] = temp[i];
+                ids[temp.length] = rid;
+
                 return token != null && Handler.getAccountHandler().putFavorites(
                         getUserID(),
-                        new int[]{rid},
+                        ids,
                         token
                 );
             }
@@ -160,7 +173,7 @@ public class UserAgent {
             protected void onPostExecute(Boolean result) {
                 if(result) {
                     if(favoriteRecipeIDs == null)
-                        favoriteRecipeIDs = new ArrayList<>();
+                        favoriteRecipeIDs = new HashSet<>();
                     favoriteRecipeIDs.add(rid);
                 }
 
