@@ -158,8 +158,11 @@ public class UserAgent {
 
             @Override
             protected void onPostExecute(Boolean result) {
-                if(result)
+                if(result) {
+                    if(favoriteRecipeIDs == null)
+                        favoriteRecipeIDs = new ArrayList<>();
                     favoriteRecipeIDs.add(rid);
+                }
 
                 listener.onFavoritePosted(result);
             }
