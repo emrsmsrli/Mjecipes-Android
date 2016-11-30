@@ -2,6 +2,7 @@ package se.ju.student.android_mjecipes.CacheHandlers;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -51,6 +52,20 @@ public abstract class CacheHandler {
                     }
             }
         }).run();
+    }
+
+    public static void clearExternalImageData(Context c) {
+        File extdir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] files = null;
+        if(extdir != null)
+            files = extdir.listFiles();
+        if(files != null) {
+            for(File f: files) {
+                if (f.delete()) Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
+                else            Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
+            }
+        }
+
     }
 
     protected static long unixTimeStamp() {
