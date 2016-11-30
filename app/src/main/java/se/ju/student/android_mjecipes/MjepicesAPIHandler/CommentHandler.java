@@ -3,11 +3,13 @@ package se.ju.student.android_mjecipes.MjepicesAPIHandler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -190,6 +192,79 @@ public class CommentHandler extends Handler {
             try {
                 if(fis != null)
                     fis.close();
+                if(dos != null)
+                    dos.close();
+            } catch(IOException e) {
+                Log.e(TAG, "postImage: IO Exception", e);
+            }
+        }
+
+        return toReturn;
+    }
+
+    public boolean postImage(int id, @NonNull InputStream filestream, @NonNull JWToken token) {
+        String imagesstr = "/image";
+        String boundary = "******";
+        String hypens = "--";
+        String endl = "\r\n";
+        int buffersize = 1024 << 10;
+        DataOutputStream dos = null;
+        HttpURLConnection connection = null;
+        BufferedInputStream bis = null;
+        boolean toReturn = false;
+
+        try {
+            connection = (HttpURLConnection) new URL(API_URL + COMMENTS_URL + id + imagesstr).openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Authorization", "Bearer " + token.access_token);
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            dos = new DataOutputStream(connection.getOutputStream());
+            dos.writeBytes(hypens + boundary + endl);
+            dos.writeBytes("Content-Disposition: form-data;name=\"image\";filename=\"comment-" + id + ".jpg\"" + endl + endl);
+
+            byte[] buffer = new byte[buffersize];
+            bis = new BufferedInputStream(filestream);
+
+            buffersize = Math.min(buffersize, bis.available());
+            while(bis.read(buffer, 0, buffersize) > 0) {
+                dos.write(buffer, 0, buffersize);
+                buffersize = Math.min(buffersize, bis.available());
+            }
+
+            dos.writeBytes(endl + hypens + boundary + hypens + endl);
+            dos.flush();
+
+            switch(connection.getResponseCode()) {
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    Log.i(TAG, "postImage: HTTP Unauthorized");
+                    errors.HTTPCode = Errors.HTTP_UNAUTHORIZED;
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    Log.i(TAG, "postImage: HTTP Not Found");
+                    errors.HTTPCode = Errors.HTTP_NOT_FOUND;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    toReturn = true;
+                    errors.HTTPCode = Errors.HTTP_NO_CONTENT;
+                    break;
+                default:
+                    Log.i(TAG, "postImage: Internal Server Error");
+                    errors.HTTPCode = Errors.HTTP_INTERNAL_SERVER_ERROR;
+                    break;
+            }
+
+        } catch(MalformedURLException e) {
+            Log.e(TAG, "postImage: Malformed URL", e);
+        } catch(IOException e) {
+            Log.e(TAG, "postImage: IO Exception", e);
+        } finally {
+            if(connection != null)
+                connection.disconnect();
+            try {
+                if(bis != null)
+                    bis.close();
                 if(dos != null)
                     dos.close();
             } catch(IOException e) {

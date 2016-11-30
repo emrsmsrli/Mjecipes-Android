@@ -1,15 +1,24 @@
 package se.ju.student.android_mjecipes;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +27,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Comment;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Errors;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class CreateCommentFragment extends Fragment implements View.OnClickListener {
 
     public interface OnCommentPostedListener {
-        void onCommentPosted(boolean posted);
+        void onCommentPosted(boolean posted, Errors errors);
     }
 
     private static final int IMAGE_REQUEST_CODE = 1;
@@ -35,14 +53,17 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
     private static final String ARG_RATING = "rating";
     private static final String ARG_ID = "id";
 
+    private Uri outputFileUri;
     private String text;
     private int rating;
     private int id;
     private boolean edit;
 
     private EditText textField;
+    private Button uploadImage;
     private RatingBar gradeBar;
-    private String imageDir = null;
+    private FloatingActionButton fab;
+    private Uri imageURI = null;
 
     private OnCommentPostedListener mListener;
 
@@ -70,9 +91,10 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
         textField = (EditText) view.findViewById(R.id.create_comment_text);
         gradeBar = (RatingBar) view.findViewById(R.id.create_comment_grade);
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.create_comment_fab);
+        uploadImage = (Button)  view.findViewById(R.id.create_comment_upload_button);
         Button postButton = (Button) view.findViewById(R.id.create_comment_post_button);
         Button close = (Button) view.findViewById(R.id.create_comment_close);
-        Button uploadImage = (Button)  view.findViewById(R.id.create_comment_upload_button);
 
         textField.setText(text);
         gradeBar.setRating(rating);
@@ -80,29 +102,66 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!edit) {
-                    FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.main_recipe_create_comment_fab);
-                    if(fab != null)
-                        fab.setImageResource(R.drawable.ic_edit_white_24dp);
-                }
+                fixFAB();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         if(TextUtils.isEmpty(textField.getText())) {
             uploadImage.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
-                    // FIXME: 28/11/2016 add camera request
-                    Intent i = new Intent();
-                    i.setAction(Intent.ACTION_PICK);
-                    i.setType("image/*");
-                    startActivityForResult(i, IMAGE_REQUEST_CODE);
+                    if(imageURI == null)
+                        openImageIntent();
+                    else {
+                        imageURI = null;
+                        uploadImage.setText(getString(R.string.create_comment_upload_image_button));
+                    }
                 }
+
+                private void openImageIntent() {
+                    requestReadPermission();
+                    final File root = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "Mjecipes");
+                    if(root.mkdirs())
+                        return;
+                    final String fname = "img-" + UUID.randomUUID().toString();
+
+                    File sdImageMainDirectory;
+                    try {
+                        sdImageMainDirectory = File.createTempFile(fname, ".jpg", root);
+                    } catch(IOException e) {
+                        return;
+                    }
+
+                    outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+                    final List<Intent> cameraIntents = new ArrayList<>();
+                    final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    final PackageManager packageManager = getActivity().getPackageManager();
+                    final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+                    for(ResolveInfo res : listCam) {
+                        final String packageName = res.activityInfo.packageName;
+                        final Intent intent = new Intent(captureIntent);
+                        intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                        intent.setPackage(packageName);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                        cameraIntents.add(intent);
+                    }
+
+                    final Intent galleryIntent = new Intent();
+                    galleryIntent.setType("image/*");
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+                    final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+                    startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
+                }
+
             });
+            close.setVisibility(View.INVISIBLE);
             edit = false;
         } else {
-            uploadImage.setClickable(false);
             uploadImage.setVisibility(View.INVISIBLE);
             edit = true;
         }
@@ -117,25 +176,30 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
 
         switch(requestCode) {
             case IMAGE_REQUEST_CODE:
-                if(resultCode == MainActivity.RESULT_OK) {
-                    imageDir = getRealPathFromURI(data.getData());
+                if (resultCode == Activity.RESULT_OK) {
+                    final boolean isCamera;
+                    if (data == null) {
+                        isCamera = true;
+                    } else {
+                        final String action = data.getAction();
+                        isCamera = action != null && action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+
+                    imageURI = isCamera ? outputFileUri : data.getData();
+                    uploadImage.setText(getString(R.string.create_comment_remove_image_button));
                 }
+                break;
         }
     }
 
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-
-        Cursor cursor = getActivity().getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            result = contentURI.getPath();
+    private void fixFAB() {
+        if(!edit) {
+            if(fab != null)
+                fab.setImageResource(R.drawable.ic_format_quote_white_24dp);
         } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
+            if(fab != null && fab.getVisibility() == View.INVISIBLE)
+                fab.setVisibility(View.VISIBLE);
         }
-        return result;
     }
 
     @Override
@@ -162,10 +226,17 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
                         if(Handler.getRecipeHandler().postComment(id, params[0], token)) {
                             int commentid = Integer.parseInt(Handler.getRecipeHandler().getErrors().error);
 
-                            if (imageDir != null)
-                                return Handler.getCommentHandler().postImage(commentid, imageDir, token);
+                            if (imageURI != null) {
+                                InputStream is;
+                                try {
+                                    is = getActivity().getContentResolver().openInputStream(imageURI);
+                                    return is != null && Handler.getCommentHandler().postImage(commentid, is, token);
+                                } catch(FileNotFoundException e) {
+                                    return false;
+                                }
+                            }
                         }
-                        return false;
+                        return true;
                     }
                 }
 
@@ -176,14 +247,17 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
             protected void onPostExecute(Boolean result) {
                 if(result) {
                     CacheHandler.getJSONJsonCacheHandler(getActivity()).clearSingleJSONCache(Integer.toString(id), Comment.class);
-                    if (imageDir != null)
-                        CacheHandler.getImageCacheHandler(getActivity()).clearSingleImageCache(imageDir);
+                    if (imageURI != null)
+                        CacheHandler.getImageCacheHandler(getActivity()).clearSingleImageCache("Comment-" + id);
                 }
 
                 if(mListener != null)
-                    mListener.onCommentPosted(result);
+                    mListener.onCommentPosted(result, result ? null : (edit ? Handler.getCommentHandler().getErrors() : Handler.getRecipeHandler().getErrors()));
+
+                fixFAB();
                 getActivity().getSupportFragmentManager().popBackStack();
             }
+
         }.execute(c);
     }
 
@@ -208,6 +282,19 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void requestReadPermission() {
+        if(ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        getActivity().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public static CreateCommentFragment newInstance(String text, int rating, int commentID) {

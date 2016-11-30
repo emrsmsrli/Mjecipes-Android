@@ -6,7 +6,11 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
+import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.R;
 
@@ -15,8 +19,9 @@ public class UserAgent {
     public interface LoginListener {
         void onLogin(boolean loggedIn);
     }
-    public interface TokenListener {
-        void onTokenReturned(JWToken token);
+
+    public interface FavoriteListener {
+        void onFavoritePosted(boolean posted);
     }
 
     private static UserAgent instance = null;
@@ -26,11 +31,15 @@ public class UserAgent {
     private static String userID = null;
     private static String username = null;
     private static String password = null;
+    private static Set<Integer> favoriteRecipeIDs = null;
 
     private UserAgent(Context c) {
         resources = c.getResources();
         sharedPreferences = c.getSharedPreferences(resources.getString(R.string.shared_preference_key), Context.MODE_PRIVATE);
         load();
+
+        if(loggedIn)
+            getFavorites();
     }
 
     public void login(final String userName, final String passWord, @NonNull final LoginListener listener) {
@@ -44,6 +53,9 @@ public class UserAgent {
                     username = userName;
                     password = passWord;
                     loggedIn = true;
+
+                    if(favoriteRecipeIDs == null)
+                        getFavorites();
                 }
 
                 save();
@@ -54,6 +66,7 @@ public class UserAgent {
             protected void onPostExecute(Void aVoid) {
                 listener.onLogin(isLoggedIn());
             }
+
         }.execute();
     }
 
@@ -62,6 +75,7 @@ public class UserAgent {
         username = null;
         password = null;
         loggedIn = false;
+        favoriteRecipeIDs = null;
         save();
     }
 
@@ -87,6 +101,33 @@ public class UserAgent {
         password = sharedPreferences.getString(resources.getString(R.string.shared_preference_password_key), null);
     }
 
+    private void getFavorites() {
+        new AsyncTask<Void, Void, Recipe[]>() {
+            @Override
+            protected Recipe[] doInBackground(Void... params) {
+                JWToken token = Handler.getTokenHandler().getToken(
+                        getUsername(),
+                        getPassword()
+                );
+
+                if(token != null)
+                    return Handler.getAccountHandler().getFavorites(userID, token);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Recipe[] recipes) {
+                if(recipes != null && recipes.length > 0) {
+                    if(favoriteRecipeIDs == null)
+                        favoriteRecipeIDs = new HashSet<>();
+                    for(Recipe r: recipes)
+                        favoriteRecipeIDs.add(r.id);
+                }
+            }
+
+        }.execute();
+    }
+
     public String getUserID() {
         return userID;
     }
@@ -99,19 +140,47 @@ public class UserAgent {
         return password;
     }
 
-    public void newToken(final TokenListener listener) {
-        new AsyncTask<Void, Void, JWToken>() {
+    public boolean hasFavorite(int recipeId) {
+        return favoriteRecipeIDs != null && favoriteRecipeIDs.contains(recipeId);
+    }
+
+    public void postFavorite(int recipeId, @NonNull final FavoriteListener listener) {
+        new AsyncTask<Integer, Void, Boolean>() {
+            private int rid;
+
             @Override
-            protected void onPostExecute(JWToken token) {
-                listener.onTokenReturned(token);
+            protected Boolean doInBackground(Integer... params) {
+                rid = params[0];
+                JWToken token = Handler.getTokenHandler().getToken(
+                        getUsername(),
+                        getPassword()
+                );
+
+                Integer[] temp = favoriteRecipeIDs.toArray(new Integer[favoriteRecipeIDs.size()]);
+                int[] ids = new int[temp.length + 1];
+                for(int i = 0; i < temp.length; ++i)
+                    ids[i] = temp[i];
+                ids[temp.length] = rid;
+
+                return token != null && Handler.getAccountHandler().putFavorites(
+                        getUserID(),
+                        ids,
+                        token
+                );
             }
 
             @Override
-            protected JWToken doInBackground(Void... params) {
-                if(!loggedIn) return null;
-                return Handler.getTokenHandler().getToken(username, password);
+            protected void onPostExecute(Boolean result) {
+                if(result) {
+                    if(favoriteRecipeIDs == null)
+                        favoriteRecipeIDs = new HashSet<>();
+                    favoriteRecipeIDs.add(rid);
+                }
+
+                listener.onFavoritePosted(result);
             }
-        }.execute();
+
+        }.execute(recipeId);
     }
 
     public static UserAgent getInstance(Context c) {

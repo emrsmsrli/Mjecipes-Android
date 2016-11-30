@@ -1,14 +1,17 @@
 package se.ju.student.android_mjecipes.CacheHandlers;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
+import se.ju.student.android_mjecipes.R;
+
 public abstract class CacheHandler {
     private static final String TAG = "CacheHandler";
+    private static long EXPIRE_TIME = 0;
     protected static File cacheDir = null;
 
     public static void clearAllCaches(Context c) {
@@ -53,6 +56,20 @@ public abstract class CacheHandler {
         }).run();
     }
 
+    public static void clearExternalImageData(Context c) {
+        File extdir = c.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] files = null;
+        if(extdir != null)
+            files = extdir.listFiles();
+        if(files != null) {
+            for(File f: files) {
+                if (f.delete()) Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
+                else            Log.i(TAG, "clearExternalImageData: External image file deleted, name: " + f.getName());
+            }
+        }
+
+    }
+
     protected static long unixTimeStamp() {
         return System.currentTimeMillis() / 1000;
     }
@@ -62,16 +79,39 @@ public abstract class CacheHandler {
 
         long now = unixTimeStamp();
         long expiration = Long.parseLong(tokens[tokens.length - 1]);
-        long expireTime = 24 * 60 * 60; //one day expiration
 
-        return now - expiration > expireTime;
+        return now - expiration > EXPIRE_TIME;
+    }
+
+    public static void setExpireTime(long newExpireTime, Context c) {
+        EXPIRE_TIME = newExpireTime;
+        save(c);
+    }
+
+    private static void save(Context c) {
+        c.getSharedPreferences(c.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
+                .edit()
+                .putLong(c.getString(R.string.shared_preference_cache_exp_key), EXPIRE_TIME)
+                .apply();
+    }
+
+    private static void load(Context c) {
+        EXPIRE_TIME = c
+                .getSharedPreferences(c.getString(R.string.shared_preference_key), Context.MODE_PRIVATE)
+                .getLong(c.getString(R.string.shared_preference_cache_exp_key), 24 * 60 * 60);
     }
 
     public static synchronized ImageCacheHandler getImageCacheHandler(Context c) {
+        if(EXPIRE_TIME == 0)
+            load(c);
+
         return ImageCacheHandler.getInstance(c);
     }
 
     public static synchronized JSONCacheHandler getJSONJsonCacheHandler(Context c) {
+        if(EXPIRE_TIME == 0)
+            load(c);
+
         return JSONCacheHandler.getInstance(c);
     }
 

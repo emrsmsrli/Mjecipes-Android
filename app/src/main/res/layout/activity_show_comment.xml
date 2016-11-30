@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -33,5 +35,29 @@
         android:layout_gravity="top|end"
         android:orientation="vertical"
         android:layout_margin="10dp"
+        android:id="@+id/edit_comment_fragment_holder" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/colorPrimaryDark"
+        android:src="@drawable/ic_format_quote_white_24dp"
+        android:id="@+id/create_comment_fab"/>
+
+    <FrameLayout
+        android:layout_width="@dimen/c_comment_w"
+        android:layout_height="@dimen/c_comment_h"
+        android:layout_gravity="bottom|end"
+        android:orientation="vertical"
+        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="20dp"
         android:id="@+id/create_comment_fragment_holder" />
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_screen"
+        android:id="@+id/loading_screen" />
 </FrameLayout>

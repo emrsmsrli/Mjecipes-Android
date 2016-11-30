@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">Mjecipes</string>
+
+
+    <string name="action_settings">Settings</string>
+
+    <!-- snackbar strings -->
     <string name="no_connection">No connection</string>
+    <string name="no_connection_cache_first">No connection, loaded information might be old</string>
+    <string name="done">Done</string>
+    <string name="error_commenter_alredy_comment">Not done, you have already comment</string>
+    <string name="error_comment_text_missing">Not done, text is missing</string>
+    <string name="error_comment_text_wrong_length">Not done, wrong text length</string>
+    <string name="error_comment_grade_invalid">Not done, missing grade</string>
+    <string name="error_image_upload">Image not uploaded</string>
+    <string name="error_favorite_recipe">Problem when making favorite</string>
+    <string name="error_delete_recipe">Problem when deleting recipe</string>
+    <string name="error_upload_image_permission_needed">You have to give permissions upload an image</string>
+
+    <!-- common strings -->
+    <string name="upload_image">Upload image</string>
 
     <!-- mainactivity strings -->
     <string name="search_hint">Search recipes</string>
@@ -19,15 +37,16 @@
     <!-- showrecipe strings -->
     <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
-    <string name="title_activity_recipe__tab__comments">Recipe_Tab_Comments</string>
-    <string name="action_settings">Settings</string>
-    <string name="show_recipe_action_menu_delete_comment">Delete comment</string>
-    <string name="show_recipe_action_menu_edit_comment">Edit comment</string>
-    <string name="show_recipe_action_menu_upload_image">Upload image</string>
+    <string name="show_recipe_menu_show_comments">Show comments</string>
+    <string name="show_recipe_menu_make_favorite">Favorite</string>
+    <string name="show_recipe_menu_edit">Edit recipe</string>
+    <string name="show_recipe_menu_delete">Delete recipe</string>
 
     <!-- showcomments strings -->
     <string name="show_comment_text_placeholder">[COMMENT_TEXT]</string>
     <string name="show_comment_commenter_placeholder">[COMMENTER_TEXT]</string>
+    <string name="show_comment_action_menu_delete">Delete comment</string>
+    <string name="show_comment_action_menu_edit">Edit comment</string>
 
     <!-- sharedprefs keys -->
     <string name="shared_preference_key">se.ju.student.android_mjecipes.SharedPreferences</string>
@@ -35,13 +54,14 @@
     <string name="shared_preference_username_key">se.ju.student.android_mjecipes.SharedPreferences.UserName</string>
     <string name="shared_preference_userid_key">se.ju.student.android_mjecipes.SharedPreferences.UserID</string>
     <string name="shared_preference_password_key">se.ju.student.android_mjecipes.SharedPreferences.Password</string>
+    <string name="shared_preference_cache_exp_key">se.ju.student.android_mjecipes.SharedPreferences.CacheExpiration</string>
 
     <!-- createcommentfragment strings -->
     <string name="create_comment_text">Comment</string>
     <string name="create_comment_text_hint">Enter comment</string>
     <string name="create_comment_grade">Grade</string>
-    <string name="create_comment_upload_image">Upload an image</string>
     <string name="create_comment_upload_image_button">Pick image</string>
+    <string name="create_comment_remove_image_button">Remove image</string>
     <string name="create_comment_post_button">Post</string>
 
 </resources>

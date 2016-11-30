@@ -81,8 +81,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimaryDark"
-        android:src="@drawable/ic_edit_white_24dp"
-        android:id="@+id/main_recipe_create_comment_fab"/>
+        android:src="@drawable/ic_format_quote_white_24dp"
+        android:id="@+id/create_comment_fab"/>
 
     <FrameLayout
         android:layout_width="@dimen/c_comment_w"
@@ -92,4 +92,10 @@
         android:layout_marginBottom="80dp"
         android:layout_marginEnd="20dp"
         android:id="@+id/create_comment_fragment_holder" />
+
+    <include
+        layout="@layout/loading_screen"
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>
