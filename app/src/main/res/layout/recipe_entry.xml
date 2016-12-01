@@ -3,9 +3,8 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:layout_marginBottom="10dp"
-    android:id="@+id/main_recipe_layout"
     android:scrollbars="vertical"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorAccent">
 
     <TextView
         android:layout_width="0dp"
@@ -23,6 +22,7 @@
         android:layout_below="@id/main_recipe_image"
         android:paddingTop="5dp"
         android:paddingStart="10dp"
+        android:textStyle="bold"
         android:id="@+id/main_recipe_name" />
 
     <TextView
@@ -37,18 +37,23 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="350dp"
         android:layout_below="@id/main_recipe_image"
-        android:paddingTop="27dp"
-        android:paddingStart="10dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="3dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
         android:id="@+id/main_recipe_description" />
 
     <TextView
+        android:textStyle="italic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_recipe_image"
-        android:paddingTop="47dp"
-        android:paddingStart="10dp"
+        android:layout_below="@id/main_recipe_description"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        android:layout_alignParentEnd="true"
         android:id="@+id/main_recipe_creatorname" />
-
 
 </RelativeLayout>
