@@ -156,6 +156,9 @@ public class UserAgent {
                         getPassword()
                 );
 
+                if(favoriteRecipeIDs == null)
+                    favoriteRecipeIDs = new HashSet<>();
+
                 Integer[] temp = favoriteRecipeIDs.toArray(new Integer[favoriteRecipeIDs.size()]);
                 int[] ids = new int[temp.length + 1];
                 for(int i = 0; i < temp.length; ++i)
