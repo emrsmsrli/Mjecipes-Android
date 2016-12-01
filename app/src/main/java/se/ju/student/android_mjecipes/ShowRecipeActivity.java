@@ -54,6 +54,7 @@ import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, CreateCommentFragment.OnCommentPostedListener {
     private static final int IMAGE_REQUEST_CODE = 1;
+    private static final int RECIPE_EDIT_REQUEST_CODE = 2;
     private static String rID;
 
     private Uri outputFileUri;
@@ -291,7 +292,22 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
         });
     }
 
-    //private void edit(){}
+    private void edit(){
+        Intent intent = new Intent(this, CreateRecipeActivity.class);
+        LinearLayout dir = (LinearLayout) mainLinearLayout.findViewById(R.id.show_recipes_ll_directions);
+
+        intent.putExtra("recipeID", rID);
+        intent.putExtra("recipeName", getTitle());
+        intent.putExtra("recipeDesc", ((TextView) mainLinearLayout.findViewById(R.id.show_recipe_desc)).getText());
+
+        String[] directions = new String[dir.getChildCount()];
+        for(int i = 0; i < directions.length; ++i)
+            directions[i] = ((Button)dir.getChildAt(i)).getText().toString();
+
+        intent.putExtra("recipeDirecs", directions);
+
+        startActivityForResult(intent, RECIPE_EDIT_REQUEST_CODE);
+    }
 
     private void uploadImage(InputStream stream) {
         new AsyncTask<InputStream, Void, Boolean>() {
@@ -414,7 +430,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
 
         switch(requestCode) {
             case IMAGE_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
+                if(resultCode == RESULT_OK) {
                     final boolean isCamera;
                     if (data == null) {
                         isCamera = true;
@@ -429,6 +445,12 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                     }
                 }
                 break;
+            case RECIPE_EDIT_REQUEST_CODE:
+                if(resultCode == RESULT_OK) {
+                    Snackbar.make(mainLinearLayout, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    onRefresh();
+                } else
+                    Snackbar.make(mainLinearLayout, getString(R.string.error_recipe_not_edited), Snackbar.LENGTH_SHORT).show();
         }
     }
 
