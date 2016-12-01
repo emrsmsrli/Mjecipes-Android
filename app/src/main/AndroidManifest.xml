@@ -44,12 +44,13 @@
         </activity>
         <activity
             android:name=".ShowCommentActivity"
+            android:label="@string/app_comments"
             android:parentActivityName=".ShowRecipeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ShowRecipeActivity" />
         </activity>
-        <activity android:name=".CreateRecipe" />
+        <activity android:name=".CreateRecipeActivity" android:label="@string/app_create_recipe" />
         <activity android:name=".ShowAccount"
             android:parentActivityName=".MainActivity">
 
