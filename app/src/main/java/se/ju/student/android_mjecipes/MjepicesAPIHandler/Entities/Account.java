@@ -4,6 +4,6 @@ public class Account {
     public String id;
     public String userName;
     public String password;
-    public double latitude;
-    public double longitude;
+    public Double latitude;
+    public Double longitude;
 }
