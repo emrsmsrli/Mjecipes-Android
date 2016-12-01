@@ -29,6 +29,7 @@ public class Errors {
     public static final String RECIPE_DESCRIPTION_MISSING = "DescriptionMissing";
     public static final String RECIPE_DESCRIPTION_WRONG_LENGTH = "DescriptionWrongLength";
     public static final String RECIPE_DIRECTIONS_MISSING = "DirectionsMissing";
+    public static final String RECIPE_DIRECTIONS_TOO_FEW = "DirectionsTooFew";
     public static final String RECIPE_DIRECTION_ORDER_MISSING = "DirectionOrderMissing";
     public static final String RECIPE_DIRECTION_DESCRIPTION_MISSING = "DirectionDescriptionMissing";
     public static final String RECIPE_DIRECTION_DESCRIPTION_WRONG_LENGTH = "DirectionDescriptionWrongLength";
