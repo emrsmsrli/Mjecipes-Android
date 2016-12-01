@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:hint="Enter direction"
+        android:layout_marginEnd="60dp"
+        android:padding="15dp"
+        android:id="@+id/direction_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/remove_direction_button"
+        android:drawableStart="@drawable/ic_cancel_black_24dp"
+        android:drawableTint="@color/colorPrimary"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_alignParentEnd="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+</RelativeLayout>
