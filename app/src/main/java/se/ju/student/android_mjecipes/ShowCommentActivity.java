@@ -88,25 +88,29 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                     actionMode.finish();
             }
         });
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(actionMode != null)
-                    actionMode.finish();
-                FragmentManager fm = getSupportFragmentManager();
-                if(fm.findFragmentByTag("CreateComment") == null) {
-                    fm.beginTransaction()
-                            .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeIDExtra)),
-                                    "CreateComment")
-                            .addToBackStack("CreateComment")
-                            .commit();
-                    floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
-                } else {
-                    fm.popBackStack();
-                    floatingActionButton.setImageResource(R.drawable.ic_format_quote_white_24dp);
+
+        if(UserAgent.getInstance(this).isLoggedIn()) {
+            floatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (actionMode != null)
+                        actionMode.finish();
+                    FragmentManager fm = getSupportFragmentManager();
+                    if (fm.findFragmentByTag("CreateComment") == null) {
+                        fm.beginTransaction()
+                                .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeIDExtra)),
+                                        "CreateComment")
+                                .addToBackStack("CreateComment")
+                                .commit();
+                        floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
+                    } else {
+                        fm.popBackStack();
+                        floatingActionButton.setImageResource(R.drawable.ic_format_quote_white_24dp);
+                    }
                 }
-            }
-        });
+            });
+        } else
+            floatingActionButton.setVisibility(View.GONE);
 
         recipeIDExtra = getIntent().getStringExtra("resid");
 
