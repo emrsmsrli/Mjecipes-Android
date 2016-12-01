@@ -12,6 +12,10 @@
         android:icon="@mipmap/ic_shopping_cart_black_24dp"
         android:title="Create A Recipe "/>
 
+    <item android:id="@+id/favoriterecipes"
+        android:icon="@drawable/ic_favorite_black_24dp"
+        android:title="My Favorite Recipes "/>
+
     <item android:id="@+id/recipeofday"
         android:icon="@mipmap/ic_cake_black_24dp"
         android:title="Recipe Of The Day"/>
@@ -19,9 +23,15 @@
     <item android:id="@+id/signup"
         android:icon="@mipmap/ic_fingerprint_black_24dp"
         android:title="Sing Up"/>
+
     <item android:id="@+id/login"
     android:icon="@mipmap/ic_flight_takeoff_black_24dp"
     android:title="Log in"/>
+
+    <item android:id="@+id/logout"
+        android:icon="@mipmap/ic_flight_land_black_24dp"
+        android:title="Log out"/>
+
 
 
 </menu>
