@@ -108,7 +108,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 favorite();
                 break;
             case R.id.edit:
-                //TODO
+                edit();
                 break;
             case R.id.upload_image:
                 openImageIntent();
@@ -141,22 +141,25 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
         }
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.create_comment_fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                if(fm.findFragmentByTag("CreateComment") == null) {
-                    fm.beginTransaction()
-                            .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeidtv.getText().toString())), "CreateComment")
-                            .addToBackStack("CreateComment")
-                            .commit();
-                    floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
-                } else {
-                    fm.popBackStack();
-                    floatingActionButton.setImageResource(R.drawable.ic_format_quote_white_24dp);
+        if(UserAgent.getInstance(this).isLoggedIn()) {
+            floatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    if (fm.findFragmentByTag("CreateComment") == null) {
+                        fm.beginTransaction()
+                                .add(R.id.create_comment_fragment_holder, CreateCommentFragment.newInstance("", 0, Integer.parseInt(recipeidtv.getText().toString())), "CreateComment")
+                                .addToBackStack("CreateComment")
+                                .commit();
+                        floatingActionButton.setImageResource(R.drawable.ic_close_white_24dp);
+                    } else {
+                        fm.popBackStack();
+                        floatingActionButton.setImageResource(R.drawable.ic_format_quote_white_24dp);
+                    }
                 }
-            }
-        });
+            });
+        } else
+            floatingActionButton.setVisibility(View.GONE);
 
         if(getIntent().hasExtra("recipeId"))
             rID = getIntent().getStringExtra("recipeId");
