@@ -28,12 +28,6 @@
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include
-        layout="@layout/empty_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/empty_screen" />
-
     <FrameLayout
         android:layout_width="@dimen/c_comment_w"
         android:layout_height="@dimen/c_comment_h"
@@ -65,4 +59,11 @@
         android:layout_height="match_parent"
         layout="@layout/loading_screen"
         android:id="@+id/loading_screen" />
+
+    <include
+        android:visibility="gone"
+        layout="@layout/empty_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/empty_screen" />
 </FrameLayout>
