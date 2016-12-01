@@ -13,7 +13,6 @@
         tools:context="se.ju.student.android_mjecipes.ShowRecipeActivity" >
 
         <ScrollView
-        android:id="@+id/activity_show_recipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -57,7 +56,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/show_recipe_directions"
-                android:id="@+id/show_recipe_t_directions"
                 android:textStyle="bold"/>
 
             <!-- for directions -->

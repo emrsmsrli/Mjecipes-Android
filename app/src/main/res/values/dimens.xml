@@ -11,12 +11,10 @@
     <dimen name="c_comment_big">30dp</dimen>
     <dimen name="c_comment_default">25dp</dimen>
     <dimen name="c_comment_mini">20dp</dimen>
-    <dimen name="c_comment_micro">15dp</dimen>
     <dimen name="c_comment_text_size">100dp</dimen>
     <dimen name="c_comment_w">250dp</dimen>
     <dimen name="c_comment_h">270dp</dimen>
 
     <dimen name="show_recipe_margins">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="appbar_padding_top">8dp</dimen>
 </resources>

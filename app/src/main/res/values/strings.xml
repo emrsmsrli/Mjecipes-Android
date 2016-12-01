@@ -45,7 +45,6 @@
 
     <!-- showrecipe strings -->
     <string name="app_comments">Comments</string>
-    <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
     <string name="show_recipe_menu_show_comments">Show comments</string>
     <string name="show_recipe_menu_make_favorite">Favorite</string>
