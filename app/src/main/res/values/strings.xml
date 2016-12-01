@@ -16,9 +16,18 @@
     <string name="error_favorite_recipe">Problem when making favorite</string>
     <string name="error_delete_recipe">Problem when deleting recipe</string>
     <string name="error_upload_image_permission_needed">You have to give permissions upload an image</string>
+    <string name="error_recipe_not_edited">Recipe not edited</string>
+    <string name="error_recipe_name_missing">Name is missing</string>
+    <string name="error_recipe_name_wrong_length">Wrong name length</string>
+    <string name="error_recipe_desc_missing">Description missing</string>
+    <string name="error_recipe_desc_wrong_length">Wrong description length</string>
+    <string name="error_recipe_direc_missing">Not done, there is no direction</string>
+    <string name="error_recipe_direc_desc_missing">Not done, one of the direction\'s description is missing</string>
+    <string name="error_recipe_direc_desc_wrong_length">Not done, one of the direction\'s have wrong length</string>
 
     <!-- common strings -->
     <string name="upload_image">Upload image</string>
+    <string name="something_went_wrong">Something went wrong</string>
 
     <!-- mainactivity strings -->
     <string name="search_hint">Search recipes</string>
@@ -35,6 +44,7 @@
     <string name="login_button">Login</string>
 
     <!-- showrecipe strings -->
+    <string name="app_comments">Comments</string>
     <string name="show_recipe_comments">Comments</string>
     <string name="show_recipe_directions">Directions</string>
     <string name="show_recipe_menu_show_comments">Show comments</string>
@@ -64,5 +74,15 @@
     <string name="create_comment_upload_image_button">Pick image</string>
     <string name="create_comment_remove_image_button">Remove image</string>
     <string name="create_comment_post_button">Post</string>
+
+    <!-- createrecipe strings -->
+    <string name="app_create_recipe">Create recipe</string>
+    <string name="create_recipe_name">Name</string>
+    <string name="create_recipe_name_hint">Enter name</string>
+    <string name="create_recipe_desc">Description</string>
+    <string name="create_recipe_desc_hint">Enter description</string>
+    <string name="create_recipe_direcs">Directions</string>
+    <string name="create_recipe_add_direc">Add a new direction</string>
+    <string name="create_recipe_post">Post</string>
 
 </resources>
