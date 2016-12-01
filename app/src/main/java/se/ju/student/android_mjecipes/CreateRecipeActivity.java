@@ -149,17 +149,28 @@ public class CreateRecipeActivity extends AppCompatActivity {
 
     private View inflateDirectionEntry(String description) {
         getLayoutInflater().inflate(R.layout.direction_entry, directionsLayout, true);
-        View v = directionsLayout.getChildAt(directionsLayout.getChildCount() - 1);
+        final View v = directionsLayout.getChildAt(directionsLayout.getChildCount() - 1);
         ((EditText)v.findViewById(R.id.direction_edit_text)).setText(description);
+        v.findViewById(R.id.remove_direction_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View button) {
+                directionsLayout.removeView(v);
+            }
+        });
         return v;
     }
 
     private void editMode() {
+        setTitle("Edit recipe");
         View v = findViewById(R.id.loading_screen);
         if(v != null)
             v.setVisibility(View.VISIBLE);
 
         final Intent intent = getIntent();
+
+        directionsLayout.removeView(
+                directionsLayout
+                        .findViewById(R.id.direction_entry));
 
         name.setText(intent.getStringExtra("recipeName"));
         description.setText(intent.getStringExtra("recipeDesc"));
@@ -226,35 +237,10 @@ public class CreateRecipeActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Boolean posted) {
                 if(posted) {
-                    Snackbar.make(activityLayout, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
                     finish();
-                } else {
-                    Errors errors = Handler.getRecipeHandler().getErrors();
-                    View focus = null;
-                    if(errors.hasError(Errors.RECIPE_NAME_MISSING)) {
-                        name.setError(getString(R.string.error_recipe_name_missing));
-                        focus = name;
-                    } else if(errors.hasError(Errors.RECIPE_NAME_WRONG_LENGTH)) {
-                        name.setError(getString(R.string.error_recipe_name_wrong_length));
-                        focus = name;
-                    } else if(errors.hasError(Errors.RECIPE_DESCRIPTION_MISSING)) {
-                        description.setError(getString(R.string.error_recipe_desc_missing));
-                        focus = description;
-                    } else if(errors.hasError(Errors.RECIPE_DESCRIPTION_WRONG_LENGTH)) {
-                        description.setError(getString(R.string.error_recipe_desc_wrong_length));
-                        focus = description;
-                    } else if(errors.hasError(Errors.RECIPE_DIRECTIONS_TOO_FEW))
-                        Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_missing), Snackbar.LENGTH_SHORT).show();
-                    else if(errors.hasError(Errors.RECIPE_DIRECTION_DESCRIPTION_MISSING))
-                        Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_desc_missing), Snackbar.LENGTH_SHORT).show();
-                    else if(errors.hasError(Errors.RECIPE_DIRECTION_DESCRIPTION_WRONG_LENGTH))
-                        Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_desc_wrong_length), Snackbar.LENGTH_SHORT).show();
-                    else
-                        Snackbar.make(activityLayout, getString(R.string.something_went_wrong), Snackbar.LENGTH_SHORT).show();
-
-                    if(focus != null)
-                        focus.requestFocus();
-                }
+                } else
+                    showError();
             }
 
         }.execute(recipe);
@@ -271,13 +257,41 @@ public class CreateRecipeActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Boolean edited) {
-                if(edited)
+                if(edited) {
                     setResult(RESULT_OK);
-                else
-                    setResult(RESULT_CANCELED);
-                finish();
+                    finish();
+                } else
+                    showError();
             }
         }.execute(recipe);
+    }
+
+    private void showError() {
+        Errors errors = Handler.getRecipeHandler().getErrors();
+        View focus = null;
+        if(errors.hasError(Errors.RECIPE_NAME_MISSING)) {
+            name.setError(getString(R.string.error_recipe_name_missing));
+            focus = name;
+        } else if(errors.hasError(Errors.RECIPE_NAME_WRONG_LENGTH)) {
+            name.setError(getString(R.string.error_recipe_name_wrong_length));
+            focus = name;
+        } else if(errors.hasError(Errors.RECIPE_DESCRIPTION_MISSING)) {
+            description.setError(getString(R.string.error_recipe_desc_missing));
+            focus = description;
+        } else if(errors.hasError(Errors.RECIPE_DESCRIPTION_WRONG_LENGTH)) {
+            description.setError(getString(R.string.error_recipe_desc_wrong_length));
+            focus = description;
+        } else if(errors.hasError(Errors.RECIPE_DIRECTIONS_TOO_FEW))
+            Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_missing), Snackbar.LENGTH_SHORT).show();
+        else if(errors.hasError(Errors.RECIPE_DIRECTION_DESCRIPTION_MISSING))
+            Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_desc_missing), Snackbar.LENGTH_SHORT).show();
+        else if(errors.hasError(Errors.RECIPE_DIRECTION_DESCRIPTION_WRONG_LENGTH))
+            Snackbar.make(activityLayout, getString(R.string.error_recipe_direc_desc_wrong_length), Snackbar.LENGTH_SHORT).show();
+        else
+            Snackbar.make(activityLayout, getString(R.string.something_went_wrong), Snackbar.LENGTH_SHORT).show();
+
+        if(focus != null)
+            focus.requestFocus();
     }
 
     private JWToken getToken() {
