@@ -480,7 +480,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 Snackbar.make(mainLinearLayout, getString(R.string.error_comment_text_wrong_length), Snackbar.LENGTH_SHORT).show();
             else if(errors.hasError(Errors.COMMENT_GRADE_INVALID))
                 Snackbar.make(mainLinearLayout, getString(R.string.error_comment_grade_invalid), Snackbar.LENGTH_SHORT).show();
-            else
+            else if(errors.hasError("NoConnection"))
                 Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_SHORT).show();
         }
     }
