@@ -41,17 +41,19 @@ public class LoginActivity extends AppCompatActivity {
         login_b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                v.setClickable(false);
                 UserAgent.getInstance(getBaseContext()).login(email_t_view.getText().toString(), password_t_view.getText().toString(), new UserAgent.LoginListener() {
                     @Override
                     public void onLogin(boolean loggedIn) {
-                        if(loggedIn==true){
+                        if(loggedIn){
                             Intent i=new Intent(getApplicationContext(),MainActivity.class);
-                            i.setAction("");
+                            i.setAction(Intent.ACTION_MAIN);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
                             finish();
                         }
                         else{
+                            login_b.setClickable(true);
                             email_t_view .setError("Password or Username wrong!");
                             email_t_view .requestFocus();
                         }
@@ -72,86 +74,6 @@ public class LoginActivity extends AppCompatActivity {
                             InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
         });
-    }
-/*
-    private void attemptLogin() {
-        password_t_view.setError(null);
-        email_t_view.setError(null);
-        boolean login = true;
-
-        String em = email_t_view.getText().toString();
-        String p = password_t_view.getText().toString();
-
-        if(TextUtils.isEmpty(em)) {
-            email_t_view.setError("Email can't be empty!");
-            focus = email_t_view;
-            focus.requestFocus();
-            login = false;
-        } else if(!emailValid(em)) {
-            email_t_view.setError("Email invalid!");
-            focus = email_t_view;
-            focus.requestFocus();
-            login = false;
-        }
-
-        if(TextUtils.isEmpty(p)) {
-            password_t_view.setError("Password can't be empty!");
-            focus = password_t_view;
-            focus.requestFocus();
-            login = false;
-        } else if(passwordValid(p)) {
-            password_t_view.setError("Password invalid!");
-            focus = password_t_view;
-            focus.requestFocus();
-            login = false;
-        }
-
-        if(login) {
-            login(em, p);
-        }
-    }
-
-    private boolean emailValid(String email) {
-        if(email.split("@").length != 2)
-            return false;
-
-        return true;
-    }
-
-    private boolean passwordValid(String password) {
-        if(password.length() < 3 || password.length() > 20)
-            return false;
-
-        if(password.toLowerCase().equals(password)
-                || password.toUpperCase().equals(password))
-            return false;
-
-        return true;
-    }
-
-    */
-
-    private void login(String email, String password) {
-        new AsyncTask<Void, Void, Boolean>() {
-
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                //TODO implement logic
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean result) {
-                //hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                if(result)
-                    Snackbar.make(findViewById(R.id.activity_login), "Logged in!", Snackbar.LENGTH_SHORT).show();
-                else
-                    Snackbar.make(findViewById(R.id.activity_login), "Error occurred!", Snackbar.LENGTH_SHORT).show();
-            }
-        }.execute();
     }
 
 }

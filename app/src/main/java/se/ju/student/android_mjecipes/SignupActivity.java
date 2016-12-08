@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public class SignupActivity extends AppCompatActivity {
         bsign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View var) {
-
+                var.setClickable(false);
 
                 username= (EditText) findViewById(R.id.enterusername);
                 hiddenpassword=(EditText)findViewById(R.id.hiddenpassword);
@@ -66,8 +67,10 @@ public class SignupActivity extends AppCompatActivity {
                     final Account a = new Account();
 
                     a.userName = username.getText().toString();
-                    a.latitude = Double.parseDouble(latitude.getText().toString());
-                    a.longitude = Double.parseDouble(longitude.getText().toString());
+                String lat = latitude.getText().toString();
+                String longi = longitude.getText().toString();
+                    a.latitude = TextUtils.isEmpty(lat) ? null: Double.parseDouble(latitude.getText().toString());
+                    a.longitude = TextUtils.isEmpty(longi) ? null: Double.parseDouble(longitude.getText().toString());
                     a.password = hiddenpassword.getText().toString();
                     new AsyncTask<Void, Void, Boolean>() {
                         @Override
@@ -84,6 +87,8 @@ public class SignupActivity extends AppCompatActivity {
                                 startActivity(i);
                                 finish();
                             } else {
+                                bsign.setClickable(true);
+
                                 //error var
                                 if (Handler.getAccountHandler().getErrors().hasError(Errors.ACCOUNT_USERNAME_MISSING)) {
                                     username.setError("Username missing");
@@ -101,8 +106,8 @@ public class SignupActivity extends AppCompatActivity {
                                 }
 
                                 if (Handler.getAccountHandler().getErrors().hasError(Errors.ACCOUNT_LATIDUTE_MISSING)) {
-                                    longitude.setError("Lantitude missing");
-                                    longitude.requestFocus();
+                                    latitude.setError("Latitude missing");
+                                    latitude.requestFocus();
                                 }
 
 

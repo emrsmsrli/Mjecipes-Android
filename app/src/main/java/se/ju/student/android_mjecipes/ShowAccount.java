@@ -30,16 +30,16 @@ public class ShowAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent i=this.getIntent();
         String action= i.getAction();
-        if(action==Intent.ACTION_USER_PRESENT)
+        if(action.equals(Intent.ACTION_USER_PRESENT))
             showaccount();
 
 
 
-        else if(action==Intent.ACTION_EDIT)
+        else if(action.equals(Intent.ACTION_EDIT))
 
             editaccount();
 
-        else if(action==Intent.ACTION_DELETE)
+        else if(action.equals(Intent.ACTION_DELETE))
              deleteaccount();
 
 
@@ -60,7 +60,6 @@ public class ShowAccount extends AppCompatActivity {
         username=(TextView) findViewById(R.id.showusername);
         latitude=(TextView) findViewById(R.id.showlatitude);
         longitude=(TextView)  findViewById(R.id.showlongitude);
-        showrecipesbutton=(ImageButton) findViewById(R.id.imageButton);
         editaccountbutton=(ImageButton) findViewById(R.id.editaccount);
         deleteaccount=(ImageButton)findViewById(R.id.deleteaccount);
         final RelativeLayout l= (RelativeLayout) findViewById(R.id.activity_show_account);
@@ -76,6 +75,7 @@ public class ShowAccount extends AppCompatActivity {
                 if(b==true) {
 
                     Intent i=new Intent(getApplicationContext(),MainActivity.class);
+                    i.setAction(Intent.ACTION_DELETE);
                     startActivity(i);
 
 
@@ -105,7 +105,6 @@ public class ShowAccount extends AppCompatActivity {
         username=(TextView) findViewById(R.id.showusername);
         latitude=(TextView) findViewById(R.id.showlatitude);
         longitude=(TextView)  findViewById(R.id.showlongitude);
-        showrecipesbutton=(ImageButton) findViewById(R.id.imageButton);
         editaccountbutton=(ImageButton) findViewById(R.id.editaccount);
         deleteaccount=(ImageButton)findViewById(R.id.deleteaccount);
 
@@ -133,17 +132,6 @@ public class ShowAccount extends AppCompatActivity {
 
             }
         }.execute();
-
-
-
-        showrecipesbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i=new Intent(getBaseContext(),MainActivity.class);
-                startActivity(i);
-
-            }
-        });
 
 
 
@@ -187,9 +175,6 @@ public class ShowAccount extends AppCompatActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 final Account a=new Account();
 
                 if(longitude!=null)
@@ -204,26 +189,18 @@ public class ShowAccount extends AppCompatActivity {
                         String userid=UserAgent.getInstance(getBaseContext()).getUserID();
                         JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
                                 UserAgent.getInstance(getBaseContext()).getPassword());
-                        Boolean b=Handler.getAccountHandler().patchAccount(userid,a,token);
-                        return b;
+                        return token != null && Handler.getAccountHandler().patchAccount(userid,a,token);
                     }
 
                     @Override
                     protected void onPostExecute(Boolean aBoolean) {
-                        final Boolean check=aBoolean;
-                        if(aBoolean==true) {
+                        if(aBoolean) {
                             Snackbar.make(l, "Account updated", Snackbar.LENGTH_SHORT).show();
 
                         }
                         else{
-                            Errors e = Handler.getRecipeHandler().getErrors();
                             latitude.setError("Error");
                         }
-
-
-
-
-
 
                     }
                 }.execute();
@@ -233,18 +210,9 @@ public class ShowAccount extends AppCompatActivity {
                 i.setAction(Intent.ACTION_USER_PRESENT);
                 startActivity(i);
 
-
-
-
-
-
             }
         });
 
-
-
     }
-
-
 
 }
