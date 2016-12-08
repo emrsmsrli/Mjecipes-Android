@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -202,8 +204,26 @@ public class CreateCommentFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    private boolean isConnectionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        return ni !=null && ni.isConnected();
+    }
+
     @Override
     public void onClick(View v) {
+
+        if(!isConnectionAvailable()) {
+            Errors e = new Errors();
+            e.error = "NoConnection";
+            if(mListener != null)
+                mListener.onCommentPosted(false, e);
+            return;
+        }
+
+        v.setClickable(false);
+
         Comment c = new Comment();
         c.text = textField.getText().toString();
         c.grade = (int)gradeBar.getRating();

@@ -135,6 +135,7 @@ public class CreateRecipeActivity extends AppCompatActivity {
             post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    v.setClickable(false);
                     Recipe r = initRecipe();
                     postRecipe(r);
                 }
@@ -181,6 +182,7 @@ public class CreateRecipeActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setClickable(false);
                 Recipe r = initRecipe();
                 r.id = Integer.parseInt(intent.getStringExtra("recipeID"));
                 editRecipe(r);
@@ -267,6 +269,8 @@ public class CreateRecipeActivity extends AppCompatActivity {
     }
 
     private void showError() {
+        post.setClickable(true);
+
         Errors errors = Handler.getRecipeHandler().getErrors();
         View focus = null;
         if(errors.hasError(Errors.RECIPE_NAME_MISSING)) {
