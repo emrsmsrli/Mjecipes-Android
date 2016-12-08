@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">Mjecipes</string>
 
-
+    <string name="drawer_my_account">My Account</string>
+    <string name="drawer_my_recipes">My Recipes</string>
+    <string name="drawer_my_fav_recipes">My Favorite Recipes</string>
+    <string name="drawer_create_a_recipe">Create A Recipe</string>
+    <string name="drawer_random_recipe">Random Recipe</string>
+    <string name="drawer_sign_up">Sign up</string>
+    <string name="drawer_log_out">Logout</string>
+    <string name="drawer_log_in">Login</string>
     <string name="action_settings">Settings</string>
 
     <!-- snackbar strings -->

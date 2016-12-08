@@ -2,35 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/myaccount"
-        android:icon="@mipmap/ic_face_black_24dp"
-        android:title="My Account"/>
+        android:icon="@drawable/ic_face_black_24dp"
+        android:title="@string/drawer_my_account"/>
     <item android:id="@+id/myrecipes"
-        android:icon="@mipmap/ic_store_black_24dp"
-        android:title="My Recipes"/>
-
-    <item android:id="@+id/createarecipe"
-        android:icon="@mipmap/ic_shopping_cart_black_24dp"
-        android:title="Create A Recipe "/>
+        android:icon="@drawable/ic_store_black_24dp"
+        android:title="@string/drawer_my_recipes"/>
 
     <item android:id="@+id/favoriterecipes"
         android:icon="@drawable/ic_favorite_black_24dp"
-        android:title="My Favorite Recipes "/>
+        android:title="@string/drawer_my_fav_recipes"/>
+
+    <item android:id="@+id/createarecipe"
+        android:icon="@drawable/ic_shopping_cart_black_24dp"
+        android:title="@string/drawer_create_a_recipe"/>
 
     <item android:id="@+id/recipeofday"
-        android:icon="@mipmap/ic_cake_black_24dp"
-        android:title="Recipe Of The Day"/>
+        android:icon="@drawable/ic_cake_black_24dp"
+        android:title="@string/drawer_random_recipe"/>
 
     <item android:id="@+id/signup"
-        android:icon="@mipmap/ic_fingerprint_black_24dp"
-        android:title="Sing Up"/>
+        android:icon="@drawable/ic_fingerprint_black_24dp"
+        android:title="@string/drawer_sign_up"/>
 
     <item android:id="@+id/login"
-    android:icon="@mipmap/ic_flight_takeoff_black_24dp"
-    android:title="Log in"/>
+        android:icon="@drawable/ic_flight_takeoff_black_24dp"
+        android:title="@string/drawer_log_in"/>
 
     <item android:id="@+id/logout"
-        android:icon="@mipmap/ic_flight_land_black_24dp"
-        android:title="Log out"/>
+        android:icon="@drawable/ic_flight_land_black_24dp"
+        android:title="@string/drawer_log_out"/>
 
 
 
