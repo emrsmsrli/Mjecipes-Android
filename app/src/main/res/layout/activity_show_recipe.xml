@@ -13,62 +13,70 @@
         tools:context="se.ju.student.android_mjecipes.ShowRecipeActivity" >
 
         <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:paddingTop="40dp"
-        android:clipToPadding="true"
-        android:animateLayoutChanges="true">
-
-        <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:id="@+id/show_recipe_main"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:clipToPadding="true"
             android:animateLayoutChanges="true">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:id="@+id/show_recipe_id"
-                android:visibility="gone" />
-
-            <ImageView
-                android:src="@drawable/norecipeimg"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/show_recipe_img"
-                android:adjustViewBounds="true"
-                android:layout_rowWeight="2"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:paddingTop="@dimen/show_recipe_margins"
-                android:paddingBottom="@dimen/show_recipe_margins"
-                android:layout_width="323dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:id="@+id/show_recipe_desc" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/show_recipe_directions"
-                android:textStyle="bold"/>
-
-            <!-- for directions -->
             <LinearLayout
-                android:paddingTop="@dimen/show_recipe_margins"
-                android:paddingStart="@dimen/show_recipe_margins"
-                android:paddingEnd="@dimen/show_recipe_margins"
-                android:paddingBottom="@dimen/show_recipe_margins"
                 android:orientation="vertical"
-                android:id="@+id/show_recipes_ll_directions"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:id="@+id/show_recipe_main"
+                android:animateLayoutChanges="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/show_recipe_id"
+                    android:visibility="gone" />
+
+                <Button
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_recipe_poster"
+                    android:text="@string/show_recipe_poster"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="end"
+                    android:backgroundTint="@color/colorPrimary" />
+
+                <ImageView
+                    android:src="@drawable/norecipeimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/show_recipe_img"
+                    android:adjustViewBounds="true"
+                    android:layout_rowWeight="2"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:paddingTop="@dimen/show_recipe_margins"
+                    android:paddingBottom="@dimen/show_recipe_margins"
+                    android:layout_width="323dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="32dp"
+                    android:id="@+id/show_recipe_desc" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/show_recipe_directions"
+                    android:textStyle="bold"/>
+
+                <!-- for directions -->
+                <LinearLayout
+                    android:paddingTop="@dimen/show_recipe_margins"
+                    android:paddingStart="@dimen/show_recipe_margins"
+                    android:paddingEnd="@dimen/show_recipe_margins"
+                    android:paddingBottom="@dimen/show_recipe_margins"
+                    android:orientation="vertical"
+                    android:id="@+id/show_recipes_ll_directions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
