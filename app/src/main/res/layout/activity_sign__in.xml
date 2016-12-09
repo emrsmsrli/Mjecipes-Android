@@ -75,11 +75,11 @@
 
         android:id="@+id/bsignin"
         android:layout_marginTop="320dp"
-        android:layout_marginLeft="200dp"
+        android:layout_marginLeft="280dp"
         />
 
     <CheckBox
-        android:text="CheckBox"
+        android:text="Use my location informations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/bsignin"
