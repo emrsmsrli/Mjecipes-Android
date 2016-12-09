@@ -68,7 +68,9 @@ public class ShowAccountActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(isConnectionAvailable() && UserAgent.getInstance(this).getUserID().equals(accountId)) {
+        if(UserAgent.getInstance(this).isLoggedIn() &&
+                isConnectionAvailable() &&
+                UserAgent.getInstance(this).getUserID().equals(accountId)) {
             menu.findItem(R.id.delete_account).setVisible(true);
             if(hasLocation) {
                 menu.findItem(R.id.edit_location).setVisible(true);
