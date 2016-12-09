@@ -52,7 +52,11 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
-public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, CreateCommentFragment.OnCommentPostedListener {
+public class ShowRecipeActivity
+        extends AppCompatActivity
+        implements SwipeRefreshLayout.OnRefreshListener,
+        CreateCommentFragment.OnCommentPostedListener,
+        View.OnClickListener {
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final int RECIPE_EDIT_REQUEST_CODE = 2;
     private static String rID;
@@ -64,6 +68,7 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
     private FloatingActionButton floatingActionButton;
     private ImageView imageView;
     private String creatorID = null;
+    private View.OnClickListener listener = this;
     private boolean loaded = false;
     private boolean imgloaded = false;
 
@@ -221,6 +226,9 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 setTitle(recipe.name);
                 recipeidtv.setText(String.format(Locale.ENGLISH, "%d", recipe.id));
                 ((TextView) mainLinearLayout.findViewById(R.id.show_recipe_desc)).setText(recipe.description);
+                Button creatorBut = (Button) mainLinearLayout.findViewById(R.id.show_recipe_poster);
+                creatorBut.setText(creatorID);
+                creatorBut.setOnClickListener(listener);
 
                 ((LinearLayout) mainLinearLayout.findViewById(R.id.show_recipes_ll_directions)).removeAllViews();
                 for (Direction d : recipe.directions) {
@@ -425,6 +433,13 @@ public class ShowRecipeActivity extends AppCompatActivity implements SwipeRefres
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i = new Intent(this, ShowAccountActivity.class);
+        i.putExtra("aID", creatorID);
+        startActivity(i);
     }
 
     @Override
