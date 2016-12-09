@@ -38,7 +38,7 @@ public class ImageCacheHandler extends CacheHandler {
     }
 
     public synchronized void downloadImage(@NonNull ImageRequest request) {
-        getRequestQueue().add(request);
+        rq.add(request);
     }
 
     public synchronized void writeToCache(@NonNull final String url, @NonNull final Bitmap b) {
@@ -65,8 +65,9 @@ public class ImageCacheHandler extends CacheHandler {
 
             try {
                 fos = new FileOutputStream(f);
-                if(b.compress(Bitmap.CompressFormat.PNG, 75, fos)) {
+                if(b.compress(Bitmap.CompressFormat.JPEG, IMAGE_CACHE_QUALITY, fos)) {
                     fos.flush();
+                    addCacheSize(f.length());
                     Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName());
                 }
             } catch(IOException e) {

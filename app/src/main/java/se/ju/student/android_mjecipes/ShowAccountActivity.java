@@ -34,6 +34,7 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class ShowAccountActivity extends AppCompatActivity {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 0;
 
     private String accountId;
     private boolean hasLocation = true;
@@ -161,8 +162,8 @@ public class ShowAccountActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(String... params) {
                 JWToken token = Handler.getTokenHandler().getToken(
-                        UserAgent.getInstance(getBaseContext()).getUsername(),
-                        UserAgent.getInstance(getBaseContext()).getPassword()
+                        UserAgent.getInstance(ShowAccountActivity.this).getUsername(),
+                        UserAgent.getInstance(ShowAccountActivity.this).getPassword()
                 );
 
                 return token != null && Handler.getAccountHandler().deleteAccount(UserAgent.getInstance(getBaseContext()).getUserID(), token);
@@ -220,8 +221,8 @@ public class ShowAccountActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Account... params) {
                 JWToken token = Handler.getTokenHandler().getToken(
-                        UserAgent.getInstance(getBaseContext()).getUsername(),
-                        UserAgent.getInstance(getBaseContext()).getPassword()
+                        UserAgent.getInstance(ShowAccountActivity.this).getUsername(),
+                        UserAgent.getInstance(ShowAccountActivity.this).getPassword()
                 );
 
                 return token != null && Handler.getAccountHandler().patchAccount(
@@ -253,8 +254,8 @@ public class ShowAccountActivity extends AppCompatActivity {
             @Override
             protected Boolean doInBackground(Account... params) {
                 JWToken token = Handler.getTokenHandler().getToken(
-                        UserAgent.getInstance(getBaseContext()).getUsername(),
-                        UserAgent.getInstance(getBaseContext()).getPassword()
+                        UserAgent.getInstance(ShowAccountActivity.this).getUsername(),
+                        UserAgent.getInstance(ShowAccountActivity.this).getPassword()
                 );
 
                 return token != null && Handler.getAccountHandler().patchAccount(
@@ -285,16 +286,17 @@ public class ShowAccountActivity extends AppCompatActivity {
     }
 
     private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch(requestCode) {
-            case 0:
+            case LOCATION_PERMISSION_REQUEST_CODE:
                 if(grantResults[0] != PackageManager.PERMISSION_GRANTED)
                     Snackbar.make(activityLayout, R.string.error_permission_needed, Snackbar.LENGTH_SHORT).show();
+                else setLocation();
                 break;
         }
     }

@@ -64,6 +64,8 @@ public class JSONCacheHandler extends CacheHandler {
                         osw.write(dataObj);
                         osw.flush();
 
+                        addCacheSize(f.length());
+
                         Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName() + ", name: " + f.getName());
                     } catch(FileNotFoundException e) {
                         Log.e(TAG, "writeToCache: File not found", e);
@@ -110,6 +112,8 @@ public class JSONCacheHandler extends CacheHandler {
                     osw = new OutputStreamWriter(new FileOutputStream(f));
                     osw.write(dataObj);
                     osw.flush();
+
+                    addCacheSize(f.length());
 
                     Log.i(TAG, "writeRecipePages: File written to cache, type: " + Recipe.class.getSimpleName() + " page, name: " + f.getName());
                 } catch(FileNotFoundException e) {
@@ -159,6 +163,8 @@ public class JSONCacheHandler extends CacheHandler {
                     osw = new OutputStreamWriter(new FileOutputStream(f));
                     osw.write(dataObj);
                     osw.flush();
+
+                    addCacheSize(f.length());
 
                     Log.i(TAG, "writeToCache: File written to cache, type: " + Comment.class.getSimpleName() + ", name: " + f.getName());
                 } catch(FileNotFoundException e) {
@@ -286,6 +292,24 @@ public class JSONCacheHandler extends CacheHandler {
         }
 
         return data;
+    }
+
+    public void clearRecipePage(final int page) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith(String.format(Locale.ENGLISH, "%s-%s-%d", Recipe.class.getSimpleName(), "page", page));
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearRecipePage: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearRecipePage: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
     }
 
     public <T> void clearSingleJSONCache(String id, Class<T> type) {

@@ -185,29 +185,29 @@ public class ShowRecipeActivity
         new AsyncTask<Void, Void, Recipe>() {
             @Override
             protected Recipe doInBackground(Void... p) {
-                Recipe r;
+                Recipe recipe;
                 if(!isConnectionAvailable()) {
                     if(!loaded) {
-                        r = CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readFromCache(rID, Recipe.class);
+                        recipe = CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readFromCache(rID, Recipe.class);
 
-                        if (r != null) {
+                        if (recipe != null) {
                             loaded = true;
                             Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
-                            return r;
-                        }
+                            return recipe;
+                        } else return null;
                     } else {
                         Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                         return null;
                     }
                 }
 
-                r = Handler.getRecipeHandler().getRecipe(Integer.parseInt(rID));
-                if(r != null) {
-                    handleCache(r);
+                recipe = Handler.getRecipeHandler().getRecipe(Integer.parseInt(rID));
+                if(recipe != null) {
+                    handleCache(recipe);
                     loaded = true;
                 }
 
-                return r;
+                return recipe;
             }
 
             @Override
