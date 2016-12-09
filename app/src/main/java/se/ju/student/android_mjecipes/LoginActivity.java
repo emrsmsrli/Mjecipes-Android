@@ -2,6 +2,8 @@ package se.ju.student.android_mjecipes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.support.design.widget.Snackbar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
@@ -26,18 +29,35 @@ public class LoginActivity extends AppCompatActivity {
     private Button login_b;
     private CheckBox showPass_cb;
     private View focus;
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        relativeLayout=(RelativeLayout) findViewById(R.id.log_in);
         email_t_view = (EditText) findViewById(R.id.login_email);
         password_t_view = (EditText) findViewById(R.id.login_password);
         login_b = (Button) findViewById(R.id.login_button);
         showPass_cb = (CheckBox) findViewById(R.id.login_cb_sp);
         focus = null;
+        if(!(isConnectionAvailable())){
+            Snackbar.make(relativeLayout, "No internet connection. You can't login.", Snackbar.LENGTH_LONG).show();
+            login_b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Snackbar.make(relativeLayout, "No internet connection!", Snackbar.LENGTH_LONG).show();
+                }
+            });
+        }else{
+            login();
+        }
 
+
+
+    }
+
+    void login(){
         login_b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,5 +95,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    private boolean isConnectionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
 
+        return ni !=null && ni.isConnected();
+    }
 }

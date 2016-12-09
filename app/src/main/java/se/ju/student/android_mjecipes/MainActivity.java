@@ -4,12 +4,15 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,10 +37,16 @@ import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
 public class MainActivity extends AppCompatActivity {
     private static final int CREATE_RECIPE_REQUEST = 0;
-
+    private LinearLayout mainLinearLayout;
     DrawerLayout drawerLayout;
     private ActionBarDrawerToggle Toggle;
     NavigationView navigationView;
+    private boolean loaded = false;
+    private boolean ordloaded = false;
+    private boolean favloaded = false;
+
+    private int page=Integer.MAX_VALUE;
+    private int pagef=Integer.MAX_VALUE-1;
 
 
 
@@ -50,9 +59,9 @@ public static String a;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        /*if(Toggle.onOptionsItemSelected(item)){
+        if(Toggle.onOptionsItemSelected(item)){
             return true;
-        }*/
+        }
 
         switch(item.getItemId()) {
             case R.id.search:
@@ -61,6 +70,8 @@ public static String a;
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+
         return true;
     }
 
@@ -115,7 +126,37 @@ public static String a;
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
-                return Handler.getRecipeHandler().getRecipeByPage(1);
+
+                Recipe r[];
+                if(!isConnectionAvailable()) {
+                    if(!ordloaded) {
+
+                        r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(1);
+
+
+                        if (r != null) {
+                            ordloaded = true;
+                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
+                            return r;
+                        }
+                    }
+
+                    else {
+                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                r = Handler.getRecipeHandler().getRecipeByPage(1);
+                if(r != null) {
+                    handleCache(r,1);
+                    ordloaded = true;
+                }
+
+                return r;
+
+
+
             }
 
             @Override
@@ -137,7 +178,7 @@ public static String a;
 
         drawerLayout.addDrawerListener(Toggle);
         Toggle.syncState();
-
+        mainLinearLayout = (LinearLayout) findViewById(R.id.activity_main);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -165,7 +206,7 @@ public static String a;
                             i1.setAction(Intent.ACTION_USER_PRESENT);}
                         else
                             i1=new Intent(MainActivity.this, LoginActivity.class);
-
+                        ordloaded=false;
                         startActivity(i1);
                         drawerLayout.closeDrawers();
                         break;
@@ -177,6 +218,7 @@ public static String a;
                             i2.setAction(Intent.ACTION_VIEW);}
                         else
                             i2 = new Intent(MainActivity.this, LoginActivity.class);
+                        ordloaded=false;
                         startActivity(i2);
                         drawerLayout.closeDrawers();
                         break;
@@ -185,10 +227,12 @@ public static String a;
                         Intent i3;
                         if(UserAgent.getInstance(getBaseContext()).isLoggedIn()) {
                             i3 = new Intent(getApplicationContext(), CreateRecipeActivity.class);
+                            ordloaded=false;
                             startActivityForResult(i3, CREATE_RECIPE_REQUEST);
                         }
                         else {
                             i3 = new Intent(getApplicationContext(), LoginActivity.class);
+                            ordloaded=false;
                             startActivity(i3);
                         }
                         drawerLayout.closeDrawers();
@@ -197,6 +241,7 @@ public static String a;
                         Intent i4 = new Intent(getApplicationContext(), MainActivity.class);
                         i4.setAction("");
                         finish();
+                        ordloaded=false;
                         startActivity(i4);
                         drawerLayout.closeDrawers();
                         break;
@@ -205,13 +250,14 @@ public static String a;
                     case R.id.signup:
                         Intent i6 = new Intent(MainActivity.this, SignupActivity.class);
                         startActivity(i6);
+                        ordloaded=false;
                         drawerLayout.closeDrawers();
                         break;
 
                     case R.id.login:
 
                         Intent i7 = new Intent(MainActivity.this, LoginActivity.class);
-
+                        ordloaded=false;
                         startActivity(i7);
 
                         drawerLayout.closeDrawers();
@@ -223,7 +269,7 @@ public static String a;
                         UserAgent.getInstance(getBaseContext()).logout();
                         Intent i8 = new Intent(MainActivity.this,MainActivity.class);
                         i8.setAction("");
-
+                        ordloaded=false;
                         startActivity(i8);
                         finish();
 
@@ -234,6 +280,7 @@ public static String a;
                     case R.id.favoriterecipes:
                         Intent i9 = new Intent(MainActivity.this, MainActivity.class);
                         i9.setAction(Intent.ACTION_PICK);
+                        ordloaded=false;
                         startActivity(i9);finish();
 
                         drawerLayout.closeDrawers();
@@ -267,8 +314,36 @@ public static String a;
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
-                return Handler.getAccountHandler().getRecipes(UserAgent.getInstance(getBaseContext()).getUserID());
+                Recipe r[];
+                if(!isConnectionAvailable()) {
+                    if(!loaded) {
+
+                            r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(page);
+
+
+                        if (r != null) {
+                            loaded = true;
+                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
+                            return r;
+                        }
+                    } else {
+                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                r = Handler.getAccountHandler().getRecipes(UserAgent.getInstance(getBaseContext()).getUserID());
+                if(r != null) {
+                    handleCache(r,page);
+                    loaded = true;
+                }
+
+                return r;
+
+
             }
+
+
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
@@ -328,10 +403,44 @@ public static String a;
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
-                JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),
-                        UserAgent.getInstance(getBaseContext()).getPassword());
-                return Handler.getAccountHandler().getFavorites(UserAgent.getInstance(getBaseContext()).getUserID(),token);
+
+
+
+                Recipe r[];
+                if(!isConnectionAvailable()) {
+                    if(!favloaded) {
+
+                        r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(pagef);
+
+
+                        if (r != null) {
+                            favloaded = true;
+                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
+                            return r;
+                        }
+                    } else {
+                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),UserAgent.getInstance(getBaseContext()).getPassword());
+                r= Handler.getAccountHandler().getFavorites(UserAgent.getInstance(getBaseContext()).getUserID(),token);
+
+                if(r != null) {
+                    handleCache(r,pagef);
+                    favloaded = true;
+                }
+
+                return r;
+
+
+
+
+
             }
+
+
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
@@ -347,8 +456,18 @@ public static String a;
 
 
     }
+    private boolean isConnectionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
 
+        return ni !=null && ni.isConnected();
+    }
+    private void handleCache(Recipe r[],int page) {
+        for(int i=0;i<r.length;i++)
+        CacheHandler.getJSONJsonCacheHandler(this).clearSingleJSONCache(Integer.toString(r[i].id), Recipe.class);
 
+        CacheHandler.getJSONJsonCacheHandler(this).writeRecipePage(r, page);
+    }
 
 
 }
