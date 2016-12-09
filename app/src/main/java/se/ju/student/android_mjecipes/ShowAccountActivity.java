@@ -1,10 +1,22 @@
 package se.ju.student.android_mjecipes;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Looper;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -54,7 +67,7 @@ public class ShowAccountActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(UserAgent.getInstance(this).getUserID().equals(accountId)) {
+        if(isConnectionAvailable() && UserAgent.getInstance(this).getUserID().equals(accountId)) {
             menu.findItem(R.id.delete_account).setVisible(true);
             if(hasLocation) {
                 menu.findItem(R.id.edit_location).setVisible(true);
@@ -74,12 +87,15 @@ public class ShowAccountActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(!isConnectionAvailable()) {
+            Snackbar.make(activityLayout, R.string.no_connection, Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+
         switch(item.getItemId()) {
             case R.id.add_location:
-                addLocation();
-                break;
             case R.id.edit_location:
-                editLocation();
+                setLocation();
                 break;
             case R.id.delete_location:
                 deleteLocation();
@@ -90,6 +106,7 @@ public class ShowAccountActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+
         return true;
     }
 
@@ -154,11 +171,50 @@ public class ShowAccountActivity extends AppCompatActivity {
 
     }
 
-    private void addLocation() {
+    private void setLocation() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+
+        Criteria criteria = new Criteria();
+        criteria.setAltitudeRequired(false);
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        String providerName = locationManager.getBestProvider(criteria, false);
+
+        Location location;
+        if(locationManager.isProviderEnabled(providerName))
+            location = locationManager.getLastKnownLocation(providerName);
+        else {
+            Toast.makeText(this, "Enable location providers", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            return;
+        }
+
+        if(location == null) {
+            LocationListener locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    updateLocation(location);
+                }
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
+                @Override
+                public void onProviderEnabled(String provider) {}
+                @Override
+                public void onProviderDisabled(String provider) {}
+            };
+
+            locationManager.requestSingleUpdate(providerName, locationListener, Looper.myLooper());
+        } else
+            updateLocation(location);
+    }
+
+    private void updateLocation(Location location) {
         Account account = new Account();
-        account.latitude = 10.0;
-        account.longitude = 20.0;
-        /** TODO get the info from location provider **/
+        account.latitude = location.getLatitude();
+        account.longitude = location.getLongitude();
 
         new AsyncTask<Account, Void, Boolean>() {
             @Override
@@ -186,11 +242,6 @@ public class ShowAccountActivity extends AppCompatActivity {
                     Snackbar.make(activityLayout, R.string.something_went_wrong, Snackbar.LENGTH_SHORT).show();
             }
         }.execute(account);
-    }
-
-    private void editLocation(){
-        // FIXME: 09/12/2016
-        addLocation();
     }
 
     private void deleteLocation() {
@@ -233,4 +284,18 @@ public class ShowAccountActivity extends AppCompatActivity {
         return ni !=null && ni.isConnected();
     }
 
+    private void requestLocationPermission() {
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode) {
+            case 0:
+                if(grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                    Snackbar.make(activityLayout, R.string.error_permission_needed, Snackbar.LENGTH_SHORT).show();
+                break;
+        }
+    }
 }
