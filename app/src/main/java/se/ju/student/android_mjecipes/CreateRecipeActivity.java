@@ -2,9 +2,12 @@ package se.ju.student.android_mjecipes;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -99,47 +102,52 @@ public class CreateRecipeActivity extends AppCompatActivity {
         post = (Button) findViewById(R.id.post_button);
         Button addDirection = (Button) findViewById(R.id.direction_add_button);
 
-        if(directionsLayout != null)
-            directionsLayout
-                    .findViewById(R.id.direction_entry)
-                    .findViewById(R.id.remove_direction_button)
-                    .setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    directionsLayout.removeView(directionsLayout.findViewById(R.id.direction_entry));
-                }
-            });
-
-        if(addDirection != null)
-            addDirection.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final View direction = inflateDirectionEntry("");
-                    direction.findViewById(R.id.remove_direction_button).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            directionsLayout.removeView(direction);
-                        }
-                    });
-                }
-            });
-
-        if(getIntent().hasExtra("recipeID")) {
-            editMode = true;
-            invalidateOptionsMenu();
-            editMode();
-            return;
+        if(!(isConnectionAvailable())){
+            Snackbar.make(activityLayout, "No internet connection. You can't create a recipe.", Snackbar.LENGTH_LONG).show();
         }
+        else {
+            if (directionsLayout != null)
+                directionsLayout
+                        .findViewById(R.id.direction_entry)
+                        .findViewById(R.id.remove_direction_button)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                directionsLayout.removeView(directionsLayout.findViewById(R.id.direction_entry));
+                            }
+                        });
 
-        if(post != null)
-            post.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setClickable(false);
-                    Recipe r = initRecipe();
-                    postRecipe(r);
-                }
-            });
+            if (addDirection != null)
+                addDirection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final View direction = inflateDirectionEntry("");
+                        direction.findViewById(R.id.remove_direction_button).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                directionsLayout.removeView(direction);
+                            }
+                        });
+                    }
+                });
+
+            if (getIntent().hasExtra("recipeID")) {
+                editMode = true;
+                invalidateOptionsMenu();
+                editMode();
+                return;
+            }
+
+            if (post != null)
+                post.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        v.setClickable(false);
+                        Recipe r = initRecipe();
+                        postRecipe(r);
+                    }
+                });
+        }
     }
 
     @Override
@@ -403,5 +411,10 @@ public class CreateRecipeActivity extends AppCompatActivity {
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
         startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
     }
+    private boolean isConnectionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
 
+        return ni !=null && ni.isConnected();
+    }
 }
