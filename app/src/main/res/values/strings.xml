@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Mjecipes</string>
 
+    <!-- drawer strings -->
     <string name="drawer_my_account">My Account</string>
     <string name="drawer_my_recipes">My Recipes</string>
     <string name="drawer_my_fav_recipes">My Favorite Recipes</string>
@@ -9,7 +10,6 @@
     <string name="drawer_sign_up">Sign up</string>
     <string name="drawer_log_out">Logout</string>
     <string name="drawer_log_in">Login</string>
-    <string name="action_settings">Settings</string>
 
     <!-- snackbar strings -->
     <string name="no_connection">No connection</string>
@@ -57,6 +57,7 @@
     <string name="show_recipe_menu_make_favorite">Favorite</string>
     <string name="show_recipe_menu_edit">Edit recipe</string>
     <string name="show_recipe_menu_delete">Delete recipe</string>
+    <string name="show_recipe_poster">[POSTER]</string>
 
     <!-- showcomments strings -->
     <string name="show_comment_text_placeholder">[COMMENT_TEXT]</string>
@@ -90,5 +91,14 @@
     <string name="create_recipe_direcs">Directions</string>
     <string name="create_recipe_add_direc">Add a new direction</string>
     <string name="create_recipe_post">Post</string>
+
+    <!-- showaccount strings -->
+    <string name="show_account_username">Username</string>
+    <string name="show_account_latitude">Latitude</string>
+    <string name="show_account_longitude">Longitude</string>
+    <string name="show_account_menu_add_loc">Add Location</string>
+    <string name="show_account_menu_edit_loc">Edit Location</string>
+    <string name="show_account_menu_delete_loc">Delete Location</string>
+    <string name="show_account_menu_delete_acc">Delete Account</string>
 
 </resources>
