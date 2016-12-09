@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -30,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox showPass_cb;
     private View focus;
     RelativeLayout relativeLayout;
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +42,10 @@ public class LoginActivity extends AppCompatActivity {
         login_b = (Button) findViewById(R.id.login_button);
         showPass_cb = (CheckBox) findViewById(R.id.login_cb_sp);
         focus = null;
+
+
         if(!(isConnectionAvailable())){
+
             Snackbar.make(relativeLayout, "No internet connection. You can't login.", Snackbar.LENGTH_LONG).show();
             login_b.setOnClickListener(new View.OnClickListener() {
                 @Override
