@@ -14,9 +14,20 @@ import java.util.Comparator;
 import se.ju.student.android_mjecipes.R;
 
 public abstract class CacheHandler {
+    public static final long EXPIRE_TIME_HIGH = 24 * 60 * 60; //24h
+    public static final long EXPIRE_TIME_NORMAL = 12 * 60 * 60; //12h
+    public static final long EXPIRE_TIME_LOW = 3 * 60 * 60; //3h
+    public static final long CACHE_LIMIT_HIGH = 2 << 24; //32mb
+    public static final long CACHE_LIMIT_NORMAL = 2 << 23; //16mb
+    public static final long CACHE_LIMIT_LOW = 2 << 21; //4mb
+    public static final int IMAGE_QUALITY_REAL = 100;
+    public static final int IMAGE_QUALITY_HIGH = 75;
+    public static final int IMAGE_QUALITY_NORMAL = 50;
+    public static final int IMAGE_QUALITY_LOW = 25;
+
     private static final String TAG = "CacheHandler";
-    private static long EXPIRE_TIME = 0; //will be 24h
-    private static long CACHE_SIZE_LIMIT = 0; //will be 32mb
+    private static long EXPIRE_TIME = 0;
+    private static long CACHE_SIZE_LIMIT = 0;
     private static long CACHE_SIZE_TOTAL = 0;
     protected static int IMAGE_CACHE_QUALITY = 0;
     protected static File cacheDir = null;
@@ -113,8 +124,12 @@ public abstract class CacheHandler {
                     File[] files = getOldestCaches();
                     for(File f: files) {
                         if(f != null) {
-                            if(f.delete()) Log.i(TAG, "deleteIfLimitReached: Cache limit reached, file deleted, name: " + f.getName());
-                            else           Log.i(TAG, "deleteIfLimitReached: Cache limit reached, but file not deleted, name " + f.getName());
+                            long size = f.length();
+                            if(f.delete()) {
+                                Log.i(TAG, "deleteIfLimitReached: Cache limit reached, file deleted, name: " + f.getName());
+                                CACHE_SIZE_TOTAL -= size;
+                            } else
+                                Log.i(TAG, "deleteIfLimitReached: Cache limit reached, but file not deleted, name " + f.getName());
                         }
                     }
                 }
@@ -201,8 +216,8 @@ public abstract class CacheHandler {
 
     private static void load(Context c) {
         SharedPreferences sp = c.getSharedPreferences(c.getString(R.string.shared_preference_key), Context.MODE_PRIVATE);
-        EXPIRE_TIME = sp.getLong(c.getString(R.string.shared_preference_cache_exp_key), 24 * 60 * 60);
-        CACHE_SIZE_LIMIT = sp.getLong(c.getString(R.string.shared_preference_cache_limit_key), 2 << 14);
+        EXPIRE_TIME = sp.getLong(c.getString(R.string.shared_preference_cache_exp_key), EXPIRE_TIME_NORMAL);
+        CACHE_SIZE_LIMIT = sp.getLong(c.getString(R.string.shared_preference_cache_limit_key), CACHE_LIMIT_NORMAL);
         IMAGE_CACHE_QUALITY = sp.getInt(c.getString(R.string.shared_preference_cache_quality_key), 50);
 
         getCacheSize(c);
