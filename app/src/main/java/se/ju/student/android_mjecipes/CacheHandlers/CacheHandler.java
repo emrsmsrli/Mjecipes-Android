@@ -218,7 +218,7 @@ public abstract class CacheHandler {
         SharedPreferences sp = c.getSharedPreferences(c.getString(R.string.shared_preference_key), Context.MODE_PRIVATE);
         EXPIRE_TIME = sp.getLong(c.getString(R.string.shared_preference_cache_exp_key), EXPIRE_TIME_NORMAL);
         CACHE_SIZE_LIMIT = sp.getLong(c.getString(R.string.shared_preference_cache_limit_key), CACHE_LIMIT_NORMAL);
-        IMAGE_CACHE_QUALITY = sp.getInt(c.getString(R.string.shared_preference_cache_quality_key), 50);
+        IMAGE_CACHE_QUALITY = sp.getInt(c.getString(R.string.shared_preference_cache_quality_key), IMAGE_QUALITY_NORMAL);
 
         getCacheSize(c);
     }
