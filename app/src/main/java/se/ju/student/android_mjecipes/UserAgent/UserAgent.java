@@ -3,6 +3,8 @@ package se.ju.student.android_mjecipes.UserAgent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
@@ -37,9 +39,6 @@ public class UserAgent {
         resources = c.getResources();
         sharedPreferences = c.getSharedPreferences(resources.getString(R.string.shared_preference_key), Context.MODE_PRIVATE);
         load();
-
-        if(loggedIn)
-            getFavorites();
     }
 
     public void login(final String userName, final String passWord, @NonNull final LoginListener listener) {
@@ -101,13 +100,13 @@ public class UserAgent {
         password = sharedPreferences.getString(resources.getString(R.string.shared_preference_password_key), null);
     }
 
-    private void getFavorites() {
+    private static void getFavorites() {
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... params) {
                 JWToken token = Handler.getTokenHandler().getToken(
-                        getUsername(),
-                        getPassword()
+                        username,
+                        password
                 );
 
                 if(token != null)
@@ -190,7 +189,17 @@ public class UserAgent {
         if(instance == null)
             instance = new UserAgent(c);
 
+        if(favoriteRecipeIDs == null && loggedIn && isConnectionAvailable(c))
+            getFavorites();
+
         return instance;
+    }
+
+    private static boolean isConnectionAvailable(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        return ni !=null && ni.isConnected();
     }
 
 }
