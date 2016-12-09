@@ -227,7 +227,7 @@ public class ShowRecipeActivity
                 recipeidtv.setText(String.format(Locale.ENGLISH, "%d", recipe.id));
                 ((TextView) mainLinearLayout.findViewById(R.id.show_recipe_desc)).setText(recipe.description);
                 Button creatorBut = (Button) mainLinearLayout.findViewById(R.id.show_recipe_poster);
-                creatorBut.setText(creatorID);
+                creatorBut.setText(recipe.creator.userName);
                 creatorBut.setOnClickListener(listener);
 
                 ((LinearLayout) mainLinearLayout.findViewById(R.id.show_recipes_ll_directions)).removeAllViews();
