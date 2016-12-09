@@ -463,9 +463,7 @@ public static String a;
         return ni !=null && ni.isConnected();
     }
     private void handleCache(Recipe r[],int page) {
-        for(int i=0;i<r.length;i++)
-        CacheHandler.getJSONJsonCacheHandler(this).clearSingleJSONCache(Integer.toString(r[i].id), Recipe.class);
-
+        CacheHandler.getJSONJsonCacheHandler(this).clearRecipePage(page);
         CacheHandler.getJSONJsonCacheHandler(this).writeRecipePage(r, page);
     }
 
