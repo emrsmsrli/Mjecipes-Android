@@ -202,7 +202,7 @@ public static String a;
 
                         Intent i1 ;
                         if(UserAgent.getInstance(getBaseContext()).isLoggedIn()){
-                            i1=new Intent(MainActivity.this, ShowAccount.class);
+                            i1=new Intent(MainActivity.this, ShowAccountActivity.class);
                             i1.setAction(Intent.ACTION_USER_PRESENT);}
                         else
                             i1=new Intent(MainActivity.this, LoginActivity.class);
