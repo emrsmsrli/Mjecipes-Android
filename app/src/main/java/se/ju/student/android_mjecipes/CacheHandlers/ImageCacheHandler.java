@@ -68,7 +68,7 @@ public class ImageCacheHandler extends CacheHandler {
                 if(b.compress(Bitmap.CompressFormat.JPEG, IMAGE_CACHE_QUALITY, fos)) {
                     fos.flush();
                     addCacheSize(f.length());
-                    Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName());
+                    Log.i(TAG, "writeToCache: File written to cache, type: Image, name: " + f.getName() + " quality: " + IMAGE_CACHE_QUALITY + "%");
                 }
             } catch(IOException e) {
                 Log.e(TAG, "writeToCache: IO Exception", e);
