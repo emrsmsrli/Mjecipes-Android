@@ -288,6 +288,24 @@ public class JSONCacheHandler extends CacheHandler {
         return data;
     }
 
+    public void clearRecipePage(final int page) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File[] files = cacheDir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.startsWith(String.format(Locale.ENGLISH, "%s-%s-%d", Recipe.class.getSimpleName(), "page", page));
+                    }
+                });
+
+                for(File f: files)
+                    if(f.delete()) Log.i(TAG, "clearRecipePage: Cache file deleted, name: " + f.getName());
+                    else           Log.i(TAG, "clearRecipePage: Cache file not deleted, name " + f.getName());
+            }
+        }).run();
+    }
+
     public <T> void clearSingleJSONCache(String id, Class<T> type) {
         final String simpleName = type.getSimpleName();
         final String typeID = id;
