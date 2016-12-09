@@ -51,8 +51,15 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign__in);
         relativeLayout= (RelativeLayout) findViewById(R.id.sign_up);
+        bsign= (Button) findViewById(R.id.bsignin);
             if(!(isConnectionAvailable())){
                 Snackbar.make(relativeLayout, "No internet connection. You can't create an account.", Snackbar.LENGTH_LONG).show();
+                bsign.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View var) {Snackbar.make(relativeLayout, "No internet connection!", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+
             }else{
                 signup();
             }
@@ -64,7 +71,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
     void signup(){
-        bsign= (Button) findViewById(R.id.bsignin);
+
         bsign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View var) {
