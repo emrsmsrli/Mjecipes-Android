@@ -64,6 +64,8 @@ public class JSONCacheHandler extends CacheHandler {
                         osw.write(dataObj);
                         osw.flush();
 
+                        addCacheSize(f.length());
+
                         Log.i(TAG, "writeToCache: File written to cache, type: " + type.getSimpleName() + ", name: " + f.getName());
                     } catch(FileNotFoundException e) {
                         Log.e(TAG, "writeToCache: File not found", e);
@@ -110,6 +112,8 @@ public class JSONCacheHandler extends CacheHandler {
                     osw = new OutputStreamWriter(new FileOutputStream(f));
                     osw.write(dataObj);
                     osw.flush();
+
+                    addCacheSize(f.length());
 
                     Log.i(TAG, "writeRecipePages: File written to cache, type: " + Recipe.class.getSimpleName() + " page, name: " + f.getName());
                 } catch(FileNotFoundException e) {
@@ -159,6 +163,8 @@ public class JSONCacheHandler extends CacheHandler {
                     osw = new OutputStreamWriter(new FileOutputStream(f));
                     osw.write(dataObj);
                     osw.flush();
+
+                    addCacheSize(f.length());
 
                     Log.i(TAG, "writeToCache: File written to cache, type: " + Comment.class.getSimpleName() + ", name: " + f.getName());
                 } catch(FileNotFoundException e) {
