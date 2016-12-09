@@ -22,7 +22,7 @@
     <string name="error_image_upload">Image not uploaded</string>
     <string name="error_favorite_recipe">Problem when making favorite</string>
     <string name="error_delete_recipe">Problem when deleting recipe</string>
-    <string name="error_upload_image_permission_needed">You have to give permissions upload an image</string>
+    <string name="error_permission_needed">You have to give permissions to do that</string>
     <string name="error_recipe_not_edited">Recipe not edited</string>
     <string name="error_recipe_name_missing">Name is missing</string>
     <string name="error_recipe_name_wrong_length">Wrong name length</string>

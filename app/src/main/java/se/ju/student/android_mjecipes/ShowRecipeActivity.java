@@ -477,7 +477,7 @@ public class ShowRecipeActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == 0) {
             if(grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)) {
-                Snackbar.make(mainLinearLayout, getString(R.string.error_upload_image_permission_needed), Snackbar.LENGTH_SHORT);
+                Snackbar.make(mainLinearLayout, getString(R.string.error_permission_needed), Snackbar.LENGTH_SHORT);
             }
         }
     }
