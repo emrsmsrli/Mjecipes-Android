@@ -50,7 +50,7 @@
                 android:value=".ShowRecipeActivity" />
         </activity>
         <activity android:name=".CreateRecipeActivity" android:label="@string/app_create_recipe" />
-        <activity android:name=".ShowAccount"
+        <activity android:name=".ShowAccountActivity"
             android:parentActivityName=".MainActivity">
 
             <intent-filter>
