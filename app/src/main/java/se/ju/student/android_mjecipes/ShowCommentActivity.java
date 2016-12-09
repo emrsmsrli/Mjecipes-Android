@@ -141,7 +141,7 @@ public class ShowCommentActivity extends AppCompatActivity implements SwipeRefre
                             loaded = true;
                             Snackbar.make(activityLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
                             return comments;
-                        }
+                        } else return null;
                     } else {
                         Snackbar.make(activityLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                         return null;
