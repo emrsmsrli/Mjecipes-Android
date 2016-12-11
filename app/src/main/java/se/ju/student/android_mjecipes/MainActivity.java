@@ -32,6 +32,8 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Random;
 
@@ -55,14 +57,14 @@ public class MainActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         RecipePageFragment.OnFragmentInteractionListener,
         View.OnClickListener {
-
+    private static final int RECIPE_EDIT_REQUEST_CODE = 2;
     private static final String ACTION_MY_RECIPES = "Mjecipes.MyRecipes";
     private static final String ACTION_MY_FAVORITES = "Mjecipes.MyFavorites";
     private static final int CREATE_RECIPE_REQUEST = 0;
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final int MY_RECIPES_PAGE_CODE = Integer.MAX_VALUE;
     private static final int MY_FAVORITES_PAGE_CODE = Integer.MAX_VALUE - 1;
-
+    private LinearLayout mainLinearLayout;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -178,6 +180,7 @@ public class MainActivity
                         break;
                     case R.id.edit:
                         //TODO
+                        edit(currentRID);
                         break;
                     case R.id.upload_image:
                         openImageIntent();
@@ -257,14 +260,14 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         String action = intent.getAction();
-
+        mainLinearLayout = (LinearLayout) findViewById(R.id.show_recipe_main);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabDots = (TabLayout) findViewById(R.id.tabDots);
         emptyScreen = findViewById(R.id.empty_screen);
         FloatingActionButton createRecipeFab = (FloatingActionButton) findViewById(R.id.create_recipe_fab);
-
+        rec= new int[50];
         if(createRecipeFab != null)
             createRecipeFab.setOnClickListener(this);
 
@@ -386,6 +389,7 @@ public class MainActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.myaccount:
@@ -424,7 +428,7 @@ public class MainActivity
                 break;
             case R.id.recipeofday:
                 Random rand=new Random();;
-                int randomNum = rand.nextInt((50 - 0) + 1) +0;
+                int randomNum = rand.nextInt(50);
                 Intent i = new Intent(MainActivity.this, ShowRecipeActivity.class);
                 i.putExtra("recipeId", ((Integer.toString( rec[randomNum]))));
                 i.setAction("");
@@ -496,7 +500,7 @@ public class MainActivity
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
-                rec= new int[50];
+
 
                 Recipe r[] = null;
 
@@ -725,5 +729,32 @@ public class MainActivity
         return result;
     }
 
+    private void edit(final int recipeid){
 
+
+
+
+        new AsyncTask<Void,Void,Recipe>(){
+            @Override
+            protected Recipe doInBackground(Void... params) {
+                return Handler.getRecipeHandler().getRecipe(recipeid);
+            }
+
+            @Override
+            protected void onPostExecute(Recipe recipe) {
+                Intent intent = new Intent(MainActivity.this, CreateRecipeActivity.class);
+                intent.putExtra("recipeID", Integer.toString(recipe.id));
+                intent.putExtra("recipeName",recipe.name);
+                intent.putExtra("recipeDesc", recipe.description);
+
+                String[] directions = new String[recipe.directions.length];
+                for(int i = 0; i < directions.length; ++i)
+                    directions[i] = recipe.directions[i].description;
+
+                intent.putExtra("recipeDirecs", directions);
+                startActivityForResult(intent, RECIPE_EDIT_REQUEST_CODE);
+
+            }
+        }.execute();
+    }
 }
