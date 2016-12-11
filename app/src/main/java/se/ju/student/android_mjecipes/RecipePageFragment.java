@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,11 @@ import java.util.Locale;
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
-public class RecipePageFragment extends Fragment {
+public class RecipePageFragment extends Fragment implements View.OnClickListener {
 
     public interface OnFragmentInteractionListener {
-        void loaded(boolean isThereRecipes);
+        void loaded();
+        void onRecipeLongClick(View v, int recipeID, String creatorID);
     }
 
     private static final String ARG_RECIPES = "recipes";
@@ -37,6 +39,7 @@ public class RecipePageFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private LinearLayout pageLayout;
+    private ActionMode actionMode;
 
     public RecipePageFragment() {}
 
@@ -61,7 +64,7 @@ public class RecipePageFragment extends Fragment {
         pageLayout = (LinearLayout) view.findViewById(R.id.recipe_page_ll);
         inflateRecipes(recipes, username);
         if(mListener != null)
-            mListener.loaded(recipes.length != 0);
+            mListener.loaded();
     }
 
     private void inflateRecipes(final Recipe[] recipes, String username) {
@@ -94,20 +97,40 @@ public class RecipePageFragment extends Fragment {
                 }, iv.getWidth(), iv.getHeight(), null, null, null));
             }
 
-            vv.setOnClickListener(new View.OnClickListener() {
+            vv.setOnClickListener(this);
+
+            final String cID = recipes[i].creator != null ? recipes[i].creator.id : recipes[i].creatorId;
+            final int rID = recipes[i].id;
+            vv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onLongClick(View v) {
+                    if(mListener != null) {
+                        mListener.onRecipeLongClick(v, rID, cID);
+                        actionMode = ((MainActivity) getActivity()).getActionMode();
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(actionMode != null) {
+                                    actionMode.finish();
+                                    actionMode = null;
+                                }
+                                v.setOnClickListener(RecipePageFragment.this);
+                            }
+                        });
+                        return true;
+                    }
 
-                    Intent i = new Intent(getActivity(), ShowRecipeActivity.class);
-                    i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
-
-                    startActivity(i);
-
+                    return false;
                 }
             });
-
-            //TODO setOnLongClickListener
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent i = new Intent(getActivity(), ShowRecipeActivity.class);
+        i.putExtra("recipeId", ((TextView) v.findViewById(R.id.main_recipe_id)).getText());
+        startActivity(i);
     }
 
     @Override
