@@ -100,7 +100,6 @@ public class RecipePageFragment extends Fragment {
 
                     Intent i = new Intent(getActivity(), ShowRecipeActivity.class);
                     i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
-
                     startActivity(i);
 
                 }
