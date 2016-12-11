@@ -3,7 +3,6 @@ package se.ju.student.android_mjecipes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,9 +25,8 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 
 public class RecipePageFragment extends Fragment {
 
-    //TODO change anything regarding to listener if needed, if not delete it.
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void loaded(boolean isThereRecipes);
     }
 
     private static final String ARG_RECIPES = "recipes";
@@ -39,7 +37,6 @@ public class RecipePageFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private LinearLayout pageLayout;
-    private View loadingView;
 
     public RecipePageFragment() {}
 
@@ -62,9 +59,9 @@ public class RecipePageFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         pageLayout = (LinearLayout) view.findViewById(R.id.recipe_page_ll);
-        loadingView = view.findViewById(R.id.loading_screen);
-        loadingView.setVisibility(View.VISIBLE);
         inflateRecipes(recipes, username);
+        if(mListener != null)
+            mListener.loaded(recipes.length != 0);
     }
 
     private void inflateRecipes(final Recipe[] recipes, String username) {
@@ -111,13 +108,6 @@ public class RecipePageFragment extends Fragment {
 
             //TODO setOnLongClickListener
         }
-
-        loadingView.setVisibility(View.GONE);
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if(mListener != null)
-            mListener.onFragmentInteraction(uri);
     }
 
     @Override
