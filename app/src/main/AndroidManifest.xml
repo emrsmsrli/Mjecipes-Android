@@ -51,18 +51,13 @@
                 android:value=".ShowRecipeActivity" />
         </activity>
         <activity android:name=".CreateRecipeActivity" android:label="@string/app_create_recipe" />
-        <activity android:name=".ShowAccountActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".ShowAccountActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
 
 
         </activity>
