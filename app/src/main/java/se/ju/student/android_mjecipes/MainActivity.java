@@ -3,30 +3,26 @@ package se.ju.student.android_mjecipes;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.toolbox.ImageRequest;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.Arrays;
 
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
@@ -34,282 +30,303 @@ import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.Recipe;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Handler;
 import se.ju.student.android_mjecipes.UserAgent.UserAgent;
 
+public class MainActivity
+        extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        RecipePageFragment.OnFragmentInteractionListener,
+        View.OnClickListener {
 
-public class MainActivity extends AppCompatActivity {
+    private static final String ACTION_MY_RECIPES = "Mjecipes.MyRecipes";
+    private static final String ACTION_MY_FAVORITES = "Mjecipes.MyFavorites";
     private static final int CREATE_RECIPE_REQUEST = 0;
-    private LinearLayout mainLinearLayout;
-    DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle Toggle;
-    NavigationView navigationView;
+    private static final int MY_RECIPES_PAGE_CODE = Integer.MAX_VALUE;
+    private static final int MY_FAVORITES_PAGE_CODE = Integer.MAX_VALUE - 1;
+
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private NavigationView navigationView;
+    private ViewPager viewPager;
+    private TabLayout tabDots;
+    private View emptyScreen;
     private boolean loaded = false;
     private boolean ordloaded = false;
     private boolean favloaded = false;
 
-    private int page=Integer.MAX_VALUE;
-    private int pagef=Integer.MAX_VALUE-1;
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        String act = getIntent().getAction();
+        if(act != null && act.equals(Intent.ACTION_SEARCH))
+            menu.findItem(R.id.search).setVisible(false);
 
+        return super.onPrepareOptionsMenu(menu);
+    }
 
-
-public static String a;
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.main_activity_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if(Toggle.onOptionsItemSelected(item)){
-            return true;
-        }
-
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.search:
                 onSearchRequested();
+                break;
+            case R.id.refresh:
+                //TODO
+                break;
+            case android.R.id.home:
+                drawerToggle.onOptionsItemSelected(item);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
-
         return true;
     }
 
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setContentView(R.layout.activity_main);
-
-        Intent i=this.getIntent();
-        String action= i.getAction();
-
-        if(action != null) {
-
-            if(action.equals(Intent.ACTION_SEARCH)) {
-                setTitle("Search results");
-                new AsyncTask<String, Void, Recipe[]>() {
-                    @Override
-                    protected void onPostExecute(Recipe[] recipes) {
-                        if(recipes!= null)
-                            inflate(recipes, null);
-                    }
-
-                    @Override
-                    protected Recipe[] doInBackground(String... params) {
-                        return Handler.getRecipeHandler().search(params[0]);
-                    }
-                }.execute(i.getStringExtra(SearchManager.QUERY));
-            } else if(action.equals(Intent.ACTION_DELETE)) {
-                final LinearLayout l = (LinearLayout) findViewById(R.id.activity_main);
-                Snackbar.make(l, "Account deleted", Snackbar.LENGTH_SHORT).show();
-                i.setAction("");
-                whileloginandnotloginjobs();
-            } else if (action.equals(Intent.ACTION_VIEW))
-                showaccountrecipes();
-            else if (action.equals(Intent.ACTION_PICK))
-                showfavorite();
-            else
-                whileloginandnotloginjobs();
+    private void invalidateDrawerMenu() {
+        if(UserAgent.getInstance(this).isLoggedIn()){
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.uname)).setText(UserAgent.getInstance(this).getUsername());
+            navigationView.getMenu().removeItem(R.id.login);
+            navigationView.getMenu().removeItem(R.id.signup);
         } else {
-            whileloginandnotloginjobs();
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.uname)).setText(getString(R.string.drawer_not_logged_in));
+            navigationView.getMenu().removeItem(R.id.favoriterecipes);
+            navigationView.getMenu().removeItem(R.id.logout);
         }
     }
 
+    @Override
+    public void loaded(boolean isThereRecipes) {
+        View v = findViewById(R.id.loading_screen);
+        if(v != null)
+            v.setVisibility(View.GONE);
+        if(!isThereRecipes) {
+            v = findViewById(R.id.empty_screen);
+            if(v != null)
+                v.setVisibility(View.VISIBLE);
+        }
+    }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+        String action = intent.getAction();
 
-    void whileloginandnotloginjobs(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        tabDots = (TabLayout) findViewById(R.id.tabDots);
+        emptyScreen = findViewById(R.id.empty_screen);
+        FloatingActionButton createRecipeFab = (FloatingActionButton) findViewById(R.id.create_recipe_fab);
 
-        drawermenu();
+        if(createRecipeFab != null)
+            createRecipeFab.setOnClickListener(this);
 
-        new AsyncTask<Void, Void, Recipe[]>() {
+        if(emptyScreen != null)
+            ((TextView)emptyScreen.findViewById(R.id.empty_view_text)).setText(getString(R.string.main_activity_no_recipe));
+
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if(action != null) {
+            switch(action) {
+                case Intent.ACTION_SEARCH:
+                    if(createRecipeFab != null)
+                        createRecipeFab.setVisibility(View.GONE);
+                    if(actionBar != null)
+                        actionBar.setDisplayHomeAsUpEnabled(false);
+                    loadSearchResults(intent);
+                    break;
+                case ACTION_MY_RECIPES:
+                    loadMyRecipes();
+                    break;
+                case ACTION_MY_FAVORITES:
+                    loadMyFavorites();
+                    break;
+                default:
+                    loadLastPostedRecipes();
+                    break;
+            }
+            return;
+        }
+
+        loadLastPostedRecipes();
+    }
+
+    @Override
+    public void onClick(View v) {
+        startActivity(new Intent(this, CreateRecipeActivity.class));
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.myaccount:
+                if(UserAgent.getInstance(getBaseContext()).isLoggedIn()) {
+                    intent = new Intent(MainActivity.this, ShowAccountActivity.class);
+                    intent.setAction(Intent.ACTION_USER_PRESENT);
+                } else
+                    intent = new Intent(MainActivity.this, LoginActivity.class);
+                ordloaded = false;
+                startActivity(intent);
+                drawerLayout.closeDrawers();
+                break;
+
+            case R.id.myrecipes:
+                if(UserAgent.getInstance(getBaseContext()).isLoggedIn()) {
+                    intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.setAction(ACTION_MY_RECIPES);
+                } else
+                    intent = new Intent(MainActivity.this, LoginActivity.class);
+                ordloaded=false;
+                startActivity(intent);
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.createarecipe:
+                if(UserAgent.getInstance(getBaseContext()).isLoggedIn()) {
+                    intent = new Intent(MainActivity.this, CreateRecipeActivity.class);
+                    ordloaded = false;
+                    startActivityForResult(intent, CREATE_RECIPE_REQUEST);
+                }
+                else {
+                    intent = new Intent(MainActivity.this, LoginActivity.class);
+                    ordloaded=false;
+                    startActivity(intent);
+                }
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.recipeofday:
+                        /*TODO
+                        intent = new Intent(MainActivity.this, MainActivity.class);
+                        intent.setAction("");
+                        finish();
+                        ordloaded = false;
+                        startActivity(intent);
+                        drawerLayout.closeDrawers();*/
+                break;
+            case R.id.signup:
+                intent = new Intent(MainActivity.this, SignupActivity.class);
+                startActivity(intent);
+                ordloaded = false;
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.login:
+                intent = new Intent(MainActivity.this, LoginActivity.class);
+                ordloaded = false;
+                startActivity(intent);
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.logout:
+                UserAgent.getInstance(getBaseContext()).logout();
+                intent = new Intent(MainActivity.this, MainActivity.class);
+                ordloaded = false;
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.favoriterecipes:
+                intent = new Intent(MainActivity.this, MainActivity.class);
+                intent.setAction(ACTION_MY_FAVORITES);
+                ordloaded = false;
+                drawerLayout.closeDrawers();
+                startActivity(intent);
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    private void loadSearchResults(Intent i) {
+        setTitle("Search results");
+        new AsyncTask<String, Void, Recipe[]>() {
             @Override
-            protected Recipe[] doInBackground(Void... p) {
-
-                Recipe r[];
-                if(!isConnectionAvailable()) {
-                    if(!ordloaded) {
-
-                        r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(1);
-
-
-                        if (r != null) {
-                            ordloaded = true;
-                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
-                            return r;
-                        }
-                    }
-
-                    else {
-                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
-                        return null;
-                    }
-                }
-
-                r = Handler.getRecipeHandler().getRecipeByPage(1);
-                if(r != null) {
-                    handleCache(r,1);
-                    ordloaded = true;
-                }
-
-                return r;
-
-
-
+            protected Recipe[] doInBackground(String... params) {
+                return Handler.getRecipeHandler().search(params[0]);
             }
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
-                if(recipes != null)
-                    inflate(recipes, null);
+                if(recipes != null) {
+                    RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
+                    viewPager.setAdapter(recipePagerAdapter);
+                    tabDots.setupWithViewPager(viewPager);
+                    emptyScreen.setVisibility(View.GONE);
+                }
+            }
+        }.execute(i.getStringExtra(SearchManager.QUERY));
+    }
+
+    private void loadLastPostedRecipes(){
+        invalidateDrawerMenu();
+
+        new AsyncTask<Void, Void, Recipe[]>() {
+            @Override
+            protected Recipe[] doInBackground(Void... p) {
+                Recipe r[] = null;
+
+                if(!isConnectionAvailable()) {
+                    if(!ordloaded) {
+                        for(int i = 0; i < 5; ++i) {
+                            Recipe[] re = CacheHandler.getJSONJsonCacheHandler(MainActivity.this).readRecipePage(i + 1);
+                            if(r == null)
+                                r = re;
+                            else
+                                r = concat(r, re);
+                        }
+
+                        if (r != null) {
+                            ordloaded = true;
+                            Snackbar.make(drawerLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
+                        }
+
+                        return r;
+                    } else {
+                        Snackbar.make(drawerLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                }
+
+                for(int i = 0; i < 5; ++i) {
+                    Recipe[] re = Handler.getRecipeHandler().getRecipeByPage(i + 1);
+                    if(re != null)
+                        handleCache(re, i + 1);
+                    if(r == null)
+                        r = re;
+                    else
+                        r = concat(r, re);
+                }
+
+                return r;
+            }
+
+            @Override
+            protected void onPostExecute(Recipe[] recipes) {
+                if(recipes != null) {
+                    RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
+                    viewPager.setAdapter(recipePagerAdapter);
+                    tabDots.setupWithViewPager(viewPager);
+                    emptyScreen.setVisibility(View.GONE);
+                }
             }
         }.execute();
 
     }
 
-
-
-    void drawermenu(){
-
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        Toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
-
-        drawerLayout.addDrawerListener(Toggle);
-        Toggle.syncState();
-        mainLinearLayout = (LinearLayout) findViewById(R.id.activity_main);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        if(UserAgent.getInstance(getBaseContext()).isLoggedIn()){
-            navigationView.getMenu().removeItem(R.id.login);
-            navigationView.getMenu().removeItem(R.id.signup);
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.uname)).setText("");
-
-        }
-        else if(!(UserAgent.getInstance(getBaseContext()).isLoggedIn())){
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.uname)).setText("Not logged in");
-            navigationView.getMenu().removeItem(R.id.favoriterecipes);
-            navigationView.getMenu().removeItem(R.id.logout);
-        }
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getItemId()) {
-
-                    case R.id.myaccount:
-
-                        Intent i1 ;
-                        if(UserAgent.getInstance(getBaseContext()).isLoggedIn()){
-                            i1=new Intent(MainActivity.this, ShowAccountActivity.class);
-                            i1.setAction(Intent.ACTION_USER_PRESENT);}
-                        else
-                            i1=new Intent(MainActivity.this, LoginActivity.class);
-                        ordloaded=false;
-                        startActivity(i1);
-                        drawerLayout.closeDrawers();
-                        break;
-
-                    case R.id.myrecipes:
-                        Intent i2;
-                        if(UserAgent.getInstance(getBaseContext()).isLoggedIn()){
-                            i2 = new Intent(MainActivity.this,MainActivity.class);
-                            i2.setAction(Intent.ACTION_VIEW);}
-                        else
-                            i2 = new Intent(MainActivity.this, LoginActivity.class);
-                        ordloaded=false;
-                        startActivity(i2);
-                        drawerLayout.closeDrawers();
-                        break;
-
-                    case R.id.createarecipe:
-                        Intent i3;
-                        if(UserAgent.getInstance(getBaseContext()).isLoggedIn()) {
-                            i3 = new Intent(getApplicationContext(), CreateRecipeActivity.class);
-                            ordloaded=false;
-                            startActivityForResult(i3, CREATE_RECIPE_REQUEST);
-                        }
-                        else {
-                            i3 = new Intent(getApplicationContext(), LoginActivity.class);
-                            ordloaded=false;
-                            startActivity(i3);
-                        }
-                        drawerLayout.closeDrawers();
-                        break;
-                    case R.id.recipeofday:
-                        Intent i4 = new Intent(getApplicationContext(), MainActivity.class);
-                        i4.setAction("");
-                        finish();
-                        ordloaded=false;
-                        startActivity(i4);
-                        drawerLayout.closeDrawers();
-                        break;
-
-
-                    case R.id.signup:
-                        Intent i6 = new Intent(MainActivity.this, SignupActivity.class);
-                        startActivity(i6);
-                        ordloaded=false;
-                        drawerLayout.closeDrawers();
-                        break;
-
-                    case R.id.login:
-
-                        Intent i7 = new Intent(MainActivity.this, LoginActivity.class);
-                        ordloaded=false;
-                        startActivity(i7);
-
-                        drawerLayout.closeDrawers();
-
-                        break;
-
-
-                    case R.id.logout:
-                        UserAgent.getInstance(getBaseContext()).logout();
-                        Intent i8 = new Intent(MainActivity.this,MainActivity.class);
-                        i8.setAction("");
-                        ordloaded=false;
-                        startActivity(i8);
-                        finish();
-
-                        drawerLayout.closeDrawers();
-
-                        break;
-
-                    case R.id.favoriterecipes:
-                        Intent i9 = new Intent(MainActivity.this, MainActivity.class);
-                        i9.setAction(Intent.ACTION_PICK);
-                        ordloaded=false;
-                        startActivity(i9);finish();
-
-                        drawerLayout.closeDrawers();
-
-
-
-                }
-
-                return false;
-            }
-        });
-
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
-            case CREATE_RECIPE_REQUEST:
-                if(requestCode == RESULT_OK) {
-                    Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
-                }
-        }
-    }
-
-    void showaccountrecipes(){
-
-        drawermenu();
+    private void loadMyRecipes(){
+        invalidateDrawerMenu();
 
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
@@ -317,155 +334,125 @@ public static String a;
                 Recipe r[];
                 if(!isConnectionAvailable()) {
                     if(!loaded) {
-
-                            r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(page);
-
-
+                        r = CacheHandler.getJSONJsonCacheHandler(MainActivity.this).readRecipePage(MY_RECIPES_PAGE_CODE);
                         if (r != null) {
                             loaded = true;
-                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
-                            return r;
+                            Snackbar.make(drawerLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
                         }
+                        return r;
                     } else {
-                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(drawerLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                         return null;
                     }
                 }
 
-                r = Handler.getAccountHandler().getRecipes(UserAgent.getInstance(getBaseContext()).getUserID());
+                r = Handler.getAccountHandler().getRecipes(UserAgent.getInstance(MainActivity.this).getUserID());
                 if(r != null) {
-                    handleCache(r,page);
+                    handleCache(r, MY_RECIPES_PAGE_CODE);
                     loaded = true;
                 }
 
                 return r;
-
-
             }
-
-
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
-
                 if(recipes!=null){
-                    inflate(recipes, UserAgent.getInstance(getBaseContext()).getUsername());
-            }
-
+                    RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(
+                            getSupportFragmentManager(),
+                            recipes,
+                            UserAgent.getInstance(MainActivity.this).getUsername());
+                    viewPager.setAdapter(recipePagerAdapter);
+                    tabDots.setupWithViewPager(viewPager);
+                    emptyScreen.setVisibility(View.GONE);
+                }
             }
         }.execute();
     }
 
-    private void inflate(final Recipe[] recipes, String username) {
-
-        LayoutInflater inf = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
-        for (int i = 0; i < recipes.length; ++i) {
-            inf.inflate(R.layout.recipe_entry, (LinearLayout) findViewById(R.id.activity_main));
-            final View vv = ((LinearLayout) findViewById(R.id.activity_main)).getChildAt(i);
-            ((TextView) vv.findViewById(R.id.main_recipe_id)).setText(String.format(Locale.ENGLISH, "%d", recipes[i].id));
-            ((TextView) vv.findViewById(R.id.main_recipe_name)).setText(recipes[i].name);
-            ((TextView) vv.findViewById(R.id.main_recipe_date)).setText(sdf.format(new Date(recipes[i].created * 1000)));
-            ((TextView) vv.findViewById(R.id.main_recipe_description)).setText(recipes[i].description);
-            ((TextView) vv.findViewById(R.id.main_recipe_creatorname)).setText(username != null ? username : (recipes[i].creator == null ? "" : recipes[i].creator.userName));
-            if (recipes[i].image != null) {
-                final ImageView iv = (ImageView) vv.findViewById(R.id.main_recipe_image);
-                CacheHandler.getImageCacheHandler(getBaseContext()).downloadImage(new ImageRequest(recipes[i].image, new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        if(iv.getWidth() < response.getWidth())
-                            return;
-                        iv.setImageBitmap(response);
-                        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    }
-                }, iv.getWidth(), iv.getHeight(), null, null, null));
-            }
-
-            vv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent i = new Intent(getApplicationContext(), ShowRecipeActivity.class);
-                    i.putExtra("recipeId", ((TextView) vv.findViewById(R.id.main_recipe_id)).getText());
-
-                    startActivity(i);
-
-                }
-            });
-        }
-    }
-
-
-    void showfavorite(){
-        drawermenu();
+    private void loadMyFavorites(){
+        invalidateDrawerMenu();
 
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
+                Recipe r[] = null;
 
-
-
-                Recipe r[];
                 if(!isConnectionAvailable()) {
                     if(!favloaded) {
 
-                        r= CacheHandler.getJSONJsonCacheHandler(getBaseContext()).readRecipePage(pagef);
-
+                        r = CacheHandler.getJSONJsonCacheHandler(MainActivity.this).readRecipePage(MY_FAVORITES_PAGE_CODE);
 
                         if (r != null) {
                             favloaded = true;
-                            Snackbar.make(mainLinearLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
-                            return r;
+                            Snackbar.make(drawerLayout, getString(R.string.no_connection_cache_first), Snackbar.LENGTH_LONG).show();
                         }
+
+                        return r;
                     } else {
-                        Snackbar.make(mainLinearLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(drawerLayout, getString(R.string.no_connection), Snackbar.LENGTH_LONG).show();
                         return null;
                     }
                 }
 
-                JWToken token = Handler.getTokenHandler().getToken(UserAgent.getInstance(getBaseContext()).getUsername(),UserAgent.getInstance(getBaseContext()).getPassword());
-                r= Handler.getAccountHandler().getFavorites(UserAgent.getInstance(getBaseContext()).getUserID(),token);
+                JWToken token = Handler.getTokenHandler().getToken(
+                        UserAgent.getInstance(MainActivity.this).getUsername(),
+                        UserAgent.getInstance(MainActivity.this).getPassword());
+                if(token != null)
+                    r = Handler.getAccountHandler().getFavorites(UserAgent.getInstance(MainActivity.this).getUserID(),token);
 
                 if(r != null) {
-                    handleCache(r,pagef);
+                    handleCache(r, MY_FAVORITES_PAGE_CODE);
                     favloaded = true;
                 }
 
                 return r;
-
-
-
-
-
             }
-
 
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
-
-                if(recipes!=null){
-
-                    inflate(recipes, null);
-
+                if(recipes != null){
+                    RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
+                    viewPager.setAdapter(recipePagerAdapter);
+                    tabDots.setupWithViewPager(viewPager);
+                    emptyScreen.setVisibility(View.GONE);
                 }
-
             }
         }.execute();
 
 
     }
-    private boolean isConnectionAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
 
-        return ni !=null && ni.isConnected();
-    }
-    private void handleCache(Recipe r[],int page) {
+    private void handleCache(Recipe r[], int page) {
         CacheHandler.getJSONJsonCacheHandler(this).clearRecipePage(page);
         CacheHandler.getJSONJsonCacheHandler(this).writeRecipePage(r, page);
     }
 
+    private boolean isConnectionAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        return ni != null && ni.isConnected();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case CREATE_RECIPE_REQUEST:
+                if(resultCode == RESULT_OK) {
+                    Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    private static <T> T[] concat(T[] first, T[] second) {
+        if(first == null || second == null)
+            return null;
+        T[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
+    }
 
 }
