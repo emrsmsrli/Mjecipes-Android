@@ -99,7 +99,7 @@ public class MainActivity
                 onSearchRequested();
                 break;
             case R.id.refresh:
-                //TODO
+                refresh();
                 break;
             case android.R.id.home:
                 drawerToggle.onOptionsItemSelected(item);
@@ -166,7 +166,7 @@ public class MainActivity
                 switch(item.getItemId()) {
                     case R.id.show_comments:
                         Intent i = new Intent(MainActivity.this, ShowCommentActivity.class);
-                        i.putExtra("resid", currentRID);
+                        i.putExtra("resid", Integer.toString(currentRID));
                         startActivity(i);
                         break;
                     case R.id.make_favorite:
@@ -191,6 +191,7 @@ public class MainActivity
             @Override
             public void onDestroyActionMode(android.view.ActionMode mode) {
                 actionMode = null;
+                RecipePageFragment.actionMode = null;
                 v.setBackgroundResource(R.color.colorAccent);
             }
         });
@@ -207,10 +208,9 @@ public class MainActivity
             public void onFavoritePosted(boolean posted) {
                 if(posted) {
                     Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
-                    invalidateOptionsMenu();
-                } else {
+                    refresh();
+                } else
                     Snackbar.make(navigationView, getString(R.string.error_favorite_recipe), Snackbar.LENGTH_SHORT).show();
-                }
             }
         });
     }
@@ -236,6 +236,7 @@ public class MainActivity
             protected void onPostExecute(Boolean deleted) {
                 if(deleted) {
                     Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    refresh();
                 } else
                     Snackbar.make(navigationView, getString(R.string.error_delete_recipe), Snackbar.LENGTH_SHORT).show();
             }
@@ -252,7 +253,7 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
-        String action = intent.getAction();
+        final String action = intent.getAction();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -276,6 +277,19 @@ public class MainActivity
         drawerToggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                if(actionMode != null)
+                    actionMode.finish();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
 
         if(action != null) {
             switch(action) {
@@ -336,6 +350,7 @@ public class MainActivity
 
                 if(result) {
                     Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    refresh();
                 } else
                     Snackbar.make(navigationView, getString(R.string.error_image_upload), Snackbar.LENGTH_SHORT).show();
             }
@@ -459,6 +474,19 @@ public class MainActivity
         return true;
     }
 
+    private void refresh() {
+        View v = findViewById(R.id.loading_screen);
+        if(v != null)
+            v.setVisibility(View.VISIBLE);
+
+        if(loaded)
+            loadMyRecipes();
+        else if(favloaded)
+            loadMyFavorites();
+        else if(ordloaded)
+            loadLastPostedRecipes();
+    }
+
     private void loadSearchResults(Intent i) {
         setTitle("Search results");
         new AsyncTask<String, Void, Recipe[]>() {
@@ -524,6 +552,8 @@ public class MainActivity
                         r = concat(r, re);
                 }
 
+                if(r != null)
+                    ordloaded = true;
                 return r;
             }
 
@@ -673,6 +703,7 @@ public class MainActivity
             case CREATE_RECIPE_REQUEST:
                 if(resultCode == RESULT_OK) {
                     Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    refresh();
                 }
                 break;
             case IMAGE_REQUEST_CODE:
