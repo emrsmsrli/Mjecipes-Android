@@ -39,7 +39,7 @@ public class RecipePageFragment extends Fragment implements View.OnClickListener
 
     private OnFragmentInteractionListener mListener;
     private LinearLayout pageLayout;
-    private ActionMode actionMode;
+    public static ActionMode actionMode;
 
     public RecipePageFragment() {}
 
@@ -107,16 +107,6 @@ public class RecipePageFragment extends Fragment implements View.OnClickListener
                     if(mListener != null) {
                         mListener.onRecipeLongClick(v, rID, cID);
                         actionMode = ((MainActivity) getActivity()).getActionMode();
-                        v.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if(actionMode != null) {
-                                    actionMode.finish();
-                                    actionMode = null;
-                                }
-                                v.setOnClickListener(RecipePageFragment.this);
-                            }
-                        });
                         return true;
                     }
 
@@ -128,9 +118,14 @@ public class RecipePageFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        Intent i = new Intent(getActivity(), ShowRecipeActivity.class);
-        i.putExtra("recipeId", ((TextView) v.findViewById(R.id.main_recipe_id)).getText());
-        startActivity(i);
+        if(actionMode != null) {
+            actionMode.finish();
+            actionMode = null;
+        } else {
+            Intent i = new Intent(getActivity(), ShowRecipeActivity.class);
+            i.putExtra("recipeId", ((TextView) v.findViewById(R.id.main_recipe_id)).getText());
+            startActivity(i);
+        }
     }
 
     @Override

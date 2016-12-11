@@ -62,7 +62,6 @@ public class MainActivity
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final int MY_RECIPES_PAGE_CODE = Integer.MAX_VALUE;
     private static final int MY_FAVORITES_PAGE_CODE = Integer.MAX_VALUE - 1;
-    private LinearLayout mainLinearLayout;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -75,8 +74,7 @@ public class MainActivity
     private boolean loaded = false;
     private boolean ordloaded = false;
     private boolean favloaded = false;
-    int counter=0,k=0;
-    boolean b=true;
+    int k = 0;
     int []rec;
 
     @Override
@@ -177,7 +175,6 @@ public class MainActivity
                         favorite(currentRID);
                         break;
                     case R.id.edit:
-                        //TODO
                         edit(currentRID);
                         break;
                     case R.id.upload_image:
@@ -260,8 +257,6 @@ public class MainActivity
         Intent intent = getIntent();
         final String action = intent.getAction();
 
-        String action = intent.getAction();
-        mainLinearLayout = (LinearLayout) findViewById(R.id.show_recipe_main);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -441,10 +436,10 @@ public class MainActivity
                 drawerLayout.closeDrawers();
                 break;
             case R.id.recipeofday:
-                Random rand=new Random();;
+                Random rand=new Random();
                 int randomNum = rand.nextInt(50);
                 Intent i = new Intent(MainActivity.this, ShowRecipeActivity.class);
-                i.putExtra("recipeId", ((Integer.toString( rec[randomNum]))));
+                i.putExtra("recipeId", Integer.toString(rec[randomNum]));
                 i.setAction("");
                 startActivity(i);
                         ordloaded = false;
