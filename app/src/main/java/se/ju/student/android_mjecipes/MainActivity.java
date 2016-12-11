@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import java.util.Random;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -74,6 +75,9 @@ public class MainActivity
     private boolean loaded = false;
     private boolean ordloaded = false;
     private boolean favloaded = false;
+    int counter=0,k=0;
+    boolean b=true;
+    int []rec;
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -434,13 +438,15 @@ public class MainActivity
                 drawerLayout.closeDrawers();
                 break;
             case R.id.recipeofday:
-                        /*TODO
-                        intent = new Intent(MainActivity.this, MainActivity.class);
-                        intent.setAction("");
-                        finish();
+                Random rand=new Random();;
+                int randomNum = rand.nextInt((50 - 0) + 1) +0;
+                Intent i = new Intent(MainActivity.this, ShowRecipeActivity.class);
+                i.putExtra("recipeId", ((Integer.toString( rec[randomNum]))));
+                i.setAction("");
+                startActivity(i);
                         ordloaded = false;
-                        startActivity(intent);
-                        drawerLayout.closeDrawers();*/
+
+                        drawerLayout.closeDrawers();
                 break;
             case R.id.signup:
                 intent = new Intent(MainActivity.this, SignupActivity.class);
@@ -518,6 +524,8 @@ public class MainActivity
         new AsyncTask<Void, Void, Recipe[]>() {
             @Override
             protected Recipe[] doInBackground(Void... p) {
+                rec= new int[50];
+
                 Recipe r[] = null;
 
                 if(!isConnectionAvailable()) {
@@ -544,8 +552,13 @@ public class MainActivity
 
                 for(int i = 0; i < 5; ++i) {
                     Recipe[] re = Handler.getRecipeHandler().getRecipeByPage(i + 1);
-                    if(re != null)
+                    if(re != null){
                         handleCache(re, i + 1);
+                        for(int j=0;j<10;j++){
+                            rec[k]= re[j].id;
+                            k++;
+                        }
+                    }
                     if(r == null)
                         r = re;
                     else
@@ -742,5 +755,6 @@ public class MainActivity
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }
+
 
 }
