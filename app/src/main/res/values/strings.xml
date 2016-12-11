@@ -1,16 +1,6 @@
 <resources>
     <string name="app_name">Mjecipes</string>
 
-    <!-- drawer strings -->
-    <string name="drawer_my_account">My Account</string>
-    <string name="drawer_my_recipes">My Recipes</string>
-    <string name="drawer_my_fav_recipes">My Favorite Recipes</string>
-    <string name="drawer_create_a_recipe">Create A Recipe</string>
-    <string name="drawer_random_recipe">Random Recipe</string>
-    <string name="drawer_sign_up">Sign up</string>
-    <string name="drawer_log_out">Logout</string>
-    <string name="drawer_log_in">Login</string>
-
     <!-- snackbar strings -->
     <string name="no_connection">No connection</string>
     <string name="no_connection_cache_first">No connection, loaded information might be old</string>
@@ -40,6 +30,20 @@
     <string name="search_hint">Search recipes</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="main_menu_search">Search</string>
+    <string name="main_menu_refresh">Refresh</string>
+    <string name="main_activity_no_recipe">No recipes</string>
+
+    <!-- drawer strings -->
+    <string name="drawer_my_account">My Account</string>
+    <string name="drawer_my_recipes">My Recipes</string>
+    <string name="drawer_my_fav_recipes">My Favorite Recipes</string>
+    <string name="drawer_create_a_recipe">Create A Recipe</string>
+    <string name="drawer_random_recipe">Random Recipe</string>
+    <string name="drawer_sign_up">Sign up</string>
+    <string name="drawer_log_out">Logout</string>
+    <string name="drawer_log_in">Login</string>
+    <string name="drawer_not_logged_in">Not logged in</string>
 
     <!-- login strings -->
     <string name="app_login">Login to Mjecipes</string>
