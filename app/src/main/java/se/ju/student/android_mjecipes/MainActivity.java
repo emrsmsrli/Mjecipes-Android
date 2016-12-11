@@ -1,28 +1,48 @@
 package se.ju.student.android_mjecipes;
 
+import android.Manifest;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import java.util.Random;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import se.ju.student.android_mjecipes.CacheHandlers.CacheHandler;
 import se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities.JWToken;
@@ -39,6 +59,7 @@ public class MainActivity
     private static final String ACTION_MY_RECIPES = "Mjecipes.MyRecipes";
     private static final String ACTION_MY_FAVORITES = "Mjecipes.MyFavorites";
     private static final int CREATE_RECIPE_REQUEST = 0;
+    private static final int IMAGE_REQUEST_CODE = 1;
     private static final int MY_RECIPES_PAGE_CODE = Integer.MAX_VALUE;
     private static final int MY_FAVORITES_PAGE_CODE = Integer.MAX_VALUE - 1;
 
@@ -48,6 +69,9 @@ public class MainActivity
     private ViewPager viewPager;
     private TabLayout tabDots;
     private View emptyScreen;
+    private int currentRID;
+    private ActionMode actionMode = null;
+    private Uri outputFileUri;
     private boolean loaded = false;
     private boolean ordloaded = false;
     private boolean favloaded = false;
@@ -58,8 +82,10 @@ public class MainActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         String act = getIntent().getAction();
-        if(act != null && act.equals(Intent.ACTION_SEARCH))
+        if(act != null && act.equals(Intent.ACTION_SEARCH)) {
             menu.findItem(R.id.search).setVisible(false);
+            menu.findItem(R.id.refresh).setVisible(false);
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -102,15 +128,127 @@ public class MainActivity
     }
 
     @Override
-    public void loaded(boolean isThereRecipes) {
+    public void loaded() {
         View v = findViewById(R.id.loading_screen);
         if(v != null)
             v.setVisibility(View.GONE);
-        if(!isThereRecipes) {
-            v = findViewById(R.id.empty_screen);
-            if(v != null)
-                v.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onRecipeLongClick(final View v, final int recipeID, String creatorID) {
+        if(actionMode != null)
+            actionMode.finish();
+        final String cID = creatorID != null ? creatorID : UserAgent.getInstance(this).getUserID();
+        currentRID = recipeID;
+        actionMode = startActionMode(new android.view.ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+                getMenuInflater().inflate(R.menu.main_activity_action_menu, menu);
+                v.setBackgroundResource(R.color.colorPrimary);
+                onPrepareActionMode(mode, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+                if(UserAgent.getInstance(MainActivity.this).isLoggedIn()) {
+                    if(UserAgent.getInstance(MainActivity.this).getUserID().equals(cID)) {
+                        menu.findItem(R.id.edit).setVisible(true);
+                        menu.findItem(R.id.upload_image).setVisible(true);
+                        menu.findItem(R.id.delete).setVisible(true);
+                    }
+
+                    menu.findItem(R.id.make_favorite).setVisible(true);
+                    if(UserAgent.getInstance(MainActivity.this).hasFavorite(recipeID))
+                        menu.findItem(R.id.make_favorite).setIcon(R.drawable.ic_favorite_white_24dp);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.show_comments:
+                        Intent i = new Intent(MainActivity.this, ShowCommentActivity.class);
+                        i.putExtra("resid", currentRID);
+                        startActivity(i);
+                        break;
+                    case R.id.make_favorite:
+                        favorite(currentRID);
+                        break;
+                    case R.id.edit:
+                        //TODO
+                        break;
+                    case R.id.upload_image:
+                        openImageIntent();
+                        break;
+                    case R.id.delete:
+                        deleteRecipe(currentRID);
+                        break;
+                    default:
+                        return false;
+                }
+                mode.finish();
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(android.view.ActionMode mode) {
+                actionMode = null;
+                v.setBackgroundResource(R.color.colorAccent);
+            }
+        });
+    }
+
+    private void favorite(int rID) {
+        if(!isConnectionAvailable()) {
+            Snackbar.make(navigationView, getString(R.string.no_connection), Snackbar.LENGTH_SHORT).show();
+            return;
         }
+
+        UserAgent.getInstance(this).postFavorite(rID, new UserAgent.FavoriteListener() {
+            @Override
+            public void onFavoritePosted(boolean posted) {
+                if(posted) {
+                    Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                    invalidateOptionsMenu();
+                } else {
+                    Snackbar.make(navigationView, getString(R.string.error_favorite_recipe), Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void deleteRecipe(final int rID) {
+        if(!isConnectionAvailable()) {
+            Snackbar.make(navigationView, getString(R.string.no_connection), Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                JWToken token = Handler.getTokenHandler().getToken(
+                        UserAgent.getInstance(getBaseContext()).getUsername(),
+                        UserAgent.getInstance(getBaseContext()).getPassword()
+                );
+
+                return token != null && Handler.getRecipeHandler().deleteRecipe(rID, token);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean deleted) {
+                if(deleted) {
+                    Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                } else
+                    Snackbar.make(navigationView, getString(R.string.error_delete_recipe), Snackbar.LENGTH_SHORT).show();
+            }
+
+        }.execute();
+    }
+
+    public ActionMode getActionMode() {
+        return actionMode;
     }
 
     @Override
@@ -171,6 +309,79 @@ public class MainActivity
     @Override
     public void onClick(View v) {
         startActivity(new Intent(this, CreateRecipeActivity.class));
+    }
+
+    public void requestReadPermission() {
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+        }
+    }
+
+    private JWToken getToken() {
+        return Handler.getTokenHandler().getToken(
+                UserAgent.getInstance(this).getUsername(),
+                UserAgent.getInstance(this).getPassword()
+        );
+    }
+
+    private void uploadImage(InputStream stream, final int rID) {
+        new AsyncTask<InputStream, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(InputStream... params) {
+                JWToken token = getToken();
+
+                return token != null && Handler.getRecipeHandler().postImage(rID, params[0], token);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
+
+                if(result) {
+                    Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
+                } else
+                    Snackbar.make(navigationView, getString(R.string.error_image_upload), Snackbar.LENGTH_SHORT).show();
+            }
+        }.execute(stream);
+    }
+
+    private void openImageIntent() {
+        requestReadPermission();
+        final File root = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + "Mjecipes");
+        if(root.mkdirs())
+            return;
+        final String fname = "img-" + UUID.randomUUID().toString();
+
+        File sdImageMainDirectory;
+        try {
+            sdImageMainDirectory = File.createTempFile(fname, ".jpg", root);
+        } catch(IOException e) {
+            return;
+        }
+
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        final List<Intent> cameraIntents = new ArrayList<>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+        startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
     }
 
     @Override
@@ -265,10 +476,15 @@ public class MainActivity
             @Override
             protected void onPostExecute(Recipe[] recipes) {
                 if(recipes != null) {
+                    if(recipes.length == 0) {
+                        loaded();
+                        emptyScreen.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
                     RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
                     viewPager.setAdapter(recipePagerAdapter);
                     tabDots.setupWithViewPager(viewPager);
-                    emptyScreen.setVisibility(View.GONE);
                 }
             }
         }.execute(i.getStringExtra(SearchManager.QUERY));
@@ -327,10 +543,15 @@ public class MainActivity
             @Override
             protected void onPostExecute(Recipe[] recipes) {
                 if(recipes != null) {
+                    if(recipes.length == 0) {
+                        loaded();
+                        emptyScreen.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
                     RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
                     viewPager.setAdapter(recipePagerAdapter);
                     tabDots.setupWithViewPager(viewPager);
-                    emptyScreen.setVisibility(View.GONE);
                 }
             }
         }.execute();
@@ -369,14 +590,19 @@ public class MainActivity
 
             @Override
             protected void onPostExecute(Recipe[] recipes) {
-                if(recipes!=null){
+                if(recipes != null) {
+                    if(recipes.length == 0) {
+                        loaded();
+                        emptyScreen.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
                     RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(
                             getSupportFragmentManager(),
                             recipes,
                             UserAgent.getInstance(MainActivity.this).getUsername());
                     viewPager.setAdapter(recipePagerAdapter);
                     tabDots.setupWithViewPager(viewPager);
-                    emptyScreen.setVisibility(View.GONE);
                 }
             }
         }.execute();
@@ -425,10 +651,15 @@ public class MainActivity
             @Override
             protected void onPostExecute(Recipe[] recipes) {
                 if(recipes != null){
+                    if(recipes.length == 0) {
+                        loaded();
+                        emptyScreen.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
                     RecipePagerAdapter recipePagerAdapter = new RecipePagerAdapter(getSupportFragmentManager(), recipes, null);
                     viewPager.setAdapter(recipePagerAdapter);
                     tabDots.setupWithViewPager(viewPager);
-                    emptyScreen.setVisibility(View.GONE);
                 }
             }
         }.execute();
@@ -456,6 +687,33 @@ public class MainActivity
                 if(resultCode == RESULT_OK) {
                     Snackbar.make(navigationView, getString(R.string.done), Snackbar.LENGTH_SHORT).show();
                 }
+                break;
+            case IMAGE_REQUEST_CODE:
+                if(resultCode == RESULT_OK) {
+                    final boolean isCamera;
+                    if (data == null) {
+                        isCamera = true;
+                    } else {
+                        final String action = data.getAction();
+                        isCamera = action != null && action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+                    try {
+                        uploadImage(getContentResolver().openInputStream(isCamera ? outputFileUri : data.getData()), currentRID);
+                    } catch(FileNotFoundException e) {
+                        Snackbar.make(navigationView, getString(R.string.error_image_upload), Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 0) {
+            if(grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED)) {
+                Snackbar.make(navigationView, getString(R.string.error_permission_needed), Snackbar.LENGTH_SHORT);
+            }
         }
     }
 
