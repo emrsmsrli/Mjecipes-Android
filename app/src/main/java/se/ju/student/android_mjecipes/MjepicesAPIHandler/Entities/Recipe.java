@@ -1,6 +1,8 @@
 package se.ju.student.android_mjecipes.MjepicesAPIHandler.Entities;
 
-public class Recipe {
+import java.io.Serializable;
+
+public class Recipe implements Serializable {
     public int id;
     public String name;
     public String description;
