@@ -479,6 +479,7 @@ public class MainActivity
     }
 
     private void refresh() {
+        k = 0;
         View v = findViewById(R.id.loading_screen);
         if(v != null)
             v.setVisibility(View.VISIBLE);
